@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Designs on Shamil Khedgikar</title>
+    <link>https://shamilkhedgikar.github.io/designs/</link>
+    <description>Recent content in Designs on Shamil Khedgikar</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© 2019 Shamil Shirish Khedgikar</copyright>
+    <lastBuildDate>Wed, 01 Aug 2018 09:47:09 +0200</lastBuildDate>
+    
+	<atom:link href="https://shamilkhedgikar.github.io/designs/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Photoshop</title>
+      <link>https://shamilkhedgikar.github.io/designs/photoshop/</link>
+      <pubDate>Wed, 01 Aug 2018 09:47:09 +0200</pubDate>
+      
+      <guid>https://shamilkhedgikar.github.io/designs/photoshop/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Illustrator</title>
+      <link>https://shamilkhedgikar.github.io/designs/illustrator/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://shamilkhedgikar.github.io/designs/illustrator/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
