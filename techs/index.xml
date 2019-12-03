@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Shamil Shirish Khedgikar</copyright>
-    <lastBuildDate>Wed, 01 Aug 2018 09:47:09 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 01 Oct 2018 09:47:09 +0200</lastBuildDate>
     
 	<atom:link href="https://shamilkhedgikar.github.io/techs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -15,7 +15,7 @@
     <item>
       <title>ESRI ArcMap</title>
       <link>https://shamilkhedgikar.github.io/techs/esri-arcmap/</link>
-      <pubDate>Wed, 01 Aug 2018 09:47:09 +0200</pubDate>
+      <pubDate>Mon, 01 Oct 2018 09:47:09 +0200</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/techs/esri-arcmap/</guid>
       <description></description>
@@ -24,7 +24,7 @@
     <item>
       <title>R</title>
       <link>https://shamilkhedgikar.github.io/techs/r/</link>
-      <pubDate>Wed, 01 Aug 2018 09:47:09 +0200</pubDate>
+      <pubDate>Mon, 01 Oct 2018 09:47:09 +0200</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/techs/r/</guid>
       <description></description>
@@ -33,7 +33,7 @@
     <item>
       <title>Shiny</title>
       <link>https://shamilkhedgikar.github.io/techs/shiny/</link>
-      <pubDate>Wed, 01 Aug 2018 09:47:09 +0200</pubDate>
+      <pubDate>Mon, 01 Oct 2018 09:47:09 +0200</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/techs/shiny/</guid>
       <description></description>

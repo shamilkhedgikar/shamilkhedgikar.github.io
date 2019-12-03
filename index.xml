@@ -31,80 +31,9 @@
     </item>
     
     <item>
-      <title>Getting started</title>
-      <link>https://shamilkhedgikar.github.io/post/getting-started/</link>
-      <pubDate>Fri, 03 May 2019 09:37:55 +0200</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/post/getting-started/</guid>
-      <description>&lt;p&gt;Here are some details to help you getting started with this theme.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Portfolio Definition</title>
-      <link>https://shamilkhedgikar.github.io/blog/portfolio-definition/</link>
-      <pubDate>Thu, 02 May 2019 19:49:05 +0200</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/blog/portfolio-definition/</guid>
-      <description>&lt;p&gt;Here are some details about the portfolio settings.&lt;/p&gt;
-
-&lt;figure&gt;
-    &lt;img src=&#34;https://shamilkhedgikar.github.io/post/images/portfolio-example.png&#34;
-         alt=&#34;Example of Portfolio page&#34;/&gt; &lt;figcaption&gt;
-            &lt;p&gt;Example of Portfolio page&lt;/p&gt;
-        &lt;/figcaption&gt;
-&lt;/figure&gt;</description>
-    </item>
-    
-    <item>
-      <title>Portfolio Definition</title>
-      <link>https://shamilkhedgikar.github.io/post/portfolio-definition/</link>
-      <pubDate>Thu, 02 May 2019 19:49:05 +0200</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/post/portfolio-definition/</guid>
-      <description>&lt;p&gt;Here are some details about the portfolio settings.&lt;/p&gt;
-
-&lt;figure&gt;
-    &lt;img src=&#34;https://shamilkhedgikar.github.io/post/images/portfolio-example.png&#34;
-         alt=&#34;Example of Portfolio page&#34;/&gt; &lt;figcaption&gt;
-            &lt;p&gt;Example of Portfolio page&lt;/p&gt;
-        &lt;/figcaption&gt;
-&lt;/figure&gt;</description>
-    </item>
-    
-    <item>
-      <title>Archetypes management</title>
-      <link>https://shamilkhedgikar.github.io/post/archetypes/</link>
-      <pubDate>Thu, 02 May 2019 19:25:30 +0200</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/post/archetypes/</guid>
-      <description>&lt;p&gt;The archetypes are defined in the &lt;code&gt;archetypes&lt;/code&gt; folder, for both post and portfolio.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Config File</title>
-      <link>https://shamilkhedgikar.github.io/post/config-file/</link>
-      <pubDate>Sat, 20 Apr 2019 16:18:12 +0100</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/post/config-file/</guid>
-      <description>&lt;p&gt;Here is the basic config file used for personal-web.&lt;/p&gt;
-
-&lt;p&gt;You can use it as a base for your website.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Open Graph image</title>
-      <link>https://shamilkhedgikar.github.io/post/define-specific-og-image/</link>
-      <pubDate>Sat, 20 Apr 2019 11:14:59 +0200</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/post/define-specific-og-image/</guid>
-      <description>Within any page, you can add in the FrontMatter a images array that will be used to define a specific Open Graph image.
-For example, see content/_index.md page:</description>
-    </item>
-    
-    <item>
       <title>Clarence Stein Institute Interactive Database Viewer</title>
       <link>https://shamilkhedgikar.github.io/portfolio/clarence_stein_project/</link>
-      <pubDate>Wed, 01 Aug 2018 09:47:09 +0200</pubDate>
+      <pubDate>Mon, 01 Oct 2018 09:47:09 +0200</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/portfolio/clarence_stein_project/</guid>
       <description>This interactive database viewer was built as part of a year long project of restarting the Clarence Stein Institute of Urban and Landscape Studies at the Department of City and Regional Planning, Cornell University. The work was part of my year long appointment at the Institute from August 2017 to August 2018.

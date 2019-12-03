@@ -21,21 +21,5 @@
       <description>Stay tuned&amp;hellip;</description>
     </item>
     
-    <item>
-      <title>Portfolio Definition</title>
-      <link>https://shamilkhedgikar.github.io/blog/portfolio-definition/</link>
-      <pubDate>Thu, 02 May 2019 19:49:05 +0200</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/blog/portfolio-definition/</guid>
-      <description>&lt;p&gt;Here are some details about the portfolio settings.&lt;/p&gt;
-
-&lt;figure&gt;
-    &lt;img src=&#34;https://shamilkhedgikar.github.io/post/images/portfolio-example.png&#34;
-         alt=&#34;Example of Portfolio page&#34;/&gt; &lt;figcaption&gt;
-            &lt;p&gt;Example of Portfolio page&lt;/p&gt;
-        &lt;/figcaption&gt;
-&lt;/figure&gt;</description>
-    </item>
-    
   </channel>
 </rss>
