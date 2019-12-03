@@ -7,6 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Shamil Shirish Khedgikar</copyright>
+    <lastBuildDate>Tue, 01 Oct 2019 09:47:09 +0200</lastBuildDate>
     
 	<atom:link href="https://shamilkhedgikar.github.io/techs/python/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +15,7 @@
     <item>
       <title>Aadhaar Pulse</title>
       <link>https://shamilkhedgikar.github.io/portfolio/aadhaar-pulse/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 01 Oct 2019 09:47:09 +0200</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/portfolio/aadhaar-pulse/</guid>
       <description>Aadhaar Pulse is an ongoing project about leveraging the digital identity for bureaucratic decision making in a world of unified digital identities.</description>

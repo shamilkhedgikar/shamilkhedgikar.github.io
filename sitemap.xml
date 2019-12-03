@@ -38,14 +38,70 @@
   </url>
   
   <url>
-    <loc>https://shamilkhedgikar.github.io/portfolio/clarence_stein_project/</loc>
-    <lastmod>2018-10-01T09:47:09+02:00</lastmod>
+    <loc>https://shamilkhedgikar.github.io/portfolio/aadhaar-pulse/</loc>
+    <lastmod>2019-10-01T09:47:09+02:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://shamilkhedgikar.github.io/designs/</loc>
+    <lastmod>2019-10-01T09:47:09+02:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://shamilkhedgikar.github.io/designs/illustrator/</loc>
+    <lastmod>2019-10-01T09:47:09+02:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://shamilkhedgikar.github.io/designs/photoshop/</loc>
+    <lastmod>2019-10-01T09:47:09+02:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://shamilkhedgikar.github.io/portfolio/</loc>
+    <lastmod>2019-10-01T09:47:09+02:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://shamilkhedgikar.github.io/techs/python/</loc>
+    <lastmod>2019-10-01T09:47:09+02:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://shamilkhedgikar.github.io/techs/r/</loc>
+    <lastmod>2019-10-01T09:47:09+02:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://shamilkhedgikar.github.io/techs/shiny/</loc>
+    <lastmod>2019-10-01T09:47:09+02:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://shamilkhedgikar.github.io/techs/</loc>
+    <lastmod>2019-10-01T09:47:09+02:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://shamilkhedgikar.github.io/portfolio/clarence_stein_project/</loc>
     <lastmod>2018-10-01T09:47:09+02:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -59,47 +115,6 @@
   </url>
   
   <url>
-    <loc>https://shamilkhedgikar.github.io/designs/photoshop/</loc>
-    <lastmod>2018-10-01T09:47:09+02:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://shamilkhedgikar.github.io/portfolio/</loc>
-    <lastmod>2018-10-01T09:47:09+02:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://shamilkhedgikar.github.io/techs/r/</loc>
-    <lastmod>2018-10-01T09:47:09+02:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://shamilkhedgikar.github.io/techs/shiny/</loc>
-    <lastmod>2018-10-01T09:47:09+02:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://shamilkhedgikar.github.io/techs/</loc>
-    <lastmod>2018-10-01T09:47:09+02:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://shamilkhedgikar.github.io/portfolio/aadhaar-pulse/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://shamilkhedgikar.github.io/about/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -107,18 +122,6 @@
   
   <url>
     <loc>https://shamilkhedgikar.github.io/cv/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://shamilkhedgikar.github.io/designs/illustrator/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://shamilkhedgikar.github.io/techs/python/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
