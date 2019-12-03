@@ -32,15 +32,6 @@
     
     <item>
       <title>Getting started</title>
-      <link>https://shamilkhedgikar.github.io/blog/getting-started/</link>
-      <pubDate>Fri, 03 May 2019 09:37:55 +0200</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/blog/getting-started/</guid>
-      <description>&lt;p&gt;Here are some details to help you getting started with this theme.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Getting started</title>
       <link>https://shamilkhedgikar.github.io/post/getting-started/</link>
       <pubDate>Fri, 03 May 2019 09:37:55 +0200</pubDate>
       
@@ -82,31 +73,11 @@
     
     <item>
       <title>Archetypes management</title>
-      <link>https://shamilkhedgikar.github.io/blog/archetypes/</link>
-      <pubDate>Thu, 02 May 2019 19:25:30 +0200</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/blog/archetypes/</guid>
-      <description>&lt;p&gt;The archetypes are defined in the &lt;code&gt;archetypes&lt;/code&gt; folder, for both post and portfolio.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Archetypes management</title>
       <link>https://shamilkhedgikar.github.io/post/archetypes/</link>
       <pubDate>Thu, 02 May 2019 19:25:30 +0200</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/post/archetypes/</guid>
       <description>&lt;p&gt;The archetypes are defined in the &lt;code&gt;archetypes&lt;/code&gt; folder, for both post and portfolio.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Config File</title>
-      <link>https://shamilkhedgikar.github.io/blog/config-file/</link>
-      <pubDate>Sat, 20 Apr 2019 16:18:12 +0100</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/blog/config-file/</guid>
-      <description>&lt;p&gt;Here is the basic config file used for personal-web.&lt;/p&gt;
-
-&lt;p&gt;You can use it as a base for your website.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -118,16 +89,6 @@
       <description>&lt;p&gt;Here is the basic config file used for personal-web.&lt;/p&gt;
 
 &lt;p&gt;You can use it as a base for your website.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Open Graph image</title>
-      <link>https://shamilkhedgikar.github.io/blog/define-specific-og-image/</link>
-      <pubDate>Sat, 20 Apr 2019 11:14:59 +0200</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/blog/define-specific-og-image/</guid>
-      <description>Within any page, you can add in the FrontMatter a images array that will be used to define a specific Open Graph image.
-For example, see content/_index.md page:</description>
     </item>
     
     <item>

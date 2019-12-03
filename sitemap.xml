@@ -38,13 +38,6 @@
   </url>
   
   <url>
-    <loc>https://shamilkhedgikar.github.io/blog/getting-started/</loc>
-    <lastmod>2019-05-03T09:37:55+02:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://shamilkhedgikar.github.io/post/getting-started/</loc>
     <lastmod>2019-05-03T09:37:55+02:00</lastmod>
     <changefreq>monthly</changefreq>
@@ -66,13 +59,6 @@
   </url>
   
   <url>
-    <loc>https://shamilkhedgikar.github.io/blog/archetypes/</loc>
-    <lastmod>2019-05-02T19:25:30+02:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://shamilkhedgikar.github.io/post/archetypes/</loc>
     <lastmod>2019-05-02T19:25:30+02:00</lastmod>
     <changefreq>monthly</changefreq>
@@ -80,22 +66,8 @@
   </url>
   
   <url>
-    <loc>https://shamilkhedgikar.github.io/blog/config-file/</loc>
-    <lastmod>2019-04-20T16:18:12+01:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://shamilkhedgikar.github.io/post/config-file/</loc>
     <lastmod>2019-04-20T16:18:12+01:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://shamilkhedgikar.github.io/blog/define-specific-og-image/</loc>
-    <lastmod>2019-04-20T11:14:59+02:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
