@@ -3,6 +3,13 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://shamilkhedgikar.github.io/</loc>
+    <lastmod>2019-10-31T19:06:29+02:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://shamilkhedgikar.github.io/blog/</loc>
     <lastmod>2019-10-31T19:06:29+02:00</lastmod>
     <changefreq>monthly</changefreq>
@@ -11,13 +18,6 @@
   
   <url>
     <loc>https://shamilkhedgikar.github.io/post/</loc>
-    <lastmod>2019-10-31T19:06:29+02:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://shamilkhedgikar.github.io/</loc>
     <lastmod>2019-10-31T19:06:29+02:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -38,13 +38,6 @@
   </url>
   
   <url>
-    <loc>https://shamilkhedgikar.github.io/portfolio/aadhaar-pulse/</loc>
-    <lastmod>2019-10-01T09:47:09+02:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://shamilkhedgikar.github.io/designs/</loc>
     <lastmod>2019-10-01T09:47:09+02:00</lastmod>
     <changefreq>monthly</changefreq>
@@ -53,6 +46,13 @@
   
   <url>
     <loc>https://shamilkhedgikar.github.io/designs/illustrator/</loc>
+    <lastmod>2019-10-01T09:47:09+02:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://shamilkhedgikar.github.io/portfolio/aadhaar-pulse/</loc>
     <lastmod>2019-10-01T09:47:09+02:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -102,20 +102,14 @@
   
   <url>
     <loc>https://shamilkhedgikar.github.io/portfolio/clarence_stein_project/</loc>
-    <lastmod>2018-10-01T09:47:09+02:00</lastmod>
+    <lastmod>2018-08-25T09:47:09+02:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://shamilkhedgikar.github.io/techs/esri-arcmap/</loc>
-    <lastmod>2018-10-01T09:47:09+02:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://shamilkhedgikar.github.io/about/</loc>
+    <lastmod>2018-08-25T09:47:09+02:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

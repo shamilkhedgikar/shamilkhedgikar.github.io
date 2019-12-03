@@ -1,1 +1,4 @@
-User-agent: *
+User-agent: Googlebot
+Disallow:
+
+Sitemap: https://www.shamilkhedgikar.github.io/sitemap.xml

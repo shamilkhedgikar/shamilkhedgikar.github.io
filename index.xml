@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Home on Shamil Khedgikar</title>
+    <title>About on Shamil Khedgikar</title>
     <link>https://shamilkhedgikar.github.io/</link>
-    <description>Recent content in Home on Shamil Khedgikar</description>
+    <description>Recent content in About on Shamil Khedgikar</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Shamil Shirish Khedgikar</copyright>
@@ -31,33 +31,22 @@
     </item>
     
     <item>
-      <title>Aadhaar Pulse</title>
+      <title>India Pulse</title>
       <link>https://shamilkhedgikar.github.io/portfolio/aadhaar-pulse/</link>
       <pubDate>Tue, 01 Oct 2019 09:47:09 +0200</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/portfolio/aadhaar-pulse/</guid>
-      <description>Aadhaar Pulse is an ongoing project about leveraging the digital identity for bureaucratic decision making in a world of unified digital identities.</description>
+      <description>India Pulse is an Aadhaar pulse is an ongoing project between the Indian School of Business and the Office of the Divisional Commissioner of Maharashtra, that aims to leverage the Indian digital identity Aadhaar to accomplish objectives of effective last-mile delivery of welfare schemes and proactive, data-driven decision making.</description>
     </item>
     
     <item>
       <title>Clarence Stein Institute Interactive Database Viewer</title>
       <link>https://shamilkhedgikar.github.io/portfolio/clarence_stein_project/</link>
-      <pubDate>Mon, 01 Oct 2018 09:47:09 +0200</pubDate>
+      <pubDate>Sat, 25 Aug 2018 09:47:09 +0200</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/portfolio/clarence_stein_project/</guid>
-      <description>This interactive database viewer was built as part of a year long project of restarting the Clarence Stein Institute of Urban and Landscape Studies at the Department of City and Regional Planning, Cornell University. The work was part of my year long appointment at the Institute from August 2017 to August 2018.
-The interactive database documents the projects funded by the Institute from its establishment in 1992 to 2015. The institute has funded projects across the entire world!</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>https://shamilkhedgikar.github.io/about/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/about/</guid>
-      <description>Hi! I am a researcher interested in developing data driven insights to inform public policy. I currently work as a Research Associate at the Department of Economics and Public Policy, Indian School of Business Hyderabad with Ashwini Chhatre and Avik Sarkar.
-My interdisciplinary pursuits span across fields Urban and Regional Planning, Real Estate, Economics and Public Policy. I am currently working on;
-Infrastructure Policy: Studying the equity implications of capital investments in large-scale infrastructure on demography, land acquisition and the environment; Food Systems: Designing experiments and policies for promoting cultivation, public distribution and consumption of sustainable millets in regions vulnerable to climate change, and lastly, Digital Identity: understanding the potential of unique digital identity in India to inform bureaucratic decision making for food, employment and scholarship welfare schemes.</description>
+      <description>This interactive database viewer was built as part of a year long project of revamping the Clarence Stein Institute of Urban and Landscape Studies at the Department of City and Regional Planning, Cornell University. This product was one of the deliverable in my year long appointment at the Institute from August 2017 to August 2018.
+The interactive database documents the projects funded by the Institute from its establishment in 1992 to 2015.</description>
     </item>
     
   </channel>
