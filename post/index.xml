@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blog on Shamil Shirish Khedgikar</title>
+    <link>https://shamilkhedgikar.github.io/post/</link>
+    <description>Recent content in Blog on Shamil Shirish Khedgikar</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© 2021 Shamil Shirish Khedgikar</copyright>
+    <lastBuildDate>Thu, 31 Oct 2019 19:06:29 +0200</lastBuildDate><atom:link href="https://shamilkhedgikar.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>New Blog Post!</title>
+      <link>https://shamilkhedgikar.github.io/post/newblog/</link>
+      <pubDate>Thu, 31 Oct 2019 19:06:29 +0200</pubDate>
+      
+      <guid>https://shamilkhedgikar.github.io/post/newblog/</guid>
+      <description>Stay tuned&amp;hellip;</description>
+    </item>
+    
+  </channel>
+</rss>
