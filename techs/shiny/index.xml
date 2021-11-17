@@ -7,31 +7,22 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2021 Shamil Shirish Khedgikar</copyright>
-    <lastBuildDate>Sun, 01 Dec 2019 09:47:09 +0200</lastBuildDate><atom:link href="https://shamilkhedgikar.github.io/techs/shiny/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 28 Oct 2021 04:47:09 +0200</lastBuildDate><atom:link href="https://shamilkhedgikar.github.io/techs/shiny/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Data Democratization</title>
+      <link>https://shamilkhedgikar.github.io/portfolio/data-democratization/</link>
+      <pubDate>Thu, 28 Oct 2021 04:47:09 +0200</pubDate>
+      
+      <guid>https://shamilkhedgikar.github.io/portfolio/data-democratization/</guid>
+      <description>PDF PPT</description>
+    </item>
+    
     <item>
       <title>Effect of Migration on Residential Segregation - An Agent Based Model</title>
       <link>https://shamilkhedgikar.github.io/portfolio/agent-based-model-segregation/</link>
       <pubDate>Sun, 01 Dec 2019 09:47:09 +0200</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/portfolio/agent-based-model-segregation/</guid>
-      <description>India Pulse is an Aadhaar pulse is an ongoing project between the Indian School of Business and the Office of the Divisional Commissioner of Maharashtra, that aims to leverage the Indian digital identity Aadhaar to accomplish objectives of effective last-mile delivery of welfare schemes and proactive, data-driven decision making.</description>
-    </item>
-    
-    <item>
-      <title>India Pulse</title>
-      <link>https://shamilkhedgikar.github.io/portfolio/aadhaar-pulse/</link>
-      <pubDate>Tue, 01 Oct 2019 09:47:09 +0200</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/portfolio/aadhaar-pulse/</guid>
-      <description>Aadhaar pulse is an ongoing project between the Indian School of Business and the Office of the Divisional Commissioner of Maharashtra, that aims to leverage the Indian digital identity Aadhaar to accomplish objectives of effective last-mile delivery of welfare schemes and proactive, data-driven decision making.</description>
-    </item>
-    
-    <item>
-      <title>India Pulse</title>
-      <link>https://shamilkhedgikar.github.io/portfolio/data-democratization/</link>
-      <pubDate>Tue, 01 Oct 2019 09:47:09 +0200</pubDate>
-      
-      <guid>https://shamilkhedgikar.github.io/portfolio/data-democratization/</guid>
       <description>India Pulse is an Aadhaar pulse is an ongoing project between the Indian School of Business and the Office of the Divisional Commissioner of Maharashtra, that aims to leverage the Indian digital identity Aadhaar to accomplish objectives of effective last-mile delivery of welfare schemes and proactive, data-driven decision making.</description>
     </item>
     
@@ -177,7 +168,16 @@ The interactive database documents the projects funded by the Institute from its
       <pubDate>Wed, 30 Aug 2017 14:47:09 +0530</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/portfolio/becker_house_talk/</guid>
-      <description>Here is a link to my static work portfolio The full presentation can be accessed here Talk given at Becker House, Cornell University (Fall 2017) based on a term long study of transportation infrastructure projects in Africa, focusing on the implications and opportunities for community engagement.</description>
+      <description>The full presentation can be accessed here Talk given at Becker House, Cornell University (Fall 2017) based on a term long study of transportation infrastructure projects in Africa, focusing on the implications and opportunities for community engagement.</description>
+    </item>
+    
+    <item>
+      <title>India Pulse</title>
+      <link>https://shamilkhedgikar.github.io/portfolio/aadhaar-pulse/</link>
+      <pubDate>Sat, 01 Oct 2016 09:47:09 +0200</pubDate>
+      
+      <guid>https://shamilkhedgikar.github.io/portfolio/aadhaar-pulse/</guid>
+      <description>Model Files in Netlogo</description>
     </item>
     
   </channel>
