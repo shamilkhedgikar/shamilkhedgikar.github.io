@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Techs on Shamil Khedgikar</title>
+    <title>Techs on Shamil Shirish Khedgikar</title>
     <link>https://shamilkhedgikar.github.io/techs/</link>
-    <description>Recent content in Techs on Shamil Khedgikar</description>
+    <description>Recent content in Techs on Shamil Shirish Khedgikar</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>© 2019 Shamil Shirish Khedgikar</copyright>
-    <lastBuildDate>Tue, 01 Oct 2019 09:47:09 +0200</lastBuildDate>
-    
-	<atom:link href="https://shamilkhedgikar.github.io/techs/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <copyright>© 2021 Shamil Shirish Khedgikar</copyright>
+    <lastBuildDate>Sun, 01 Dec 2019 09:47:09 +0200</lastBuildDate><atom:link href="https://shamilkhedgikar.github.io/techs/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Python</title>
       <link>https://shamilkhedgikar.github.io/techs/python/</link>
-      <pubDate>Tue, 01 Oct 2019 09:47:09 +0200</pubDate>
+      <pubDate>Sun, 01 Dec 2019 09:47:09 +0200</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/techs/python/</guid>
       <description></description>
@@ -24,7 +20,7 @@
     <item>
       <title>R</title>
       <link>https://shamilkhedgikar.github.io/techs/r/</link>
-      <pubDate>Tue, 01 Oct 2019 09:47:09 +0200</pubDate>
+      <pubDate>Sun, 01 Dec 2019 09:47:09 +0200</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/techs/r/</guid>
       <description></description>
@@ -33,7 +29,7 @@
     <item>
       <title>Shiny</title>
       <link>https://shamilkhedgikar.github.io/techs/shiny/</link>
-      <pubDate>Tue, 01 Oct 2019 09:47:09 +0200</pubDate>
+      <pubDate>Sun, 01 Dec 2019 09:47:09 +0200</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/techs/shiny/</guid>
       <description></description>
@@ -45,6 +41,15 @@
       <pubDate>Sat, 25 Aug 2018 09:47:09 +0200</pubDate>
       
       <guid>https://shamilkhedgikar.github.io/techs/esri-arcmap/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>None</title>
+      <link>https://shamilkhedgikar.github.io/techs/none/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://shamilkhedgikar.github.io/techs/none/</guid>
       <description></description>
     </item>
     

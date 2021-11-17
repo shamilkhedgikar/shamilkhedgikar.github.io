@@ -4,16 +4,30 @@
  *  Square icons designed to be used alongside Font Awesome square icons - https://fortawesome.github.io/Font-Awesome/
  *  Licenses - Font: SIL OFL 1.1, CSS: MIT License
  */
-@font-face {
-    font-family: 'Academicons';
-    src:url('../fonts/academicons.eot?v=1.8.6');
-    src:url('../fonts/academicons.eot?v=1.8.6') format('embedded-opentype'),
-        url('../fonts/academicons.ttf?v=1.8.6') format('truetype'),
-        url('../fonts/academicons.woff?v=1.8.6') format('woff'),
-        url('../fonts/academicons.svg?v=1.8.6#academicons') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
+ /* baskervville-regular - latin */
+ @font-face {
+   font-family: 'Baskervville';
+   font-style: normal;
+   font-weight: normal;
+   src: url('../fonts/baskervville-v5-latin-regular.eot'); /* IE9 Compat Modes */
+   src: local(''),
+        url('../fonts/baskervville-v5-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+        url('../fonts/baskervville-v5-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+        url('../fonts/baskervville-v5-latin-regular.woff') format('woff'), /* Modern Browsers */
+        url('../fonts/baskervville-v5-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+        url('../fonts/baskervville-v5-latin-regular.svg#Baskervville') format('svg'); /* Legacy iOS */
+ }
+
+  @font-face {
+     font-family: 'Academicons';
+     src:url('../fonts/academicons.eot?v=1.8.6');
+     src:url('../fonts/academicons.eot?v=1.8.6') format('embedded-opentype'),
+         url('../fonts/academicons.ttf?v=1.8.6') format('truetype'),
+         url('../fonts/academicons.woff?v=1.8.6') format('woff'),
+         url('../fonts/academicons.svg?v=1.8.6#academicons') format('svg');
+     font-weight: normal;
+     font-style: normal;
+ }
 .ai {
 	display:inline-block;
 	font:normal normal normal 14px/1 Academicons;
@@ -307,7 +321,7 @@
 .ai.fa-pull-right {
   margin-left: .3em;
 }
-/*  
+/*
  *  Repeat of the FontAwesome style classes to prevent override if academicons.css
  *  is called after font-awesome.css.
  */
