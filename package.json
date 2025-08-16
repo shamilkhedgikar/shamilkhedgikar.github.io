@@ -9,7 +9,8 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "astro": "^5.9.3"
+    "astro": "^5.9.3",
+    "roughjs": "^4.6.6"
   },
   "devDependencies": {
     "gh-pages": "^6.3.0"

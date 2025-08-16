@@ -1,13 +1,262 @@
 ---
-title: "Coming Soon"
+import RoughInk from "../components/RoughInk.astro"
+
+title: "Home"
 ---
 <html lang="en">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..900&family=Markazi+Text:wght@400..700&display=swap" rel="stylesheet">
   <head>
     <meta charset="UTF-8" />
-    <title>Coming Soon</title>
+    <title>Home</title>
   </head>
-  <body style="font-family: sans-serif; text-align: center; margin-top: 20vh;">
-    <h1>🚧 Coming Soon</h1>
-    <p>This site is being re-built with Astro.</p>
+  <body style="text-align: center;">
+    <div class="elevation-container">
+      <canvas id="elevation-bg" class="elevation-bg"></canvas>
+      <canvas id="terrain-canvas" class="terrain-canvas"></canvas>
+    </div>
+    <div class="glass-ring">
+      <img src="/profile-picture.jpg" alt="Profile Photo" class="profile-photo" />
+    </div>
+    <main>
+      <header class="text-wrapper">
+        <h1>Shamil Shirish Khedgikar</h1>
+        <p>Spatial Data Scientist</p>
+      </header>
+
+      <label>Scale: <input type="range" min="10" max="100" value="40" id="scaleSlider"></label>
+      <label>Octaves: <input type="range" min="1" max="5" step ="1" value="3" id="octaveSlider"></label>
+      <label>Persistence: <input type="range" min="0.1" max="1" step="0.1" value="0.5" id="persistenceSlider"></label>
+      <label>Lacunarity: <input type="range" min="1" max="5" step="0.1" value="2.0" id="lacunaritySlider"></label>
+      <label>Frequency: <input type="range" min="0" max="10" step="0.5" value="1.5" id="frequencySlider"></label>
+      <label>Amplitude: <input type="range" min="0" max="5" step="0.1" value="1" id="amplitudeSlider"></label>
+      <label>Noise: <input type="range" min="0" max="2" step="0.1" value="0" id="noiseSlider"></label>
+      <div id="perlin-controller">
+        <canvas id="control-pad" width="200" height="200"></canvas>
+      </div>
+      <section id="About" class="scroll-section">...</section>
+      <section id="Projects" class="scroll-section">...</section>
+      <section id="Blog" class="scroll-section">...</section>
+    </main> 
+     
+    <nav class="side-nav">
+      <span class="nav-arrow">⏵</span>
+      <ul>
+        <li><a href="#About">About</a></li>
+        <li><a href="#Projects">Projects</a></li>
+        <li><a href="#Blog">Blog</a></li>
+      </ul>
+    </nav>
+    <script src="https://cdn.jsdelivr.net/npm/marching-squares@1.0.0/dist/bundle.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+    <!-- Load script *after* DOM elements -->
+    <script type="module" src="/js/elevation-effect.js"></script>
   </body>
 </html>
+
+<style>
+html, body {
+  font-family: 'Marzaki Text', serif;
+  font-weight: 300;
+  font-size: 18px;
+  /*background-color: transparent;
+  /* background-image: none; /* url('/textures/paper-texture.svg'); */
+  /*background-size:auto;
+  /*background-repeat:initial;*/
+  /*background-position: center center;*/
+}
+
+#elevation-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  perspective: 500px; /* Creates 3D depth */
+  z-index: -5;
+  pointer-events: none;
+}
+
+#elevation-bg, #terrain-canvas{
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: rotateX(45deg) translateZ(0); /* Tilt canvas */
+  transform-origin: center center;
+  backface-visibility: hidden;
+  z-index: -5;
+  pointer-events: none;
+}
+
+canvas#elevation-bg {
+  will-change: transform;
+  image-rendering: crisp-edges; /* or: pixelated */
+}
+
+canvas#terrain-canvas {
+  will-change: transform;
+  image-rendering: crisp-edges; /* or: pixelated */
+}
+
+.text-wrapper{
+  font-family: 'Golos Text', san-serif;
+  font-weight: 300;
+  font-size: 18px;
+}
+
+.scroll-section {
+  padding: 8rem 2rem;
+  border-bottom: 1px dashed rgba(0,0,0,0.1);
+  background-color: transparent;
+}
+
+.side-nav {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 40px;
+  height: auto;
+  overflow: hidden;
+  background: #ffffff33; /* base for glass */
+  backdrop-filter: blur(8px);           /* glass blur */
+  border-right: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  transition: width 0.5s ease;
+  z-index: 1000;
+}
+
+.side-nav:hover {
+  width: 180px;
+}
+
+.side-nav ul {
+  opacity: 0;
+  list-style: none;
+  transition: opacity 0.1s ease 0.2s;
+  padding: 1rem;
+  white-space: nowrap;
+}
+
+.side-nav li {
+  margin: 1rem 0;
+}
+
+.side-nav a {
+  display: block;
+  font-family: 'Golos Text', san-serif;
+  font-weight: 300;
+  font-size: 16px;
+  text-decoration: none;
+  fill-opacity: 0.8;
+  color: #222;
+  font-weight: 500;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(8px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.15),
+    0 0 20px rgba(0, 0, 0, 0.1);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.side-nav a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(2px);
+}
+
+.nav-arrow {
+  position: fixed;
+  fill-opacity: 0.8;
+  font-weight: 700;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  color: #000000;
+  padding: 5px 5px;
+  border-radius: 0 4px 4px 0;
+  font-size: 1.6rem;
+  box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.15),
+    0 0 3px rgba(0, 0, 0, 0.15);
+  border-left: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  pointer-events: none;
+  opacity: 0.6;
+  transition: opacity 0.5s ease;
+}
+
+.side-nav:hover .nav-arrow {
+  opacity: 0;
+}
+
+.side-nav:hover ul {
+  opacity: 1;
+}
+
+.side-nav .text-wrapper {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  white-space: nowrap;
+  padding: 0rem;
+  opacity: 0.4;
+}
+
+.side-nav:hover .text-wrapper {
+  transform: translateX(0);
+  opacity: 0.2;
+}
+
+.profile-photo {
+  width: 99%;
+  height: 99%;
+  object-fit: cover;
+  border-radius: 50%;
+  z-index: 20;
+  opacity: 1;
+}
+
+.glass-ring {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  padding: 0px;
+  background: rgba(255, 255, 255, 0.8); /* translucent white */
+  backdrop-filter: blur(2px);           /* blur effect */
+  -webkit-backdrop-filter: blur(2px);   /* Safari support */
+  box-shadow: inset 0 0 30px rgba(14, 14, 14, 0.905),
+    0 0 3px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem auto;
+  border: 0.2px solid rgba(255, 255, 255, 0.3); /* subtle glass edge */
+}
+
+#perlin-controller {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+}
+
+#control-pad {
+  cursor: crosshair;
+  border-radius: 6px;
+}
+
+
+</style>
