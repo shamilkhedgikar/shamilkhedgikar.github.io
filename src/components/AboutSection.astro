@@ -1,0 +1,66 @@
+---
+const {
+  id = "about",
+  heading = "",
+} = Astro.props;
+---
+
+<section id={id} class="scroll-section about-section" aria-labelledby="about-title" itemscope itemtype="https://schema.org/Person">
+  <div class="about-card glass">
+    {heading && <h4 id="about-title" class="about-title">{heading}</h4>}
+    <div class="about-body" itemprop="description">
+      {
+        <slot name="bio"/>
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-section{
+    isolation:isolate;
+    display:grid;                 
+    place-items:center;
+    padding: clamp(2rem, 6vw, 4rem) 1rem;
+  }
+
+  .about-card{
+    max-width: 800px;
+    width: min(100%, 800px);
+    border-radius: 12px;
+    padding: clamp(1rem, 2.5vw, 2rem);     /* your clamp args were inverted */
+    box-shadow: 0 30px 24px rgba(0,0,0,.08);
+    border: 1px solid rgba(224,231,248,.48);
+    background: rgba(224,231,248,.48);
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+    backdrop-filter: blur(12px) saturate(130%);
+  }
+
+  .about-title{ 
+    margin: 0 0 .25rem 0;
+    font-family: 'Golos Text', sans-serif;
+    text-align: left;
+  }
+  .about-subtitle{ margin: 0 0 1rem 0; opacity:.8; }
+
+  .about-body{
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    text-align: left;
+    /* If you add side columns later, switch to grid here */
+  }
+
+  /* Nice defaults for Markdown content dropped in the slot */
+  .about-body :where(p){ margin: 0 0 0.9rem 0; line-height:1.65; }
+  .about-body :where(h2,h3){ margin:1.2rem 0 .4rem; }
+  .about-body :where(ul,ol){ margin: .6rem 0 .9rem 1.2rem; }
+  .about-body :where(a){ text-decoration:underline; }
+
+  .about-bio{
+    margin:0;
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    font-weight: 400;
+    font-size: clamp(1rem, 1.1rem + .2vw, 1.15rem);
+    line-height: 1.65;
+    text-align:start;
+  }
+</style>

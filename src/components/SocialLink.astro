@@ -1,0 +1,31 @@
+---
+import Icon from '../components/Icon.astro';
+const { href, label, name } = Astro.props; // name ∈ registry keys above
+---
+<a class="social-link" href={href} aria-label={label} target="_blank" rel="noopener noreferrer">
+  <Icon name={name} size={22} />
+</a>
+
+<style>
+.social-link{
+  inline-size:40px;
+  block-size:40px;
+  display:grid;                 /* lets us place the child */
+  padding:2.5px;
+  margin-top: 10px;                 
+  line-height:0;                /* removes baseline wiggle */
+  transition:transform .15s ease, opacity .15s ease;
+  /* optional visuals ... border, bg, radius */
+}
+
+.social-link:hover{ transform: translateY(-1px); opacity:.85; }
+
+.social-link svg,
+.social-link img{
+  width:20px;
+  height:20px;
+  justify-self:start;           /* left  */
+  align-self:end;               /* bottom */
+  display:block;
+}
+</style>

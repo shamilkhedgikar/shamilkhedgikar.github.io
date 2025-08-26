@@ -1,0 +1,21 @@
+---
+import github from '../assets/icons/github-tritone-fixed.svg?raw';
+import scholar from '../assets/icons/googlescholarNew.svg?raw';
+import instagram from '../assets/icons/insta-dark-tritone.svg?raw';
+import linkedin from '../assets/icons/linkedin-tritone-fixed.svg?raw';
+import twitter from '../assets/icons/twitter-dark-tritone.svg?raw';
+
+const { name, size = 24, class: extra = '' } = Astro.props as {
+  name: 'github' | 'scholar' | 'instagram' | 'linkedin' | 'twitter';
+  size?: number;
+  class?: string;
+};
+const registry = { github, scholar, instagram, linkedin, twitter };
+const svg = registry[name];
+if (!svg) throw new Error(`Unknown icon: ${name}`);
+---
+<span class={`icon ${extra}`} style={`inline-size:${size}px; block-size:${size}px`} set:html={svg} />
+
+<style>
+.icon :where(svg){ width:100%; height:100%; display:block; }
+.icon :where(path, circle, rect, polygon){ fill: currentColor; }

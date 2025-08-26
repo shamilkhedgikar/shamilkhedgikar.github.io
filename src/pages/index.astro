@@ -1,49 +1,74 @@
 ---
-import RoughInk from "../components/RoughInk.astro"
-
 title: "Home"
+import AboutSection from "../components/AboutSection.astro";
+import { getEntry } from "astro:content";
+
+//import Socials from "fulldev-ui/components/Socials.astro"
+import SocialLink from '../components/SocialLink.astro';
+
+const about = await getEntry("profile", "about");
+const { Content } = await about.render();
+const { title } = about.data;
+
 ---
 <html lang="en">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..900&family=Markazi+Text:wght@400..700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
   </head>
   <body style="text-align: center;">
-    <div class="elevation-container">
-      <canvas id="elevation-bg" class="elevation-bg"></canvas>
-      <canvas id="terrain-canvas" class="terrain-canvas"></canvas>
-    </div>
+    <div class="bg-image-layer" aria-hidden="true"></div>
     <div class="glass-ring">
-      <img src="/profile-picture.jpg" alt="Profile Photo" class="profile-photo" />
+      <img src="/profile-picture.jpg" alt="Profile Pic" class="profile-photo" />
     </div>
     <main>
-      <header class="text-wrapper">
-        <h1>Shamil Shirish Khedgikar</h1>
-        <p>Spatial Data Scientist</p>
-      </header>
-
-      <label>Scale: <input type="range" min="10" max="100" value="40" id="scaleSlider"></label>
-      <label>Octaves: <input type="range" min="1" max="5" step ="1" value="3" id="octaveSlider"></label>
-      <label>Persistence: <input type="range" min="0.1" max="1" step="0.1" value="0.5" id="persistenceSlider"></label>
-      <label>Lacunarity: <input type="range" min="1" max="5" step="0.1" value="2.0" id="lacunaritySlider"></label>
-      <label>Frequency: <input type="range" min="0" max="10" step="0.5" value="1.5" id="frequencySlider"></label>
-      <label>Amplitude: <input type="range" min="0" max="5" step="0.1" value="1" id="amplitudeSlider"></label>
-      <label>Noise: <input type="range" min="0" max="2" step="0.1" value="0" id="noiseSlider"></label>
-      <div id="perlin-controller">
-        <canvas id="control-pad" width="200" height="200"></canvas>
+      <header class="site-header" role="banner">
+      <div class="brand">Shamil Shirish Khedgikar</div>
+        <div class="socials small">
+          <SocialLink name="linkedin" href="https://www.linkedin.com/in/shamilkhedgikar" label="LinkedIn" />
+          <SocialLink name="github"   href="https://github.com/shamilkhedgikar" label="GitHub" />
+          <SocialLink name="scholar"  href="https://scholar.google.com/citations?user=-u_uBZUAAAAJ&hl=en" label="Google Scholar" />
+          <SocialLink name="twitter"  href="https://twitter.com/ShamilKhedgikar" label="Twitter" />
+          <SocialLink name="instagram" href="https://www.instagram.com/swordsandblades/?hl=en" label="Instagram" />
+        </div>
       </div>
-      <section id="About" class="scroll-section">...</section>
-      <section id="Projects" class="scroll-section">...</section>
-      <section id="Blog" class="scroll-section">...</section>
+      </header>
+      <section class="hero">
+        <header class="text-wrapper">
+          <h1>Shamil Shirish Khedgikar</h1>
+          <h4> Data Scientist . Product Engineer </h4>
+        </header>
+        <div class="socials">
+          <SocialLink name="linkedin" href="https://www.linkedin.com/in/shamilkhedgikar" label="LinkedIn" />
+          <SocialLink name="github"   href="https://github.com/shamilkhedgikar" label="GitHub" />
+          <SocialLink name="scholar"  href="https://scholar.google.com/citations?user=-u_uBZUAAAAJ&hl=en" label="Google Scholar" />
+          <SocialLink name="twitter"  href="https://twitter.com/ShamilKhedgikar" label="Twitter" />
+          <SocialLink name="instagram" href="https://www.instagram.com/swordsandblades/?hl=en" label="Instagram" />
+        </div>
+        <div id="hero-sentinel" aria-hidden="true"></div>
+      </section>
+      <section id="about" class="scroll-section">
+        <AboutSection id="about-md" heading= {title ?? ""}> 
+          <Content slot="bio" />
+        </AboutSection/>
+      </section>
+      <section id="projects" class="scroll-section">...</section>
+      <section id="blog" class="scroll-section">...</section>
     </main> 
      
     <nav class="side-nav">
       <span class="nav-arrow">⏵</span>
       <ul>
-        <li><a href="#About">About</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#work-ex">Experience</a></li>
         <li><a href="#Projects">Projects</a></li>
         <li><a href="#Blog">Blog</a></li>
       </ul>
@@ -51,65 +76,77 @@ title: "Home"
     <script src="https://cdn.jsdelivr.net/npm/marching-squares@1.0.0/dist/bundle.min.js"></script> 
     <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
     <!-- Load script *after* DOM elements -->
-    <script type="module" src="/js/elevation-effect.js"></script>
+    <script>
+      // Show the compact header when the hero is out of view
+      const sentinel = document.getElementById('hero-sentinel');
+      const io = new IntersectionObserver(([e]) => {
+        if (e) {
+          document.body.classList.toggle('show-header', !e.isIntersecting);
+        }
+      }, {threshold: 0.5});
+
+      if (sentinel) io.observe(sentinel);
+    </script>
+
   </body>
 </html>
 
 <style>
+main {
+  position: relative;
+  isolation: isolate;
+}
+
 html, body {
   font-family: 'Marzaki Text', serif;
   font-weight: 300;
   font-size: 18px;
-  /*background-color: transparent;
-  /* background-image: none; /* url('/textures/paper-texture.svg'); */
-  /*background-size:auto;
-  /*background-repeat:initial;*/
-  /*background-position: center center;*/
+  background-size:auto;
+  background-attachment:scroll;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
-#elevation-container {
+html { scroll-behavior: smooth; }
+#about, #projects, #blog { scroll-margin-top: 12px; } /* adjust if you add a fixed header */
+
+.bg-image-layer {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  perspective: 500px; /* Creates 3D depth */
-  z-index: -5;
+  inset: 0;
+  z-index: -7;                 /* behind your canvases (-5) */
   pointer-events: none;
-}
-
-#elevation-bg, #terrain-canvas{
-  position: fixed;
-  top: 0;
-  left: 0;
-  transform: rotateX(45deg) translateZ(0); /* Tilt canvas */
-  transform-origin: center center;
-  backface-visibility: hidden;
-  z-index: -5;
-  pointer-events: none;
-}
-
-canvas#elevation-bg {
-  will-change: transform;
-  image-rendering: crisp-edges; /* or: pixelated */
-}
-
-canvas#terrain-canvas {
-  will-change: transform;
-  image-rendering: crisp-edges; /* or: pixelated */
+  background-image: url('/textures/paper-texture.svg');
+  background-size: auto;       /* or 'auto' if you like the tile */
+  background-color:rgba(224, 231, 248, 0.482);
+  background-attachment: scroll;
+  will-change: transform;       /* perf */
 }
 
 .text-wrapper{
-  font-family: 'Golos Text', san-serif;
+  position: relative;
+  z-index: 2;
+  font-family: 'Golos Text', sans-serif;
   font-weight: 300;
   font-size: 18px;
+  transform: translateZ(0);
 }
 
+.text-wrapper h1 { margin: 0.5rem 0 0.25rem; }
+.text-wrapper h4 { margin: 0.25rem 0 0; }
+
 .scroll-section {
-  padding: 8rem 2rem;
+  min-block-size: 100vh;
+  box-sizing: border-box;
+  padding: 0rem 2rem;
   border-bottom: 1px dashed rgba(0,0,0,0.1);
   background-color: transparent;
+  display: grid;
 }
+
+#about { scroll-margin-top: -15px; }
 
 .side-nav {
   position: fixed;
@@ -119,9 +156,9 @@ canvas#terrain-canvas {
   width: 40px;
   height: auto;
   overflow: hidden;
-  background: #ffffff33; /* base for glass */
+  background: rgba(224, 231, 248, 0.482)); /* base for glass */
   backdrop-filter: blur(8px);           /* glass blur */
-  border-right: 2px solid rgba(255, 255, 255, 0.3);
+  border-right: 2px solid rgba(224, 231, 248, 0.482));
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
@@ -147,8 +184,7 @@ canvas#terrain-canvas {
 
 .side-nav a {
   display: block;
-  font-family: 'Golos Text', san-serif;
-  font-weight: 300;
+  font-family: 'Golos Text', sans-serif;
   font-size: 16px;
   text-decoration: none;
   fill-opacity: 0.8;
@@ -215,16 +251,52 @@ canvas#terrain-canvas {
   opacity: 0.2;
 }
 
+.site-header{
+  position: fixed; inset: 0 0 auto 0; /* top:0; left/right:0 */
+  display: flex; align-items: center; gap: .75rem;
+  padding: .6rem 1rem;
+  font-family: 'Golos Text', sans-serif;
+  background: rgba(224, 231, 248, 0.482));
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  border-bottom: 1px solid rgba(224, 231, 248, 0.482));
+  box-shadow: 0 30px 24px rgba(0,0,0,.08);
+  transform: translateY(-100%);   /* slide out */
+  opacity: 0;
+  transition: transform .48s ease, opacity .28s ease;
+  z-index: 1000;
+}
+
+.site-header .brand{
+  font-family: 'Golos Text', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  margin-right: auto;            /* shove socials to the right */
+}
+
+.site-header .socials{
+  display: flex; 
+  gap: .4rem;
+  scale: 0.7;
+}
+
+/* When scrolled past hero: show header */
+body.show-header .site-header{
+  transform: translateY(0);
+  opacity: 1;
+}
+
 .profile-photo {
+  position: relative;
   width: 99%;
   height: 99%;
-  object-fit: cover;
+  object-fit:fill;
   border-radius: 50%;
-  z-index: 20;
   opacity: 1;
 }
 
 .glass-ring {
+  position: relative;
   width: 200px;
   height: 200px;
   border-radius: 50%;
@@ -232,31 +304,21 @@ canvas#terrain-canvas {
   background: rgba(255, 255, 255, 0.8); /* translucent white */
   backdrop-filter: blur(2px);           /* blur effect */
   -webkit-backdrop-filter: blur(2px);   /* Safari support */
-  box-shadow: inset 0 0 30px rgba(14, 14, 14, 0.905),
-    0 0 3px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 20px 20px 20px rgba(0, 0, 0, .08);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 2rem auto;
   border: 0.2px solid rgba(255, 255, 255, 0.3); /* subtle glass edge */
+  z-index: 1;
+  margin-bottom: 2rem;
 }
 
-#perlin-controller {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-  padding: 10px;
+/* SOCIALS: flex grid */
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;                /* row + column gap */
+  justify-content: center;    /* or: flex-start */
 }
-
-#control-pad {
-  cursor: crosshair;
-  border-radius: 6px;
-}
-
-
 </style>

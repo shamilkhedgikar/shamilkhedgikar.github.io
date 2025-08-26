@@ -9,10 +9,12 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "astro": "^5.9.3",
     "roughjs": "^4.6.6"
   },
   "devDependencies": {
+    "@astrojs/mdx": "^4.3.4",
+    "astro": "^5.13.2",
+    "fulldev-ui": "^0.6.5",
     "gh-pages": "^6.3.0"
   }
 }
