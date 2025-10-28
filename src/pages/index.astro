@@ -1,7 +1,9 @@
 ---
 title: "Home"
 import AboutSection from "../components/AboutSection.astro";
+import Button from "../components/Button.astro";
 import { getEntry } from "astro:content";
+import "@/styles/markdown.css";
 
 //import Socials from "fulldev-ui/components/Socials.astro"
 import SocialLink from '../components/SocialLink.astro';
@@ -14,11 +16,7 @@ const { title } = about.data;
 <html lang="en">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..900&family=Markazi+Text:wght@400..700&display=swap" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Golos+Text:wght@400..900&family=Manrope:wght@200..800&family=Markazi+Text:wght@400..700&display=swap" rel="stylesheet">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,7 +25,7 @@ const { title } = about.data;
   <body style="text-align: center;">
     <div class="bg-image-layer" aria-hidden="true"></div>
     <div class="glass-ring">
-      <img src="/profile-picture.jpg" alt="Profile Pic" class="profile-photo" />
+      <img src="/images/profile-picture.jpg" alt="Profile Pic" class="profile-photo" />
     </div>
     <main>
       <header class="site-header" role="banner">
@@ -38,6 +36,7 @@ const { title } = about.data;
           <SocialLink name="scholar"  href="https://scholar.google.com/citations?user=-u_uBZUAAAAJ&hl=en" label="Google Scholar" />
           <SocialLink name="twitter"  href="https://twitter.com/ShamilKhedgikar" label="Twitter" />
           <SocialLink name="instagram" href="https://www.instagram.com/swordsandblades/?hl=en" label="Instagram" />
+          <SocialLink name="rss" href="/rss.xml" label="RSS Feed" />
         </div>
       </div>
       </header>
@@ -52,55 +51,105 @@ const { title } = about.data;
           <SocialLink name="scholar"  href="https://scholar.google.com/citations?user=-u_uBZUAAAAJ&hl=en" label="Google Scholar" />
           <SocialLink name="twitter"  href="https://twitter.com/ShamilKhedgikar" label="Twitter" />
           <SocialLink name="instagram" href="https://www.instagram.com/swordsandblades/?hl=en" label="Instagram" />
+          <SocialLink name="rss" href="/rss.xml" label="RSS Feed" />
         </div>
         <div id="hero-sentinel" aria-hidden="true"></div>
       </section>
       <section id="about" class="scroll-section">
         <AboutSection id="about-md" heading= {title ?? ""}> 
-          <Content slot="bio" />
+          <Content slot="bio" class="md"/>
         </AboutSection/>
       </section>
-      <section id="projects" class="scroll-section">...</section>
-      <section id="blog" class="scroll-section">...</section>
+      <section id="experience" class="scroll-section">
+        <div class="xp-grid">
+          <Button href="#exp-work" size="medium">Work</Button>
+          <Button href="#exp-research_pubs" size="medium">Research & Publications</Button>
+          <Button href="#exp-talks_awards" size="medium">Talks & Awards</Button>
+          <Button href="#exp-education" size="medium">Education</Button>
+        </div>
+      </section>
+      <section id="projects" class="scroll-section">projects</section>
+      <section id="blog" class="scroll-section">blog</section>
     </main> 
      
     <nav class="side-nav">
       <span class="nav-arrow">⏵</span>
       <ul>
-        <li><a href="/#about">About</a></li>
-        <li><a href="/#work-ex">Experience</a></li>
-        <li><a href="#Projects">Projects</a></li>
-        <li><a href="#Blog">Blog</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#blog">Blog</a></li>
       </ul>
     </nav>
     <script src="https://cdn.jsdelivr.net/npm/marching-squares@1.0.0/dist/bundle.min.js"></script> 
     <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
     <!-- Load script *after* DOM elements -->
-    <script>
-      // Show the compact header when the hero is out of view
-      const sentinel = document.getElementById('hero-sentinel');
-      const io = new IntersectionObserver(([e]) => {
-        if (e) {
-          document.body.classList.toggle('show-header', !e.isIntersecting);
+    <script is:inline>
+      (() => {
+        const sentinel = document.getElementById('hero-sentinel');
+        if (sentinel) {
+          const io = new IntersectionObserver(([e]) => {
+            if (!e) return;
+            const r = e.intersectionRatio;
+            const showing = document.body.classList.contains('show-header');
+            if (!showing && r < 0.15) document.body.classList.add('show-header');
+            if (showing && r > 0.25)  document.body.classList.remove('show-header');
+          }, { threshold: [0, 0.15, 0.25, 1] });
+          io.observe(sentinel);
         }
-      }, {threshold: 0.5});
 
-      if (sentinel) io.observe(sentinel);
+        // --- About section wiring ---
+        const section = document.getElementById('about');
+        const card    = section?.querySelector('[data-collapsible]');
+        const btn     = section?.querySelector('.about-toggle');
+
+        const isExpanded = () => !!card?.hasAttribute('data-expanded');
+        const setExpanded = (on) => {
+          if (!card) return;
+          if (on) { card.setAttribute('data-expanded','');  btn?.setAttribute('aria-expanded','true'); }
+          else    { card.removeAttribute('data-expanded');   btn?.setAttribute('aria-expanded','false'); }
+        };
+        const toggle = () => setExpanded(!isExpanded());
+
+        // 1) Button click -> toggle
+        if (btn && card) {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggle();
+          });
+        }
+
+        // rebind after swaps in case the DOM node got replaced
+        document.addEventListener('astro:after-swap', () => {
+          const btn2 = document.getElementById('about')?.querySelector('.about-toggle');
+          if (btn2) {
+            btn2.addEventListener('click', (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggle();
+            }, { once: true });
+          }
+        });
+
+        // 2) Expand once when header shows
+        const mo = new MutationObserver(() => {
+          setExpanded(document.body.classList.contains('show-header'));
+        });
+        mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+      })();
     </script>
-
   </body>
 </html>
 
 <style>
+  
 main {
   position: relative;
   isolation: isolate;
 }
 
 html, body {
-  font-family: 'Marzaki Text', serif;
-  font-weight: 300;
-  font-size: 18px;
   background-size:auto;
   background-attachment:scroll;
   margin: 0;
@@ -111,7 +160,7 @@ html, body {
 }
 
 html { scroll-behavior: smooth; }
-#about, #projects, #blog { scroll-margin-top: 12px; } /* adjust if you add a fixed header */
+#about, #projects, #blog { scroll-margin-top: 2px; padding-top: 3.5rem;} /* adjust if you add a fixed header */
 
 .bg-image-layer {
   position: fixed;
@@ -138,15 +187,14 @@ html { scroll-behavior: smooth; }
 .text-wrapper h4 { margin: 0.25rem 0 0; }
 
 .scroll-section {
-  min-block-size: 100vh;
+  min-block-size: 90vh;
   box-sizing: border-box;
   padding: 0rem 2rem;
-  border-bottom: 1px dashed rgba(0,0,0,0.1);
   background-color: transparent;
   display: grid;
 }
 
-#about { scroll-margin-top: -15px; }
+#about { scroll-margin-top: -10px;}
 
 .side-nav {
   position: fixed;
@@ -290,15 +338,16 @@ body.show-header .site-header{
   position: relative;
   width: 99%;
   height: 99%;
-  object-fit:fill;
+  object-fit:cover;
   border-radius: 50%;
   opacity: 1;
+  object-position: 65% 20%;
 }
 
 .glass-ring {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
   padding: 0px;
   background: rgba(255, 255, 255, 0.8); /* translucent white */
@@ -318,7 +367,7 @@ body.show-header .site-header{
 .socials {
   display: flex;
   flex-wrap: wrap;
-  gap: .6rem;                /* row + column gap */
+  gap: .7rem;                /* row + column gap */
   justify-content: center;    /* or: flex-start */
 }
 </style>

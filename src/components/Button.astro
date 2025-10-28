@@ -1,0 +1,80 @@
+---
+export interface Props {
+  class?: string;
+  href?: string;                           // if present -> <a>
+  size?: 'small' | 'medium' | 'large';
+  title?: string;
+  fullWidth?: boolean;
+  disabled?: boolean;
+}
+
+const {
+  class: className,
+  href,
+  size = 'medium',
+  title,
+  fullWidth = false,
+  disabled = false,
+} = Astro.props;
+
+const classes = [
+  'glass-btn',
+  `is-${size}`,
+  fullWidth && 'is-full',
+  disabled && 'is-disabled',
+  className,
+].filter(Boolean);
+---
+
+{href ? (
+  <a class:list={classes} href={href} title={title}>
+    <span class="glass-btn__label"><slot /></span>
+  </a>
+) : (
+  <button class:list={classes} type="button" title={title} disabled={disabled}>
+    <span class="glass-btn__label"><slot /></span>
+  </button>
+)}
+  
+<style>
+  .glass-btn{
+    border-radius: 10px;
+    border: 1px solid rgba(224,231,248,.48);
+    background: rgba(224,231,248,.48);
+    backdrop-filter: blur(12px) saturate(130%);
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+    box-shadow: 0 5px 6px rgba(0,0,0,.08);
+    inline-size: auto;
+    block-size: 20px;
+    display: inline-grid;
+    grid-auto-flow: column;
+    align-items: center;
+    gap: 2rem;
+    margin-right: 2rem; /* Add space between buttons */
+    margin-bottom: 1rem; /* Add space if buttons wrap to next line */
+    font-family: 'Golos Text', sans-serif;
+    text-decoration: none;
+    fill-opacity: 0.8;
+    font-weight: 600;
+    color: #0f172a;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    transition: transform .15s ease, opacity .15s ease, background .15s ease, box-shadow .15s ease;
+  }
+  .glass-btn:hover{ transform: translateY(-2px); }
+  .glass-btn:focus-visible{
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+  .glass-btn.is-disabled{ opacity: .55; cursor: not-allowed; transform: none; }
+
+  .glass-btn.is-small  { padding: .45rem 1rem;  font-size: 0.8rem; }
+  .glass-btn.is-medium { padding: .95rem 3rem;   font-size: 1rem;  }
+  .glass-btn.is-large  { padding: .9rem 1.25rem; font-size: 1.05rem; }
+
+  .glass-btn.is-full{ width: 100%; justify-content: center; }
+
+  .glass-btn__label{ line-height: 1.2;  }
+</style>

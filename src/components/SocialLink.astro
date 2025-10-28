@@ -1,6 +1,6 @@
 ---
 import Icon from '../components/Icon.astro';
-const { href, label, name } = Astro.props; // name ∈ registry keys above
+const { href, label, name } = Astro.props; // name ∈ registry keys in Icons.astro
 ---
 <a class="social-link" href={href} aria-label={label} target="_blank" rel="noopener noreferrer">
   <Icon name={name} size={22} />

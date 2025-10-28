@@ -4,16 +4,18 @@ import scholar from '../assets/icons/googlescholarNew.svg?raw';
 import instagram from '../assets/icons/insta-dark-tritone.svg?raw';
 import linkedin from '../assets/icons/linkedin-tritone-fixed.svg?raw';
 import twitter from '../assets/icons/twitter-dark-tritone.svg?raw';
+import rss from '../assets/icons/rss-rounded-tritone.svg?raw';
 
 const { name, size = 24, class: extra = '' } = Astro.props as {
-  name: 'github' | 'scholar' | 'instagram' | 'linkedin' | 'twitter';
+  name: 'github' | 'scholar' | 'instagram' | 'linkedin' | 'twitter' | 'rss';
   size?: number;
   class?: string;
 };
-const registry = { github, scholar, instagram, linkedin, twitter };
+const registry = { github, scholar, instagram, linkedin, twitter, rss };
 const svg = registry[name];
 if (!svg) throw new Error(`Unknown icon: ${name}`);
 ---
+
 <span class={`icon ${extra}`} style={`inline-size:${size}px; block-size:${size}px`} set:html={svg} />
 
 <style>

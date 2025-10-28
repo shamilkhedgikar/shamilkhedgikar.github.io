@@ -6,61 +6,128 @@ const {
 ---
 
 <section id={id} class="scroll-section about-section" aria-labelledby="about-title" itemscope itemtype="https://schema.org/Person">
-  <div class="about-card glass">
-    {heading && <h4 id="about-title" class="about-title">{heading}</h4>}
-    <div class="about-body" itemprop="description">
-      {
-        <slot name="bio"/>
-      }
+  <div class="about-card glass" data-collapsible>
+
+    <!-- body has an id id that can be controlled -->
+    <div id={`${id}-body`} class="about-body" itemprop="description">
+      <div class="md">
+        {heading && <h4 id="about-title" class="about-title">{heading}</h4>}
+        <slot name="bio" />
+      </div>
     </div>
+
+    <nav class="down-nav">
+      <button
+        class="about-toggle"
+        type="button"
+        aria-controls={`${id}-body`}
+        aria-expanded="false"
+      > ▼ </button>
+    </nav>
   </div>
 </section>
 
 <style>
-  .about-section{
-    isolation:isolate;
-    display:grid;                 
-    place-items:center;
-    padding: clamp(2rem, 6vw, 4rem) 1rem;
-  }
 
-  .about-card{
-    max-width: 800px;
-    width: min(100%, 800px);
-    border-radius: 12px;
-    padding: clamp(1rem, 2.5vw, 2rem);     /* your clamp args were inverted */
-    box-shadow: 0 30px 24px rgba(0,0,0,.08);
-    border: 1px solid rgba(224,231,248,.48);
-    background: rgba(224,231,248,.48);
-    -webkit-backdrop-filter: blur(12px) saturate(130%);
-    backdrop-filter: blur(12px) saturate(130%);
-  }
+html{ scroll-behavior: smooth; }  
 
-  .about-title{ 
-    margin: 0 0 .25rem 0;
-    font-family: 'Golos Text', sans-serif;
-    text-align: left;
-  }
-  .about-subtitle{ margin: 0 0 1rem 0; opacity:.8; }
+.about-section{
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  padding: clamp(2rem, 2vw, 2rem) 0.1rem;
+  scroll-margin-top: 80px;  
+  padding-block-end: 3rem;     
+}
 
-  .about-body{
-    font-family: 'Atkinson Hyperlegible', sans-serif;
-    text-align: left;
-    /* If you add side columns later, switch to grid here */
-  }
+/* the glass card doubles as the collapsible */
+.about-card{
+  position:relative;
+  z-index: 2;
+  max-width:1200px; width:min(100%,900px);
+  border-radius:12px; padding:clamp(1rem,2.5vw,2rem);
+  border:1px solid rgba(224,231,248,.48);
+  background:rgba(224,231,248,.48);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  backdrop-filter: blur(12px) saturate(130%);
+  box-shadow:0 15px 18px rgba(0,0,0,.08);
+  display:flex; 
+  flex-direction:column;
+  padding-top: 0.8rem;
+  padding-bottom: 1rem;
+}
 
-  /* Nice defaults for Markdown content dropped in the slot */
-  .about-body :where(p){ margin: 0 0 0.9rem 0; line-height:1.65; }
-  .about-body :where(h2,h3){ margin:1.2rem 0 .4rem; }
-  .about-body :where(ul,ol){ margin: .6rem 0 .9rem 1.2rem; }
-  .about-body :where(a){ text-decoration:underline; }
 
-  .about-bio{
-    margin:0;
-    font-family: 'Atkinson Hyperlegible', sans-serif;
-    font-weight: 400;
-    font-size: clamp(1rem, 1.1rem + .2vw, 1.15rem);
-    line-height: 1.65;
-    text-align:start;
-  }
+/* content area */
+.about-title{ 
+  margin: 0 0 1rem 0;
+  font-family: 'Golos Text', sans-serif;
+  text-align: left;
+}
+
+.about-subtitle{ margin: 0 0 1rem 0; opacity:.8; }
+
+.about-body{
+  font-family: 'Golos Text', sans-serif;
+  text-align: left;
+}
+
+.about-body .md :where(p){ margin:0 0 .9rem 0; line-height:1.65; }
+.about-body .md :where(h2,h3){ margin:1.2rem 0 .4rem; }
+.about-body .md :where(ul,ol){ margin:.6rem 0 .9rem 1.2rem; }
+.about-body .md :where(a){ text-decoration:underline; }
+
+/* collapse behavior (CSS-only): show a teaser, fade bottom; expand on [open] */
+.about-card:not([open]) .about-body{
+  --teaser: 230px;                /* height of collapsed state; tweak to taste */
+  max-block-size: var(--teaser);
+  overflow: hidden;
+  transition: max-height .28s ease;
+}
+
+.about-card[data-expanded] .about-body{
+  max-height: 180rem;           
+  -webkit-mask-image: none;
+          mask-image: none;
+  transition: max-height cubic-bezier(0.755, 0.05, 0.855, 0.06) 1s;
+}
+
+.down-nav{
+  position: absolute;
+  left: 50%;
+  bottom: .3rem;
+  transform: translateX(-100%);
+}
+
+.about-toggle {
+  display: grid;
+  z-index: 3;
+  fill-opacity: 0.8;
+  font-weight: 700;
+  border:1px solid rgba(224,231,248,.48);
+  background:rgba(224,231,248,.48);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  backdrop-filter: blur(12px) saturate(130%);
+  color: #000000;
+  padding: 2px 10px;
+  border-radius: 2px 2px 2px 2px;
+  font-size: 1.2rem;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.15),
+    0 0 3px rgba(0, 0, 0, 0.15);
+  opacity: 0.6;
+  transition: opacity 0.5s ease;
+  pointer-events:auto;
+}
+
+.about-card[data-expanded] .about-toggle{
+  transition: transform 0.28s 0.20s;
+  transform: rotate(180deg);
+}
+
+.nav-arrow:focus-visible{
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 </style>

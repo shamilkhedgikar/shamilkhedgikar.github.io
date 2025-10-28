@@ -1,0 +1,139 @@
+/* ===========================
+   Markdown UI (drop-in)
+   Target wrapper: .md
+   =========================== */
+
+/* ---- Theme knobs ---- */
+:root{
+  --md-text:        #0f172a;     /* slate-900 */
+  --md-muted:       #475569;     /* slate-600 */
+  --md-border:      #e2e8f0;     /* slate-200 */
+  --md-surface:     rgba(255,255,255,.6);
+
+  --md-link:        #1d4ed8;     /* blue-600 */
+  --md-link-hover:  #0f172a;     /* slate-900 */
+  --md-link-visited:#6d28d9;     /* violet-700 */
+
+  --md-code-bg:     #0b1020;     /* code block */
+  --md-inline-bg:   rgba(2,6,23,.06);
+}
+
+
+/* ---- Base ---- */
+.md{
+  color: var(--md-text);
+  font-size: 18px;
+  line-height: 1.618;
+}
+.md :where(p){ margin: 0 0 .9rem 0; }
+.md :where(h1,h2,h3,h4,h5,h6){
+  line-height: 1.2;
+  margin: 1.25em 0 .5em;
+  scroll-margin-top: var(--anchor-offset, 72px);
+}
+.md h2{ font-size: clamp(1.25rem, 1.1rem + .8vw, 1.75rem); }
+.md h3{ font-size: clamp(1.05rem, 1rem + .5vw, 1.25rem); }
+.md :where(ul,ol){ margin: .6rem 0 .9rem 1.2rem; }
+.md li{ margin: .2rem 0; }
+.md hr{ border: 0; border-top: 1px solid var(--md-border); margin: 1.5rem 0; }
+
+/* ---- Links ---- */
+.md a{
+  color: var(--md-text);                    /* same as paragraph text */
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
+  text-decoration-thickness: .08em;
+  text-underline-offset: .22em;
+  text-decoration-skip-ink: auto;
+  transition: 
+    text-decoration-thickness 120ms ease,
+    text-underline-offset 120ms ease,
+    color 120ms ease,
+    font-variation-settings 120ms ease,    /* if using variable fonts */
+    font-weight 60ms ease;                /* fallback */
+}
+
+/* Hover: thicker underline + slightly bolder */
+.md a:hover{
+  text-decoration-thickness: .10em;
+  text-underline-offset: .20em;
+  color: var(--md-text);                   /* keep same color */
+  /* If your font is variable (e.g., Atkinson Hyperlegible Next), prefer this: */
+  font-weight: 700;
+}
+
+/* Visited links: same color (optional) */
+.md a:visited{ color: var(--md-text); }
+
+/* Focus visibility still matters */
+.md a:focus-visible{
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* If links sit on tinted “highlight” chips/cards */
+.highlight a{
+  color: var(--md-link-hover);
+  text-decoration-color: currentColor;
+}
+
+/* ---- Code ---- */
+.md code{
+  font-family: 'Atkinson Hyperlegible Next', sans-serif;
+  font-size: .95em;
+  background: var(--md-inline-bg);
+  padding: .1em .35em;
+  border-radius: 4px;
+}
+.md pre{
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--md-code-bg);
+  color: #e5e7eb;
+  border-radius: 10px;
+  overflow-x: auto;
+  border: 1px solid color-mix(in srgb, var(--md-border) 60%, transparent);
+}
+.md pre code{ background: none; padding: 0; font-size: .95em; }
+
+/* ---- Blockquotes ---- */
+.md blockquote{
+  margin: .9rem 0;
+  padding: .6rem .9rem;
+  border-left: 3px solid var(--md-border);
+  background: var(--md-surface);
+  color: var(--md-muted);
+  border-radius: 8px;
+}
+
+/* ---- Images & figures ---- */
+.md img{ max-width: 100%; height: auto; border-radius: 10px; }
+.md figure{ margin: 1rem 0; }
+.md figcaption{ color: var(--md-muted); font-size: .9em; margin-top: .4rem; }
+
+/* ---- Tables ---- */
+.md table{
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-variant-numeric: tabular-nums;
+  display: block;              /* allow horizontal scroll on small screens */
+  overflow-x: auto;
+}
+.md th, .md td{
+  border: 1px solid var(--md-border);
+  padding: .5rem .6rem;
+  text-align: left;
+}
+.md thead th{
+  background: var(--md-surface);
+  font-weight: 700;
+}
+.md tbody tr:nth-child(odd){
+  background: color-mix(in srgb, var(--md-surface) 60%, transparent);
+}
+
+/* ---- Small/footnotes ---- */
+.md sup, .md sub{ line-height: 0; }
+.md small, .md .footnotes{ color: var(--md-muted); }
