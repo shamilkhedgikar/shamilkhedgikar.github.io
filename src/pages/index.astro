@@ -1,200 +1,468 @@
----
+﻿---
 title: "Home"
 import AboutSection from "../components/AboutSection.astro";
-import Button from "../components/Button.astro";
+import ExperienceTimeline from "../components/ExperienceTimeline.astro";
+import ProjectsCarousel from "../components/ProjectsCarousel.astro";
+import SkillsCard from "../components/SkillsCard.astro";
+import { timelineCategories } from "../data/timelineCategories";
 import { getEntry } from "astro:content";
 import "@/styles/markdown.css";
 
-//import Socials from "fulldev-ui/components/Socials.astro"
-import SocialLink from '../components/SocialLink.astro';
+import SocialLink from "../components/SocialLink.astro";
 
 const about = await getEntry("profile", "about");
 const { Content } = await about.render();
-const { title } = about.data;
-
+const aboutTitle = about.data.title ?? "About";
 ---
+
 <html lang="en">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Golos+Text:wght@400..900&family=Manrope:wght@200..800&family=Markazi+Text:wght@400..700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Golos+Text:wght@400..900&family=Manrope:wght@200..800&display=swap"
+    rel="stylesheet"
+  >
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
   </head>
-  <body style="text-align: center;">
+  <body>
     <div class="bg-image-layer" aria-hidden="true"></div>
     <div class="glass-ring">
       <img src="/images/profile-picture.jpg" alt="Profile Pic" class="profile-photo" />
     </div>
     <main>
       <header class="site-header" role="banner">
-      <div class="brand">Shamil Shirish Khedgikar</div>
+        <div class="brand">Shamil Shirish Khedgikar</div>
         <div class="socials small">
           <SocialLink name="linkedin" href="https://www.linkedin.com/in/shamilkhedgikar" label="LinkedIn" />
-          <SocialLink name="github"   href="https://github.com/shamilkhedgikar" label="GitHub" />
-          <SocialLink name="scholar"  href="https://scholar.google.com/citations?user=-u_uBZUAAAAJ&hl=en" label="Google Scholar" />
-          <SocialLink name="twitter"  href="https://twitter.com/ShamilKhedgikar" label="Twitter" />
+          <SocialLink name="github" href="https://github.com/shamilkhedgikar" label="GitHub" />
+          <SocialLink name="scholar" href="https://scholar.google.com/citations?user=-u_uBZUAAAAJ&hl=en" label="Google Scholar" />
+          <SocialLink name="twitter" href="https://twitter.com/ShamilKhedgikar" label="Twitter" />
           <SocialLink name="instagram" href="https://www.instagram.com/swordsandblades/?hl=en" label="Instagram" />
           <SocialLink name="rss" href="/rss.xml" label="RSS Feed" />
         </div>
-      </div>
       </header>
+
       <section class="hero">
         <header class="text-wrapper">
           <h1>Shamil Shirish Khedgikar</h1>
-          <h4> Data Scientist . Product Engineer </h4>
+          <h4> Data Scientist &middot; Product Engineer </h4>
         </header>
         <div class="socials">
           <SocialLink name="linkedin" href="https://www.linkedin.com/in/shamilkhedgikar" label="LinkedIn" />
-          <SocialLink name="github"   href="https://github.com/shamilkhedgikar" label="GitHub" />
-          <SocialLink name="scholar"  href="https://scholar.google.com/citations?user=-u_uBZUAAAAJ&hl=en" label="Google Scholar" />
-          <SocialLink name="twitter"  href="https://twitter.com/ShamilKhedgikar" label="Twitter" />
+          <SocialLink name="github" href="https://github.com/shamilkhedgikar" label="GitHub" />
+          <SocialLink name="scholar" href="https://scholar.google.com/citations?user=-u_uBZUAAAAJ&hl=en" label="Google Scholar" />
+          <SocialLink name="twitter" href="https://twitter.com/ShamilKhedgikar" label="Twitter" />
           <SocialLink name="instagram" href="https://www.instagram.com/swordsandblades/?hl=en" label="Instagram" />
           <SocialLink name="rss" href="/rss.xml" label="RSS Feed" />
         </div>
         <div id="hero-sentinel" aria-hidden="true"></div>
       </section>
-      <section id="about" class="scroll-section">
-        <AboutSection id="about-md" heading= {title ?? ""}> 
-          <Content slot="bio" class="md"/>
-        </AboutSection/>
-      </section>
+
+      <AboutSection id="about" heading={aboutTitle}>
+        <Content slot="bio" class="md" />
+      </AboutSection>
+
       <section id="experience" class="scroll-section">
-        <div class="xp-grid">
-          <Button href="#exp-work" size="medium">Work</Button>
-          <Button href="#exp-research_pubs" size="medium">Research & Publications</Button>
-          <Button href="#exp-talks_awards" size="medium">Talks & Awards</Button>
-          <Button href="#exp-education" size="medium">Education</Button>
+        <div class="section-shell">
+          <div class="section-head">
+            <h2 class="section-title">Experience</h2>
+            <p class="section-subtitle">
+              Chronological highlights across practice, research, and publication; scroll the timeline to follow each chapter.
+            </p>
+          </div>
+          <div class="timeline-legend">
+            {timelineCategories.map((category) => (
+              <span class="timeline-legend__item" key={`legend-${category.name}`}>
+                <span
+                  class="timeline-legend__dot"
+                  style={`background:${category.color}; box-shadow:0 0 0 5px ${category.halo};`}
+                />
+                {category.name}
+              </span>
+            ))}
+          </div>
+         <ExperienceTimeline />
         </div>
       </section>
-      <section id="projects" class="scroll-section">projects</section>
-      <section id="blog" class="scroll-section">blog</section>
-    </main> 
-     
+
+      <section id="projects" class="scroll-section">
+        <div class="section-shell">
+          <div class="section-head">
+            <h2 class="section-title">Projects</h2>
+            <p class="section-subtitle">
+              Selected experiments and products tracking the intersection of data, design, and engineering.
+            </p>
+          </div>
+          <ProjectsCarousel />
+        </div>
+      </section>
+
+      <section id="technologies" class="scroll-section">
+        <div class="section-shell">
+          <div class="section-head">
+            <h2 class="section-title">Technologies</h2>
+            <p class="section-subtitle">
+              Tooling and platforms I rely on across analytical workflows, cartography, and product experiments.
+            </p>
+          </div>
+          <SkillsCard heading="Technologies" />
+        </div>
+      </section>
+
+      <section id="blog" class="scroll-section">
+        <div class="section-shell">
+          <div class="section-head">
+            <h2 class="section-title">Writing</h2>
+            <p class="section-subtitle">
+              Notes on spatial analytics, product strategy, and mapping experiments. Highlights below&mdash;more soon.
+            </p>
+          </div>
+          <div class="blog-grid">
+            <article class="blog-card">
+              <h3>Latest Articles</h3>
+              <p>
+                I’m curating long-form pieces that unpack projects, research, and field notes. In the meantime, explore the archive or subscribe for updates.
+              </p>
+              <div class="blog-card__cta">
+                <a href="/blog" class="blog-card__link">Browse Articles</a>
+                <a href="/rss.xml" class="blog-card__link is-secondary">Subscribe via RSS</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
     <nav class="side-nav">
       <span class="nav-arrow">⏵</span>
       <ul>
         <li><a href="#about">About</a></li>
         <li><a href="#experience">Experience</a></li>
         <li><a href="#projects">Projects</a></li>
+        <li><a href="#technologies">Technologies</a></li>
         <li><a href="#blog">Blog</a></li>
       </ul>
     </nav>
-    <script src="https://cdn.jsdelivr.net/npm/marching-squares@1.0.0/dist/bundle.min.js"></script> 
+
+    <script src="https://cdn.jsdelivr.net/npm/marching-squares@1.0.0/dist/bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
-    <!-- Load script *after* DOM elements -->
+
     <script is:inline>
       (() => {
         const sentinel = document.getElementById('hero-sentinel');
         if (sentinel) {
-          const io = new IntersectionObserver(([e]) => {
-            if (!e) return;
-            const r = e.intersectionRatio;
-            const showing = document.body.classList.contains('show-header');
-            if (!showing && r < 0.15) document.body.classList.add('show-header');
-            if (showing && r > 0.25)  document.body.classList.remove('show-header');
-          }, { threshold: [0, 0.15, 0.25, 1] });
+          const io = new IntersectionObserver(([entry]) => {
+            if (!entry) return;
+            document.body.classList.toggle('show-header', entry.intersectionRatio < 0.25);
+          }, { threshold: [0, 0.25, 0.5, 1] });
           io.observe(sentinel);
         }
 
-        // --- About section wiring ---
-        const section = document.getElementById('about');
-        const card    = section?.querySelector('[data-collapsible]');
-        const btn     = section?.querySelector('.about-toggle');
+        const aboutSection = document.getElementById('about');
+        const aboutCard = aboutSection?.querySelector('[data-collapsible]');
+        const aboutToggle = aboutSection?.querySelector('.about-toggle');
 
-        const isExpanded = () => !!card?.hasAttribute('data-expanded');
+        const isExpanded = () => !!aboutCard?.hasAttribute('data-expanded');
         const setExpanded = (on) => {
-          if (!card) return;
-          if (on) { card.setAttribute('data-expanded','');  btn?.setAttribute('aria-expanded','true'); }
-          else    { card.removeAttribute('data-expanded');   btn?.setAttribute('aria-expanded','false'); }
+          if (!aboutCard) return;
+          if (on) {
+            aboutCard.setAttribute('data-expanded', '');
+            aboutToggle?.setAttribute('aria-expanded', 'true');
+          } else {
+            aboutCard.removeAttribute('data-expanded');
+            aboutToggle?.setAttribute('aria-expanded', 'false');
+          }
         };
+
         const toggle = () => setExpanded(!isExpanded());
 
-        // 1) Button click -> toggle
-        if (btn && card) {
-          btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+        if (aboutToggle && aboutCard) {
+          aboutToggle.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
             toggle();
           });
         }
 
-        // rebind after swaps in case the DOM node got replaced
-        document.addEventListener('astro:after-swap', () => {
-          const btn2 = document.getElementById('about')?.querySelector('.about-toggle');
-          if (btn2) {
-            btn2.addEventListener('click', (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              toggle();
-            }, { once: true });
-          }
-        });
+        let expandedOnce = isExpanded();
+        if (!expandedOnce) {
+          const observer = new MutationObserver(() => {
+            if (!expandedOnce && document.body.classList.contains('show-header')) {
+              setExpanded(true);
+              expandedOnce = true;
+              observer.disconnect();
+            }
+          });
+          observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+        }
 
-        // 2) Expand once when header shows
-        const mo = new MutationObserver(() => {
-          setExpanded(document.body.classList.contains('show-header'));
+        const carousels = document.querySelectorAll('[data-carousel]');
+        carousels.forEach((carousel) => {
+          const track = carousel.querySelector('[data-track]');
+          if (!track) return;
+          const buttons = carousel.querySelectorAll('[data-dir]');
+          const getDistance = () => {
+            const firstCard = track.querySelector('[data-card]');
+            const rect = firstCard?.getBoundingClientRect();
+            const style = window.getComputedStyle(track);
+            const gap = parseFloat(style.columnGap || style.gap || '0');
+            return (rect?.width ?? track.clientWidth) + gap;
+          };
+          buttons.forEach((btn) => {
+            btn.addEventListener('click', () => {
+              const direction = Number(btn.getAttribute('data-dir') ?? '0');
+              if (!direction) return;
+              track.scrollBy({ left: direction * getDistance(), behavior: 'smooth' });
+            });
+          });
         });
-        mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
       })();
     </script>
   </body>
 </html>
 
 <style>
-  
 main {
   position: relative;
   isolation: isolate;
 }
 
 html, body {
-  background-size:auto;
-  background-attachment:scroll;
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  background-size: auto;
+  background-attachment: scroll;
+  overflow-x: hidden;
+  font-family: 'Golos Text', sans-serif;
 }
 
-html { scroll-behavior: smooth; }
-#about, #projects, #blog { scroll-margin-top: 2px; padding-top: 3.5rem;} /* adjust if you add a fixed header */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4.75rem;
+}
+
+:root {
+  --shell-width: min(100%, 900px);
+}
 
 .bg-image-layer {
   position: fixed;
   inset: 0;
-  z-index: -7;                 /* behind your canvases (-5) */
+  z-index: -7;
   pointer-events: none;
   background-image: url('/textures/paper-texture.svg');
-  background-size: auto;       /* or 'auto' if you like the tile */
-  background-color:rgba(224, 231, 248, 0.482);
-  background-attachment: scroll;
-  will-change: transform;       /* perf */
+  background-size: auto;
+  background-color: rgba(224, 231, 248, 0.48);
 }
 
-.text-wrapper{
+.text-wrapper {
   position: relative;
   z-index: 2;
   font-family: 'Golos Text', sans-serif;
   font-weight: 300;
   font-size: 18px;
-  transform: translateZ(0);
+  text-align: center;
 }
 
-.text-wrapper h1 { margin: 0.5rem 0 0.25rem; }
-.text-wrapper h4 { margin: 0.25rem 0 0; }
+.text-wrapper h1 {
+  margin: 0.5rem 0 0.25rem;
+}
+
+.text-wrapper h4 {
+  margin: 0.25rem 0 0;
+}
 
 .scroll-section {
-  min-block-size: 90vh;
+  scroll-margin-top: 7.5rem;
+  min-block-size: auto;
   box-sizing: border-box;
-  padding: 0rem 2rem;
+  padding: clamp(2.25rem, 4.5vw, 3.75rem) 1.75rem;
   background-color: transparent;
   display: grid;
 }
 
-#about { scroll-margin-top: -10px;}
+
+.hero.scroll-section {
+  min-block-size: 90vh;
+  padding-block-start: clamp(4rem, 10vw, 7rem);
+  padding-block-end: clamp(3.5rem, 8vw, 5rem);
+}
+
+.hero .socials {
+  margin-top: 1rem;
+  margin-bottom: clamp(2.5rem, 6vw, 3.5rem);
+}
+
+.section-shell {
+
+  width: var(--shell-width);
+  margin: 0 auto;
+  display: grid;
+  gap: 1.25rem;
+  justify-items: stretch;
+  text-align: left;
+}
+
+.section-head {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.section-title {
+  margin: 0;
+  font-family: 'Golos Text', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.6rem, 3vw, 2rem);
+}
+
+.section-subtitle {
+  margin: 0;
+  font-family: 'Golos Text', sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  color: rgba(15, 23, 42, 0.7);
+  max-width: 52ch;
+}
+
+.timeline-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.timeline-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.timeline-legend__dot {
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+#experience,
+#projects,
+#blog {
+  min-block-size: clamp(32rem, 78vh, 56rem);
+}
+
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  justify-content: center;
+}
+
+.socials.small {
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.profile-photo {
+  position: relative;
+  width: 99%;
+  height: 99%;
+  object-fit: cover;
+  border-radius: 50%;
+  object-position: 65% 20%;
+}
+
+.glass-ring {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  box-shadow: 0 20px 20px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem auto 2rem;
+  border: 0.2px solid rgba(255, 255, 255, 0.3);
+  z-index: 1;
+}
+
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.blog-card {
+  border-radius: 16px;
+  border: 1px solid rgba(224, 231, 248, 0.48);
+  background: rgba(224, 231, 248, 0.42);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: 0 18px 24px rgba(15, 23, 42, 0.12);
+  display: grid;
+  gap: 1rem;
+  padding: 2rem 2.1rem;
+}
+
+.blog-card h3 {
+  margin: 0;
+  font-family: 'Golos Text', sans-serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.blog-card p {
+  margin: 0;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: rgba(15, 23, 42, 0.78);
+}
+
+.blog-card__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.blog-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
+  font-family: 'Golos Text', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.7);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.blog-card__link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.blog-card__link.is-secondary {
+  border-style: dashed;
+  color: rgba(15, 23, 42, 0.75);
+}
 
 .side-nav {
   position: fixed;
@@ -202,11 +470,9 @@ html { scroll-behavior: smooth; }
   left: 0;
   transform: translateY(-50%);
   width: 40px;
-  height: auto;
-  overflow: hidden;
-  background: rgba(224, 231, 248, 0.482)); /* base for glass */
-  backdrop-filter: blur(8px);           /* glass blur */
-  border-right: 2px solid rgba(224, 231, 248, 0.482));
+  background: rgba(224, 231, 248, 0.48);
+  backdrop-filter: blur(8px);
+  border-right: 2px solid rgba(224, 231, 248, 0.48);
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
@@ -221,8 +487,9 @@ html { scroll-behavior: smooth; }
 .side-nav ul {
   opacity: 0;
   list-style: none;
-  transition: opacity 0.1s ease 0.2s;
+  transition: opacity 0.2s ease 0.2s;
   padding: 1rem;
+  margin: 0;
   white-space: nowrap;
 }
 
@@ -235,7 +502,6 @@ html { scroll-behavior: smooth; }
   font-family: 'Golos Text', sans-serif;
   font-size: 16px;
   text-decoration: none;
-  fill-opacity: 0.8;
   color: #222;
   font-weight: 500;
   padding: 10px 16px;
@@ -244,8 +510,7 @@ html { scroll-behavior: smooth; }
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(8px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.15),
-    0 0 20px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.15), 0 0 20px rgba(0, 0, 0, 0.1);
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
@@ -255,24 +520,21 @@ html { scroll-behavior: smooth; }
 }
 
 .nav-arrow {
-  position: fixed;
-  fill-opacity: 0.8;
+  position: absolute;
+  display: grid;
+  place-items: center;
   font-weight: 700;
-  right: -6px;
-  top: 50%;
+  right: 0.35rem;
+  top: 45%;
   transform: translateY(-50%);
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px) saturate(150%);
   -webkit-backdrop-filter: blur(10px) saturate(150%);
-  color: #000000;
-  padding: 5px 5px;
+  color: #000;
+  padding: 5px;
   border-radius: 0 4px 4px 0;
   font-size: 1.6rem;
-  box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.15),
-    0 0 3px rgba(0, 0, 0, 0.15);
   border-left: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-left-radius: 6px;
-  border-bottom-left-radius: 6px;
   pointer-events: none;
   opacity: 0.6;
   transition: opacity 0.5s ease;
@@ -286,88 +548,47 @@ html { scroll-behavior: smooth; }
   opacity: 1;
 }
 
-.side-nav .text-wrapper {
-  transform: translateX(-100%);
-  transition: transform 0.3s ease;
-  white-space: nowrap;
-  padding: 0rem;
-  opacity: 0.4;
-}
-
-.side-nav:hover .text-wrapper {
-  transform: translateX(0);
-  opacity: 0.2;
-}
-
-.site-header{
-  position: fixed; inset: 0 0 auto 0; /* top:0; left/right:0 */
-  display: flex; align-items: center; gap: .75rem;
-  padding: .6rem 1rem;
+.site-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
   font-family: 'Golos Text', sans-serif;
-  background: rgba(224, 231, 248, 0.482));
-  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  background: rgba(224, 231, 248, 0.48);
   backdrop-filter: blur(10px) saturate(140%);
-  border-bottom: 1px solid rgba(224, 231, 248, 0.482));
-  box-shadow: 0 30px 24px rgba(0,0,0,.08);
-  transform: translateY(-100%);   /* slide out */
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  border-bottom: 1px solid rgba(224, 231, 248, 0.48);
+  box-shadow: 0 30px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-100%);
   opacity: 0;
-  transition: transform .48s ease, opacity .28s ease;
+  transition: transform 0.48s ease, opacity 0.28s ease;
   z-index: 1000;
 }
 
-.site-header .brand{
-  font-family: 'Golos Text', sans-serif;
+.site-header .brand {
   font-weight: 600;
   font-size: 20px;
-  margin-right: auto;            /* shove socials to the right */
+  margin-right: auto;
 }
 
-.site-header .socials{
-  display: flex; 
-  gap: .4rem;
-  scale: 0.7;
+.site-header .socials {
+  display: flex;
+  gap: 0.4rem;
+  transform: scale(0.7);
 }
 
-/* When scrolled past hero: show header */
-body.show-header .site-header{
+body.show-header .site-header {
   transform: translateY(0);
   opacity: 1;
 }
-
-.profile-photo {
-  position: relative;
-  width: 99%;
-  height: 99%;
-  object-fit:cover;
-  border-radius: 50%;
-  opacity: 1;
-  object-position: 65% 20%;
-}
-
-.glass-ring {
-  position: relative;
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  padding: 0px;
-  background: rgba(255, 255, 255, 0.8); /* translucent white */
-  backdrop-filter: blur(2px);           /* blur effect */
-  -webkit-backdrop-filter: blur(2px);   /* Safari support */
-  box-shadow: 0px 20px 20px 20px rgba(0, 0, 0, .08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 2rem auto;
-  border: 0.2px solid rgba(255, 255, 255, 0.3); /* subtle glass edge */
-  z-index: 1;
-  margin-bottom: 2rem;
-}
-
-/* SOCIALS: flex grid */
-.socials {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .7rem;                /* row + column gap */
-  justify-content: center;    /* or: flex-start */
-}
 </style>
+
+
+
+
+
+
+
+

@@ -1,0 +1,79 @@
+---
+import { skills } from '../data/skills';
+
+const {
+  items = skills,
+  heading = 'Skills',
+} = Astro.props as {
+  items?: readonly string[];
+  heading?: string;
+};
+
+const tags: string[] = [];
+for (const line of items) {
+  const parts = line
+    .split('|')
+    .map((part) => part.trim())
+    .filter(Boolean);
+  for (const part of parts) {
+    if (!tags.includes(part)) {
+      tags.push(part);
+    }
+  }
+}
+---
+
+<article class="skills-card glass-card">
+  <header class="skills-card__header">
+    <h3>{heading}</h3>
+  </header>
+  <div class="skills-card__tags">
+    {tags.map((tag) => (
+      <span class="atlas-tag" key={`tag-${tag}`}>{tag}</span>
+    ))}
+  </div>
+</article>
+
+<style>
+.glass-card{
+  border-radius: 16px;
+  border: 1px solid rgba(224, 231, 248, 0.48);
+  background: rgba(224, 231, 248, 0.42);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: 0 18px 24px rgba(15, 23, 42, 0.12);
+}
+
+.skills-card{
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem 1.75rem;
+}
+
+.skills-card__header h3{
+  margin: 0;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.skills-card__tags{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.atlas-tag{
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(15, 23, 42, 0.78);
+}
+</style>

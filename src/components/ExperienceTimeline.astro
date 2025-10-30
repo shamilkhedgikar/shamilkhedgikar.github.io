@@ -1,0 +1,332 @@
+﻿---
+import { getCollection } from 'astro:content';
+import { timelineCategories } from '../data/timelineCategories';
+
+const colorMap = new Map(timelineCategories.map((cat) => [cat.name, cat.color] as const));
+const haloMap = new Map(timelineCategories.map((cat) => [cat.name, cat.halo] as const));
+const defaultCategory = timelineCategories[0] ?? { color: '#3b82f6', halo: 'rgba(59, 130, 246, 0.18)' };
+
+const timelineEntries = await getCollection('timeline');
+
+const enriched = await Promise.all(
+  timelineEntries.map(async (entry) => {
+    const { Content } = await entry.render();
+    return {
+      ...entry,
+      Content,
+    };
+  }),
+);
+
+const grouped = enriched
+  .sort((a, b) => {
+    if (a.data.year === b.data.year) {
+      return (b.data.order ?? 0) - (a.data.order ?? 0);
+    }
+    return b.data.year - a.data.year;
+  })
+  .reduce((acc, entry) => {
+    const group = acc.get(entry.data.year) ?? [];
+    group.push(entry);
+    acc.set(entry.data.year, group);
+    return acc;
+  }, new Map<number, typeof enriched>());
+
+const extractTitleParts = (
+  entry: (typeof enriched)[number],
+) => {
+  const normalize = (value?: unknown) =>
+    typeof value === 'string' ? value.trim() : undefined;
+
+  const explicitRole = normalize(entry.data.role);
+  const explicitOrg = normalize(entry.data.organization);
+  const fallbackTitle = normalize(entry.data.title);
+  const fallbackSlug = normalize(entry.slug);
+
+  if (explicitRole || explicitOrg) {
+    return {
+      role: explicitRole ?? fallbackTitle ?? fallbackSlug ?? '',
+      organization: explicitOrg ?? '',
+    };
+  }
+
+  const base = fallbackTitle ?? fallbackSlug ?? '';
+  if (!base) {
+    return { role: '', organization: '' };
+  }
+
+  if (base.includes(' - ')) {
+    const [role, ...rest] = base.split(' - ');
+    return {
+      role: role?.trim() || base,
+      organization: rest.join(' - ').trim(),
+    };
+  }
+
+  return {
+    role: base,
+    organization: '',
+  };
+};
+---
+
+<div class="timeline-viewport" role="presentation">
+  <div class="timeline-shell" role="list">
+    {[...grouped.entries()].map(([year, entries]) => (
+      <div class="timeline-row">
+        <div class="timeline-year" aria-hidden="true">{year}</div>
+        <div class="timeline-stack">
+          {entries.map((entry) => {
+            const tone = colorMap.get(entry.data.category) ?? defaultCategory.color;
+            const halo = haloMap.get(entry.data.category) ?? defaultCategory.halo;
+            const { Content } = entry;
+            const { role, organization } = extractTitleParts(entry);
+            return (
+              <article
+                class="timeline-card glass-card"
+                style={`--tone:${tone}; --tone-halo:${halo};`}
+                role="listitem"
+              >
+                <header class="timeline-card__header">
+                  <div class="timeline-card__topline">
+                    <h3 class="timeline-card__role">{role}</h3>
+                    {organization && <span class="timeline-card__org">{organization}</span>}
+                  </div>
+                  <span class="timeline-card__date">{entry.data.period}</span>
+                  {entry.data.subtitle && <p class="timeline-card__subtitle">{entry.data.subtitle}</p>}
+                </header>
+                <div class="timeline-card__body">
+                  <Content />
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+.timeline-viewport{
+  position: relative;
+  display: block;
+  width: 100%;
+  max-block-size: clamp(28rem, 72vh, 50rem);
+  overflow-y: auto;
+  overflow-x: clip;
+  padding: 0.75rem 1.5rem 0.75rem 0.25rem;
+  margin-inline: -0.75rem 0;
+  scrollbar-gutter: stable both-edges;
+  overscroll-behavior: contain;
+  mask-image: linear-gradient(180deg, transparent 0%, black 4%, black 96%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 4%, black 96%, transparent 100%);
+}
+
+.timeline-viewport::-webkit-scrollbar{
+  width: 8px;
+}
+
+.timeline-viewport::-webkit-scrollbar-thumb{
+  background: rgba(224, 231, 248, 0.5);
+  border-radius: 999px;
+}
+
+.timeline-shell{
+  display: grid;
+  gap: 3rem;
+  padding-right: 0.75rem;
+}
+
+.timeline-row{
+  display: grid;
+  grid-template-columns: minmax(5rem, 110px) 1fr;
+  gap: 1.75rem;
+  align-items: flex-start;
+}
+
+.timeline-year{
+  font-family: 'Golos Text', sans-serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.45);
+  text-align: right;
+  padding-top: 0.5rem;
+}
+
+.timeline-stack{
+  display: grid;
+  gap: 1.8rem;
+  position: relative;
+  padding-left: 2.6rem;
+}
+
+.timeline-stack::before{
+  content: "";
+  position: absolute;
+  top: 0.75rem;
+  bottom: 0.75rem;
+  left: 0.6rem;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.32) 0%, rgba(15, 23, 42, 0.05) 100%);
+}
+
+.glass-card{
+  border-radius: 16px;
+  border: 1px solid rgba(224, 231, 248, 0.48);
+  background: rgba(224, 231, 248, 0.42);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: 0 18px 24px rgba(15, 23, 42, 0.12);
+}
+
+.timeline-card{
+  position: relative;
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.9rem 2rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.timeline-card::before{
+  content: "";
+  position: absolute;
+  left: -2.2rem;
+  top: 2.15rem;
+  inline-size: 0.78rem;
+  block-size: 0.78rem;
+  border-radius: 50%;
+  background: var(--tone, #3b82f6);
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 6px var(--tone-halo, rgba(59, 130, 246, 0.18));
+}
+
+.timeline-card::after{
+  content: "";
+  position: absolute;
+  left: -1.8rem;
+  top: 2.5rem;
+  width: 3rem;
+  height: 2px;
+  background: linear-gradient(90deg, var(--tone, #3b82f6) 0%, rgba(15, 23, 42, 0) 100%);
+  opacity: 0.6;
+}
+
+.timeline-card:is(:hover, :focus-within){
+  transform: translateY(-6px);
+  box-shadow: 0 24px 34px rgba(15, 23, 42, 0.18);
+}
+
+
+.timeline-card__header{
+  display: grid;
+  gap: 0.65rem;
+}
+
+.timeline-card__topline{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.timeline-card__role{
+  margin: 0;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.95);
+}
+
+.timeline-card__org{
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.72);
+  margin-left: auto;
+  text-align: right;
+}
+
+.timeline-card__subtitle{
+  margin: 0;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.88rem;
+  color: rgba(15, 23, 42, 0.65);
+}
+
+.timeline-card__date{
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.64);
+}
+
+.timeline-card__body :where(p, ul){
+  margin: 0 0 0.65rem 0;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(15, 23, 42, 0.85);
+}
+
+.timeline-card__body :where(ul){
+  padding-left: 1.25rem;
+}
+
+.timeline-card__body :where(li){
+  margin-bottom: 0.4rem;
+}
+
+.timeline-card__body :where(a){
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+@media (max-width: 720px){
+  .timeline-viewport{
+    max-block-size: none;
+    overflow: visible;
+    padding: 0;
+    margin: 0;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .timeline-row{
+    grid-template-columns: minmax(3.5rem, 90px) 1fr;
+    gap: 1.1rem;
+  }
+
+  .timeline-year{
+    font-size: 0.95rem;
+  }
+
+  .timeline-stack{
+    padding-left: 2.1rem;
+  }
+
+  .timeline-card{
+    padding: 1.5rem 1.35rem 1.5rem 2.25rem;
+    transform: none;
+  }
+
+  .timeline-card::after{
+    width: 2.25rem;
+  }
+}
+</style>
+
+
+
