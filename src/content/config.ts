@@ -13,7 +13,7 @@ const timeline = defineCollection({
     title: z.string(),
     role: z.string().optional(),
     organization: z.string().optional(),
-    category: z.enum(['Work', 'Research', 'Talks & Awards', 'Education', 'Publications']),
+    category: z.enum(['Work', 'Education', 'Research & Publications', 'Talks, Awards & Grants']),
     period: z.string(),
     year: z.number(),
     order: z.number().optional(),
@@ -29,6 +29,15 @@ const projects = defineCollection({
     href: z.string().url(),
     stack: z.array(z.string()),
     order: z.number().optional(),
+    image: z
+      .union([
+        z.string(),
+        z.object({
+          src: z.string(),
+          alt: z.string().optional(),
+        }),
+      ])
+      .optional(),
   }),
 });
 

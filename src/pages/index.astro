@@ -10,9 +10,12 @@ import "@/styles/markdown.css";
 
 import SocialLink from "../components/SocialLink.astro";
 
-const about = await getEntry("profile", "about");
-const { Content } = await about.render();
-const aboutTitle = about.data.title ?? "About";
+const aboutEntry = await getEntry("profile", "about");
+if (!aboutEntry) {
+  throw new Error('Missing content entry: profile/about. Create src/content/profile/about.md.');
+}
+const { Content } = await aboutEntry.render();
+const aboutTitle = aboutEntry.data.title ?? "About";
 ---
 
 <html lang="en">
@@ -69,13 +72,10 @@ const aboutTitle = about.data.title ?? "About";
         <div class="section-shell">
           <div class="section-head">
             <h2 class="section-title">Experience</h2>
-            <p class="section-subtitle">
-              Chronological highlights across practice, research, and publication; scroll the timeline to follow each chapter.
-            </p>
           </div>
           <div class="timeline-legend">
             {timelineCategories.map((category) => (
-              <span class="timeline-legend__item" key={`legend-${category.name}`}>
+              <span class="timeline-legend__item">
                 <span
                   class="timeline-legend__dot"
                   style={`background:${category.color}; box-shadow:0 0 0 5px ${category.halo};`}
@@ -93,22 +93,12 @@ const aboutTitle = about.data.title ?? "About";
           <div class="section-head">
             <h2 class="section-title">Projects</h2>
             <p class="section-subtitle">
-              Selected experiments and products tracking the intersection of data, design, and engineering.
-            </p>
+              Selected works in data, engineering and design.
+          </div>
+          <div id="technologies" class="tech-stack">
+            <SkillsCard heading="Technologies" />
           </div>
           <ProjectsCarousel />
-        </div>
-      </section>
-
-      <section id="technologies" class="scroll-section">
-        <div class="section-shell">
-          <div class="section-head">
-            <h2 class="section-title">Technologies</h2>
-            <p class="section-subtitle">
-              Tooling and platforms I rely on across analytical workflows, cartography, and product experiments.
-            </p>
-          </div>
-          <SkillsCard heading="Technologies" />
         </div>
       </section>
 
@@ -286,6 +276,14 @@ html {
   display: grid;
 }
 
+.tech-stack{
+  margin-block: clamp(1.1rem, 2.5vw, 1.75rem);
+}
+
+#technologies{
+  scroll-margin-top: 7.5rem;
+}
+
 
 .hero.scroll-section {
   min-block-size: 90vh;
@@ -310,7 +308,7 @@ html {
 
 .section-head {
   display: grid;
-  gap: 0.35rem;
+  gap: clamp(0.4rem, 0.9vw, 0.65rem);
 }
 
 .section-title {
@@ -325,6 +323,7 @@ html {
   font-family: 'Golos Text', sans-serif;
   font-weight: 400;
   font-size: 1rem;
+  line-height: 1.55;
   color: rgba(15, 23, 42, 0.7);
   max-width: 52ch;
 }
