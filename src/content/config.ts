@@ -1,3 +1,4 @@
+import type { ImageMetadata } from 'astro';
 import { defineCollection, z } from 'astro:content';
 
 const profile = defineCollection({
@@ -29,15 +30,8 @@ const projects = defineCollection({
     href: z.string().url(),
     stack: z.array(z.string()),
     order: z.number().optional(),
-    image: z
-      .union([
-        z.string(),
-        z.object({
-          src: z.string(),
-          alt: z.string().optional(),
-        }),
-      ])
-      .optional(),
+    image: z.custom<ImageMetadata>().optional(),
+    imageAlt: z.string().optional(),
   }),
 });
 

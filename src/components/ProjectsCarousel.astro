@@ -1,30 +1,32 @@
 ﻿---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 
-const normalizeImage = (value: unknown) => {
-  if (!value) return null;
-  if (typeof value === 'string') {
-    return { src: value, alt: '' };
-  }
-  if (typeof value === 'object' && value !== null && 'src' in value) {
-    const record = value as { src?: string; alt?: string };
-    if (typeof record.src === 'string') {
-      return {
-        src: record.src,
-        alt: typeof record.alt === 'string' ? record.alt : '',
-      };
-    }
-  }
-  return null;
-};
+const imageModules = import.meta.glob('../content/projects/**/*.{png,jpg,jpeg,webp,avif,gif}', {
+  eager: true,
+  import: 'default',
+});
+
+type ProjectImage = (typeof imageModules)[string];
 
 const projects = (await getCollection('projects'))
   .sort((a, b) => (b.data.order ?? 0) - (a.data.order ?? 0))
-  .map((item) => ({
-    ...item.data,
-    id: item.id,
-    image: normalizeImage((item.data as Record<string, unknown>).image),
-  }));
+  .map(({ id, data, slug }) => {
+    let image = data.image as ProjectImage | undefined;
+
+    if (typeof image === 'string') {
+      const normalized = image.startsWith('./') ? image.slice(2) : image;
+      const directPath = `../content/projects/${normalized}`;
+      const slugPath = `../content/projects/${slug ?? id}/${normalized}`;
+      image = (imageModules[directPath] ?? imageModules[slugPath]) as ProjectImage | undefined;
+    }
+
+    return {
+      id,
+      ...data,
+      image,
+    };
+  });
 ---
 
 <div class="projects-carousel" data-carousel>
@@ -38,7 +40,12 @@ const projects = (await getCollection('projects'))
         <p class="project-card__summary">{project.summary}</p>
         {project.image && (
           <figure class="project-card__media">
-            <img src={project.image.src} alt={project.image.alt} loading="lazy" />
+            <Image
+              src={project.image}
+              alt={project.imageAlt ?? project.title}
+              loading="lazy"
+              class="project-card__media-img"
+            />
           </figure>
         )}
         <ul class="project-card__tags">
@@ -143,7 +150,11 @@ const projects = (await getCollection('projects'))
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
 }
 
-.project-card__media img{
+.project-card__media :where(picture){
+  display: block;
+}
+
+.project-card__media :where(img){
   display: block;
   width: 100%;
   height: auto;

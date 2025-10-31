@@ -6,6 +6,8 @@ import ProjectsCarousel from "../components/ProjectsCarousel.astro";
 import SkillsCard from "../components/SkillsCard.astro";
 import { timelineCategories } from "../data/timelineCategories";
 import { getEntry } from "astro:content";
+import { Image } from "astro:assets";
+import profilePic from "../assets/images/profile-picture.jpg";
 import "@/styles/markdown.css";
 
 import SocialLink from "../components/SocialLink.astro";
@@ -33,7 +35,7 @@ const aboutTitle = aboutEntry.data.title ?? "About";
   <body>
     <div class="bg-image-layer" aria-hidden="true"></div>
     <div class="glass-ring">
-      <img src="/images/profile-picture.jpg" alt="Profile Pic" class="profile-photo" />
+      <Image src={profilePic} alt="Profile Pic" class="profile-photo" loading="eager" decoding="auto"/>
     </div>
     <main>
       <header class="site-header" role="banner">
