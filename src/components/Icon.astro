@@ -1,17 +1,42 @@
----
-import github from '../assets/icons/github-tritone-fixed.svg?raw';
-import scholar from '../assets/icons/googlescholarNew.svg?raw';
-import instagram from '../assets/icons/insta-dark-tritone.svg?raw';
-import linkedin from '../assets/icons/linkedin-tritone-fixed.svg?raw';
-import twitter from '../assets/icons/twitter-dark-tritone.svg?raw';
-import rss from '../assets/icons/rss-rounded-tritone.svg?raw';
+﻿---
+import github from "../assets/icons/github-tritone-fixed.svg?raw";
+import scholar from "../assets/icons/googlescholarNew.svg?raw";
+import instagram from "../assets/icons/insta-dark-tritone.svg?raw";
+import linkedin from "../assets/icons/linkedin-tritone-fixed.svg?raw";
+import twitter from "../assets/icons/twitter-dark-tritone.svg?raw";
+import rss from "../assets/icons/rss-rounded-tritone.svg?raw";
+import pdf from "../assets/icons/pdf-icon.svg?raw";
+import hyperlink from "../assets/icons/hyperlink.svg?raw";
+import blog from "../assets/icons/blog-link.svg?raw";
+import youtube from "../assets/icons/youtube-icon.svg?raw";
 
 const { name, size = 24, class: extra = '' } = Astro.props as {
-  name: 'github' | 'scholar' | 'instagram' | 'linkedin' | 'twitter' | 'rss';
+  name:
+    | 'github'
+    | 'scholar'
+    | 'instagram'
+    | 'linkedin'
+    | 'twitter'
+    | 'rss'
+    | 'pdf'
+    | 'hyperlink'
+    | 'blog'
+    | 'youtube';
   size?: number;
   class?: string;
 };
-const registry = { github, scholar, instagram, linkedin, twitter, rss };
+const registry = {
+  github,
+  scholar,
+  instagram,
+  linkedin,
+  twitter,
+  rss,
+  pdf,
+  hyperlink,
+  blog,
+  youtube,
+} as const;
 const svg = registry[name];
 if (!svg) throw new Error(`Unknown icon: ${name}`);
 ---
@@ -21,3 +46,4 @@ if (!svg) throw new Error(`Unknown icon: ${name}`);
 <style>
 .icon :where(svg){ width:100%; height:100%; display:block; }
 .icon :where(path, circle, rect, polygon){ fill: currentColor; }
+</style>
