@@ -22,6 +22,7 @@ const timeline = defineCollection({
   }),
 });
 
+// src/content/config.ts
 const projects = defineCollection({
   type: 'content',
   schema: z.object({
@@ -30,10 +31,31 @@ const projects = defineCollection({
     href: z.string().url(),
     stack: z.array(z.string()),
     order: z.number().optional(),
-    image: z.custom<ImageMetadata>().optional(),
+    image: z.union([z.string(), z.custom<ImageMetadata>()]).optional(),
     imageAlt: z.string().optional(),
+    links: z
+      .array(
+        z.object({
+          label: z.string().optional(),
+          href: z.string().url(),
+          icon: z.enum([
+            'github',
+            'scholar',
+            'instagram',
+            'linkedin',
+            'twitter',
+            'rss',
+            'pdf',
+            'hyperlink',
+            'blog',
+            'youtube',
+          ]).optional(),
+        }),
+      )
+      .optional(),
   }),
 });
+
 
 export const collections = {
   profile,

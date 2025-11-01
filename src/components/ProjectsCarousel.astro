@@ -1,32 +1,47 @@
 ﻿---
+import type { ImageMetadata } from 'astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
 
-const imageModules = import.meta.glob('../content/projects/**/*.{png,jpg,jpeg,webp,avif,gif}', {
-  eager: true,
-  import: 'default',
-});
+type ProjectsCollectionEntry = Awaited<ReturnType<typeof getCollection<'projects'>>>[number];
+type ProjectLink = NonNullable<ProjectsCollectionEntry['data']['links']>[number];
+type ProjectCard = Omit<ProjectsCollectionEntry['data'], 'image' | 'links'> & {
+  id: string;
+  image?: ImageMetadata;
+  links?: ProjectLink[];
+};
 
-type ProjectImage = (typeof imageModules)[string];
+const imageModules = import.meta.glob<ImageMetadata>(
+  '../content/projects/**/*.{png,jpg,jpeg,webp,avif,gif}',
+  {
+    eager: true,
+    import: 'default',
+  },
+);
 
-const projects = (await getCollection('projects'))
+const projects: ProjectCard[] = (await getCollection('projects'))
   .sort((a, b) => (b.data.order ?? 0) - (a.data.order ?? 0))
   .map(({ id, data, slug }) => {
-    let image = data.image as ProjectImage | undefined;
+    const { image: rawImage, links, ...rest } = data;
+    let image: ImageMetadata | undefined;
 
-    if (typeof image === 'string') {
-      const normalized = image.startsWith('./') ? image.slice(2) : image;
+    if (typeof rawImage === 'string') {
+      const normalized = rawImage.startsWith('./') ? rawImage.slice(2) : rawImage;
       const directPath = `../content/projects/${normalized}`;
-      const slugPath = `../content/projects/${slug ?? id}/${normalized}`;
-      image = (imageModules[directPath] ?? imageModules[slugPath]) as ProjectImage | undefined;
+      const slugPath = slug ? `../content/projects/${slug}/${normalized}` : undefined;
+      image = imageModules[directPath] ?? (slugPath ? imageModules[slugPath] : undefined);
+    } else if (rawImage && typeof rawImage === 'object' && 'src' in rawImage) {
+      image = rawImage as ImageMetadata;
     }
 
     return {
       id,
-      ...data,
+      ...rest,
       image,
+      links,
     };
-  });
+  }) as unknown as ProjectCard[];
 ---
 
 <div class="projects-carousel" data-carousel>
@@ -55,8 +70,17 @@ const projects = (await getCollection('projects'))
         </ul>
         <a class="project-card__link" href={project.href} target="_blank" rel="noopener noreferrer">
           Explore
-          <span aria-hidden="true" class="project-card__arrow">→</span>
+          <span aria-hidden="true" class="project-card__arrow">&rarr;</span>
         </a>
+        {project.links && project.links.length > 0 && (
+          <div class="project-card__links">
+            {project.links.map((link) => (
+              <a href={link.href} class="project-card__link-line">
+                {link.icon && <Icon name={link.icon} size={16} class="project-link__icon" />}
+              </a>
+            ))}
+          </div>
+        )}
       </article>
     ))}
   </div>
@@ -199,6 +223,25 @@ const projects = (await getCollection('projects'))
   background: rgba(255, 255, 255, 0.65);
 }
 
+.project-card__links{
+  display: grid;
+  gap: 0.4rem;
+}
+
+.project-card__link-line{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+}
+
+.project-link__icon{
+  display: inline-flex;
+  color: rgba(15, 23, 42, 0.75);
+}
+
 .project-card__link:hover{
   transform: translateY(-2px);
   box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
@@ -274,4 +317,10 @@ const projects = (await getCollection('projects'))
   }
 }
 </style>
+
+
+
+
+
+
 
