@@ -3,7 +3,7 @@ title: IndiaPulse@ISB
 summary: Insights on India's economic recovery during the pandemic based on high-frequency data curated from reliable and recognized sources.
 href: https://diri.isb.edu/en/research/india-pulse1.html
 year: 2021
-order: 20
+order: 30
 image: ./indiapulse.png
 imageAlt: IndiaPulse dashboards illustrating economic recovery metrics across India
 technologies:
@@ -26,4 +26,8 @@ technologies:
   - language: Platforms
     tools:
       - Transerve Online Stack
+links:
+  - label: ""
+    href: https://youtube.com/playlist?list=PLYasXHNH8ycYr60Cz6C4agZvHRyK-Rgk4&si=OwM2UD8IXsru3J2V
+    icon: youtube
 ---

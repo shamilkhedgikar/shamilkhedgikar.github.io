@@ -1,6 +1,6 @@
 ---
 title: SPA Delhi
-role: Bachelor of Physical Planning
+role: Bachelor of Urban and Regional Planning
 organization: School of Planning and Architecture Delhi
 category: Education
 period: 2011-2015
