@@ -6,24 +6,34 @@ export const skills = [
       'Xarray',
       'Zarr',
       'Rasterio',
+      'scikit-learn',
       'PyTorch',
       'Selenium',
       'Beautiful Soup',
       'Plotly',
       'Matplotlib',
+      'Folium',
+      'Flask',
+      'FastAPI',
+      'Dask',
     ],
   },
   {
     language: 'R',
     tools: [
+      'tidyverse',
       'sf',
       'sp',
+      'tmap',
       'sfdep',
       'spatialreg',
       'spatstat',
       'rgeoda',
       'httr',
       'jsonlite',
+      'leaflet',
+      'ggplot2',
+      'shiny',
     ],
   },
   {
@@ -57,4 +67,8 @@ export const skills = [
     language: 'Cartography',
     tools: ['Adobe Illustrator', 'Adobe InDesign'],
   },
+  {
+    language: 'Automation & Scripting',
+    tools: ['Bash', 'PowerShell', 'zsh'],
+  }
 ] as const;

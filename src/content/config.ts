@@ -70,7 +70,7 @@ const projects = defineCollection({
     links: z
       .array(
         z.object({
-          label: z.string().optional(),
+          label: z.string().optional().nullable(),
           href: z.string().url(),
           icon: z.enum([
             'github',
