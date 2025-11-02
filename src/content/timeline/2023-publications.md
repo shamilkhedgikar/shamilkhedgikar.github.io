@@ -5,6 +5,13 @@ category: Research & Publications
 period: 2019 - 2023
 year: 2023
 order: 70
+links:
+  - label: Link
+    href: https://doi.org/10.6082/uchicago.7136
+    icon: pdf
+  - label: Link
+    href: https://dx.doi.org/10.2139/ssrn.5249614
+    icon: hyperlink
 ---
 
 - Khedgikar, S. (2023). *Fragmented Futures: Understanding the Role of Spatial Boundaries on Groundwater*. University of Chicago (Thesis). [https://doi.org/10.6082/uchicago.7136](https://doi.org/10.6082/uchicago.7136)

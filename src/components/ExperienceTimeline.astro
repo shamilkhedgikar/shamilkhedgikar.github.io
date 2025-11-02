@@ -1,5 +1,7 @@
 ﻿---
 import { getCollection } from 'astro:content';
+import Icon from './Icon.astro';
+import PlumxWidget from './PlumxWidget.astro';
 import { timelineCategories } from '../data/timelineCategories';
 
 const colorMap = new Map(timelineCategories.map((cat) => [cat.name, cat.color] as const));
@@ -68,9 +70,20 @@ const extractTitleParts = (
     organization: '',
   };
 };
+
+const resolveLinkLabel = (href: string, explicit?: string | null) => {
+  const trimmed = explicit?.trim();
+  if (trimmed) return trimmed;
+  try {
+    const url = new URL(href);
+    return url.hostname.replace(/^www\./, '');
+  } catch {
+    return href;
+  }
+};
 ---
 
-<div class="timeline-viewport" role="presentation">
+<div class="timeline-viewport" data-timeline-viewport role="presentation">
   <div class="timeline-shell" role="list">
     {[...grouped.entries()].map(([year, entries]) => (
       <div class="timeline-row">
@@ -81,6 +94,11 @@ const extractTitleParts = (
             const halo = haloMap.get(entry.data.category) ?? defaultCategory.halo;
             const { Content } = entry;
             const { role, organization } = extractTitleParts(entry);
+            const links = (entry.data.links ?? []).map((link) => ({
+              ...link,
+              label: resolveLinkLabel(link.href, link.label),
+            }));
+            const plumx = entry.data.plumx;
             return (
               <article
                 class="timeline-card glass-card"
@@ -97,7 +115,27 @@ const extractTitleParts = (
                 </header>
                 <div class="timeline-card__body">
                   <Content />
+                  {plumx && (
+                    <div class="timeline-card__plumx">
+                      <PlumxWidget href={plumx.href} label={plumx.label} />
+                    </div>
+                  )}
                 </div>
+                {links.length > 0 && (
+                  <footer class="timeline-card__links" aria-label="Related links">
+                    {links.map((link) => (
+                      <a
+                        href={link.href}
+                        class="timeline-link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {link.icon && <Icon name={link.icon} size={16} class="timeline-link__icon" />}
+                        <span>{link.label}</span>
+                      </a>
+                    ))}
+                  </footer>
+                )}
               </article>
             );
           })}
@@ -294,6 +332,43 @@ const extractTitleParts = (
   text-decoration: underline;
 }
 
+.timeline-card__plumx{
+  margin-top: 0.75rem;
+}
+
+.timeline-card__links{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.timeline-link{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.78);
+  text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.timeline-link:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 10px 16px rgba(15, 23, 42, 0.14);
+}
+
+.timeline-link__icon{
+  display: inline-flex;
+  color: rgba(15, 23, 42, 0.72);
+}
+
 @media (max-width: 720px){
   .timeline-viewport{
     max-block-size: none;
@@ -326,7 +401,35 @@ const extractTitleParts = (
     width: 2.25rem;
   }
 }
+
+.timeline-card__links{
+  margin-top: 0.75rem;
+}
 </style>
+
+<script is:inline>
+  document.addEventListener('astro:load', () => {
+    document
+      .querySelectorAll('[data-timeline-viewport]')
+      .forEach((viewport) => {
+        if (!(viewport instanceof HTMLElement)) return;
+        const element = viewport;
+        const onWheel = (event) => {
+          if (Math.abs(event.deltaY) < 1) return;
+          const { scrollTop, scrollHeight, clientHeight } = element;
+          const atTop = scrollTop <= 0;
+          const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
+          if ((event.deltaY < 0 && atTop) || (event.deltaY > 0 && atBottom)) {
+            return;
+          }
+          event.preventDefault();
+          element.scrollTop += event.deltaY;
+        };
+
+        element.addEventListener('wheel', onWheel, { passive: false });
+      });
+  });
+</script>
 
 
 

@@ -1,15 +1,17 @@
 ---
 title: Initiative on Forest Economy
-summary: Technology Charter and applications for creating partnerships between local forest communities, industries, and governments.
+summary: Technology charter and applications for creating partnerships between local forest communities, industries, and governments.
 href: https://github.com/Forest-Economy-Alliance
-stack:
-  - Javascript
-  - Python
-  - CSS
-  - TypeScript
+year: 2024
+order: 40
+technologies:
+  - language: JavaScript
+    tools:
+      - TypeScript
+  - language: Python
+  - language: CSS
 links:
-  - label: Repo
+  - label: ""
     href: https://github.com/Forest-Economy-Alliance
     icon: github
-order: 40
 ---

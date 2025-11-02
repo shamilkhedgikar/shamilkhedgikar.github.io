@@ -1,38 +1,140 @@
 ---
 import { skills } from '../data/skills';
+import { slugify } from '../utils/slugify';
 
-const {
-  items = skills,
-  heading = 'Skills',
-} = Astro.props as {
-  items?: readonly string[];
+type SkillInput =
+  | string
+  | {
+      language: string;
+      tools?: readonly string[];
+    };
+
+type SkillProps = {
+  items?: readonly SkillInput[];
   heading?: string;
 };
 
-const tags: string[] = [];
-for (const line of items) {
-  const parts = line
-    .split('|')
-    .map((part) => part.trim())
-    .filter(Boolean);
-  for (const part of parts) {
-    if (!tags.includes(part)) {
-      tags.push(part);
-    }
+const toGroups = (item: SkillInput) => {
+  if (typeof item === 'string') {
+    return item
+      .split('|')
+      .map((chunk) => chunk.trim())
+      .filter(Boolean)
+      .map((chunk) => {
+        const match = chunk.match(/^(?<language>[^()]+?)(?:\((?<tools>.+)\))?$/);
+        const language = match?.groups?.language?.trim() ?? chunk;
+        const tools =
+          match?.groups?.tools
+            ?.split(',')
+            .map((tool) => tool.trim())
+            .filter(Boolean) ?? [];
+        return { language, tools };
+      });
   }
-}
+
+  const language = item.language?.trim() ?? '';
+  const tools = Array.isArray(item.tools)
+    ? item.tools.map((tool) => tool.trim()).filter(Boolean)
+    : [];
+  return language ? [{ language, tools }] : [];
+};
+
+const { items = skills, heading = 'Technologies' } = Astro.props as SkillProps;
+
+const seen = new Set<string>();
+
+const groups = items
+  .flatMap(toGroups)
+  .filter((group) => group.language.length > 0)
+  .map((group) => {
+    const slug = slugify(group.language);
+    return { ...group, slug };
+  })
+  .filter((group) => {
+    if (group.slug.length === 0) return false;
+    if (seen.has(group.slug)) return false;
+    seen.add(group.slug);
+    return true;
+  });
 ---
 
-<article class="skills-card glass-card">
+<article class="skills-card glass-card" data-tech-filter>
   <header class="skills-card__header">
     <h3>{heading}</h3>
+    <p class="skills-card__hint">Select one or more tags to filter the project carousel.</p>
   </header>
-  <div class="skills-card__tags">
-    {tags.map((tag) => (
-      <span class="atlas-tag" key={`tag-${tag}`}>{tag}</span>
-    ))}
+  <div class="tech-groups">
+    {groups.map((group) => (
+  <section class="tech-group">
+    <button
+      type="button"
+      class="atlas-tag is-language"
+      data-filter-value={group.slug}
+      data-level="language"
+      aria-pressed="false"
+    >
+      {group.language}
+    </button>
+    {group.tools.length > 0 && (
+      <p class="tech-group__details">{group.tools.join(', ')}</p>
+    )}
+  </section>
+))}
   </div>
 </article>
+
+<script is:inline>
+  document.addEventListener('astro:load', () => {
+    document.querySelectorAll('[data-tech-filter]').forEach((root) => {
+      const selected = new Set();
+
+      const dispatch = () => {
+        window.dispatchEvent(
+          new CustomEvent('tech-filter-change', {
+            detail: { values: Array.from(selected) },
+          }),
+        );
+      };
+
+      const toggle = (button) => {
+        const value = button?.dataset.filterValue;
+        if (!value) return;
+        const nextState = !button.classList.contains('is-active');
+        button.classList.toggle('is-active', nextState);
+        button.setAttribute('aria-pressed', String(nextState));
+        if (nextState) {
+          selected.add(value);
+        } else {
+          selected.delete(value);
+        }
+        dispatch();
+      };
+
+      const buttons = Array.from(
+        root.querySelectorAll('button[data-filter-value][data-level="language"]'),
+      );
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => toggle(button));
+        button.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggle(button);
+          }
+        });
+      });
+
+      root.addEventListener('tech-filter-reset', () => {
+        selected.clear();
+        buttons.forEach((button) => {
+          button.classList.remove('is-active');
+          button.setAttribute('aria-pressed', 'false');
+        });
+        dispatch();
+      });
+    });
+  });
+</script>
 
 <style>
 .glass-card{
@@ -46,8 +148,13 @@ for (const line of items) {
 
 .skills-card{
   display: grid;
-  gap: 1rem;
-  padding: 1.5rem 1.75rem;
+  gap: 1.25rem;
+  padding: 1.7rem 1.9rem;
+}
+
+.skills-card__header{
+  display: grid;
+  gap: 0.35rem;
 }
 
 .skills-card__header h3{
@@ -55,25 +162,79 @@ for (const line of items) {
   font-family: 'Golos Text', sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
+  color: rgba(15, 23, 42, 0.92);
 }
 
-.skills-card__tags{
-  display: flex;
-  flex-wrap: wrap;
+.skills-card__hint{
+  margin: 0;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.tech-groups{
+  display: grid;
+  gap: 1rem;
+}
+
+.tech-group{
+  display: grid;
   gap: 0.6rem;
+}
+
+.tech-group__details{
+  margin: 0;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.8rem;
+  color: rgba(15, 23, 42, 0.58);
 }
 
 .atlas-tag{
   display: inline-flex;
   align-items: center;
-  padding: 0.35rem 0.75rem;
+  justify-content: center;
+  padding: 0.35rem 0.8rem;
   border-radius: 999px;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: rgba(255, 255, 255, 0.65);
   font-family: 'Golos Text', sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   color: rgba(15, 23, 42, 0.78);
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.atlas-tag.is-language{
+  background: rgba(224, 231, 248, 0.55);
+  border-color: rgba(89, 102, 157, 0.28);
+}
+
+.atlas-tag.is-active{
+  background: rgba(89, 102, 157, 0.2);
+  border-color: rgba(89, 102, 157, 0.45);
+  color: rgba(15, 23, 42, 0.95);
+  box-shadow: inset 0 0 0 1px rgba(89, 102, 157, 0.25);
+}
+
+.atlas-tag:is(:hover, :focus-visible){
+  transform: translateY(-1px);
+  box-shadow: 0 10px 16px rgba(15, 23, 42, 0.16);
+}
+
+.atlas-tag:focus-visible{
+  outline: 2px solid rgba(89, 102, 157, 0.6);
+  outline-offset: 2px;
+}
+
+button.atlas-tag{
+  background-color: transparent;
+}
+
+@media (max-width: 720px){
+  .skills-card{
+    padding: 1.5rem 1.65rem;
+  }
 }
 </style>

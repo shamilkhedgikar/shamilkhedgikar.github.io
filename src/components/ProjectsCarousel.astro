@@ -1,15 +1,21 @@
-﻿---
+---
+import type { AstroComponentFactory } from 'astro';
 import type { ImageMetadata } from 'astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
+import { slugify } from '../utils/slugify';
 
 type ProjectsCollectionEntry = Awaited<ReturnType<typeof getCollection<'projects'>>>[number];
 type ProjectLink = NonNullable<ProjectsCollectionEntry['data']['links']>[number];
-type ProjectCard = Omit<ProjectsCollectionEntry['data'], 'image' | 'links'> & {
+type ProjectTechnology = NonNullable<ProjectsCollectionEntry['data']['technologies']>[number];
+type ProjectCard = Omit<ProjectsCollectionEntry['data'], 'image' | 'links' | 'technologies'> & {
   id: string;
   image?: ImageMetadata;
   links?: ProjectLink[];
+  technologies?: ProjectTechnology[];
+  Content: AstroComponentFactory;
+  techSlugs: string[];
 };
 
 const imageModules = import.meta.glob<ImageMetadata>(
@@ -20,37 +26,68 @@ const imageModules = import.meta.glob<ImageMetadata>(
   },
 );
 
-const projects: ProjectCard[] = (await getCollection('projects'))
-  .sort((a, b) => (b.data.order ?? 0) - (a.data.order ?? 0))
-  .map(({ id, data, slug }) => {
-    const { image: rawImage, links, ...rest } = data;
-    let image: ImageMetadata | undefined;
+const projects: ProjectCard[] = await Promise.all(
+  (await getCollection('projects'))
+    .sort((a, b) => (b.data.order ?? 0) - (a.data.order ?? 0))
+    .map(async (entry) => {
+      const { Content } = await entry.render();
+      const { image: rawImage, links, technologies, ...rest } = entry.data;
+      let image: ImageMetadata | undefined;
 
-    if (typeof rawImage === 'string') {
-      const normalized = rawImage.startsWith('./') ? rawImage.slice(2) : rawImage;
-      const directPath = `../content/projects/${normalized}`;
-      const slugPath = slug ? `../content/projects/${slug}/${normalized}` : undefined;
-      image = imageModules[directPath] ?? (slugPath ? imageModules[slugPath] : undefined);
-    } else if (rawImage && typeof rawImage === 'object' && 'src' in rawImage) {
-      image = rawImage as ImageMetadata;
-    }
+      if (typeof rawImage === 'string') {
+        const normalized = rawImage.startsWith('./') ? rawImage.slice(2) : rawImage;
+        const directPath = `../content/projects/${normalized}`;
+        const slugPath = entry.slug ? `../content/projects/${entry.slug}/${normalized}` : undefined;
+        image = imageModules[directPath] ?? (slugPath ? imageModules[slugPath] : undefined);
+      } else if (rawImage && typeof rawImage === 'object' && 'src' in rawImage) {
+        image = rawImage as ImageMetadata;
+      }
 
-    return {
-      id,
-      ...rest,
-      image,
-      links,
-    };
-  }) as unknown as ProjectCard[];
+      const normalisedLinks =
+        links?.map((link) => {
+          const trimmed = link.label?.trim();
+          if (trimmed) return { ...link, label: trimmed };
+          try {
+            const hostname = new URL(link.href).hostname.replace(/^www\./, '');
+            return { ...link, label: hostname };
+          } catch {
+            return { ...link, label: link.href };
+          }
+        }) ?? [];
+
+      const techSlugs =
+        technologies?.map((tech) => slugify(tech.language)).filter(Boolean) ?? [];
+
+      return {
+        id: entry.id,
+        ...rest,
+        image,
+        links: normalisedLinks,
+        technologies,
+        Content,
+        techSlugs,
+      };
+    }),
+);
 ---
 
 <div class="projects-carousel" data-carousel>
   <button class="carousel-arrow is-prev arrow-pill" type="button" aria-label="Previous projects" data-dir="-1"></button>
   <div class="projects-track" data-track>
     {projects.map((project) => (
-      <article class="project-card glass-card" data-card>
+      <article
+        class="project-card glass-card"
+        data-card
+        data-card-id={project.id}
+        data-tech={project.techSlugs.join(' ')}
+        tabindex="0"
+        role="button"
+        aria-expanded="false"
+        aria-haspopup="dialog"
+      >
         <header class="project-card__header">
-          <h3>{project.title}</h3>
+          <h3 class="project-card__title">{project.title}</h3>
+          {project.year && <span class="project-card__year">{project.year}</span>}
         </header>
         <p class="project-card__summary">{project.summary}</p>
         {project.image && (
@@ -63,28 +100,71 @@ const projects: ProjectCard[] = (await getCollection('projects'))
             />
           </figure>
         )}
-        <ul class="project-card__tags">
-          {project.stack.map((tag) => (
-            <li>{tag}</li>
-          ))}
-        </ul>
-        <a class="project-card__link" href={project.href} target="_blank" rel="noopener noreferrer">
-          Explore
-          <span aria-hidden="true" class="project-card__arrow">&rarr;</span>
-        </a>
-        {project.links && project.links.length > 0 && (
-          <div class="project-card__links">
-            {project.links.map((link) => (
-              <a href={link.href} class="project-card__link-line">
-                {link.icon && <Icon name={link.icon} size={16} class="project-link__icon" />}
-              </a>
+        {project.technologies && project.technologies.length > 0 && (
+          <ul class="project-card__tags">
+            {project.technologies.map((tech) => (
+              <li>{tech.language}</li>
             ))}
-          </div>
+          </ul>
         )}
+        <div class="project-card__cta">
+          <a
+            class="project-card__link"
+            href={project.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-primary-link
+          >
+            Explore
+            <span aria-hidden="true" class="project-card__arrow">&#x2192;</span>
+          </a>
+          {project.links && project.links.length > 0 && (
+            <div class="project-card__links" aria-label="Supplementary links">
+              {project.links.map((link) => (
+                <a
+                  href={link.href}
+                  class="project-card__link-line"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {link.icon && <Icon name={link.icon} size={16} class="project-link__icon" />}
+                  <span>{link.label}</span>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+        <div class="project-card__body" data-project-body aria-hidden="true">
+          <project.Content />
+          {project.technologies && project.technologies.length > 0 && (
+            <div class="project-tech-breakdown">
+              {project.technologies.map((tech) => (
+                <div class="project-tech-breakdown__item">
+                  <h4>{tech.language}</h4>
+                  {tech.tools && tech.tools.length > 0 && <p>{tech.tools.join(', ')}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </article>
     ))}
   </div>
   <button class="carousel-arrow is-next arrow-pill" type="button" aria-label="Next projects" data-dir="1"></button>
+  <div class="project-overlay" data-project-overlay hidden aria-hidden="true">
+    <div class="project-overlay__backdrop" data-overlay-backdrop></div>
+    <div class="project-overlay__shell" role="dialog" aria-modal="true">
+      <button
+        class="project-overlay__close"
+        type="button"
+        aria-label="Close project details"
+        data-overlay-close
+      >
+        ×
+      </button>
+      <div class="project-overlay__content" data-overlay-content></div>
+    </div>
+  </div>
 </div>
 
 <style>
@@ -93,21 +173,20 @@ const projects: ProjectCard[] = (await getCollection('projects'))
   width: 100%;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  align-items: stretch;
+  align-items: center;
   gap: 1.2rem;
 }
 
 .projects-track{
+  --carousel-card-size: clamp(320px, 44vw, 520px);
   position: relative;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(400px, 600px);
-  min-height: 480px;
+  display: flex;
+  gap: 1.5rem;
   align-items: stretch;
-  gap: 2rem;
-  padding-block: 0.5rem;
+  padding-block: 1rem 1.5rem;
   padding-inline: 0;
   overflow-x: auto;
+  overflow-y: visible;
   scroll-snap-type: x mandatory;
   overscroll-behavior-inline: contain;
   scrollbar-gutter: stable;
@@ -115,10 +194,6 @@ const projects: ProjectCard[] = (await getCollection('projects'))
   -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.95) 4%, rgba(0, 0, 0, 0.95) 96%, rgba(0, 0, 0, 0) 100%);
   mask-size: 100% 100%;
   -webkit-mask-size: 100% 100%;
-}
-
-.projects-track::selection{
-  background: rgba(15, 23, 42, 0.1);
 }
 
 .projects-track::-webkit-scrollbar{
@@ -140,29 +215,58 @@ const projects: ProjectCard[] = (await getCollection('projects'))
 }
 
 .project-card{
+  position: relative;
   display: grid;
   grid-auto-rows: max-content;
-  gap: 1.35rem;
-  padding: 2.4rem 2.5rem;
+  gap: 1.1rem;
+  padding: 1.85rem 2rem;
   scroll-snap-align: center;
-  min-block-size: 100%;
-  height: 100%;
+  flex: 0 0 var(--carousel-card-size);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
 }
 
-.project-card__header h3{
+.project-card:focus-visible{
+  outline: 2px solid rgba(15, 23, 42, 0.4);
+  outline-offset: 3px;
+}
+
+.project-card__header{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.project-card__title{
   margin: 0;
   font-family: 'Golos Text', sans-serif;
   font-weight: 600;
-  font-size: 1.45rem;
-  text-align: left;
+  font-size: clamp(1.3rem, 2vw, 1.55rem);
+  color: rgba(15, 23, 42, 0.94);
+}
+
+.project-card__year{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: rgba(255, 255, 255, 0.7);
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.65);
 }
 
 .project-card__summary{
   margin: 0;
   font-family: 'Golos Text', sans-serif;
-  font-size: 1.02rem;
-  line-height: 1.65;
-  text-align: left;
+  font-size: 0.96rem;
+  line-height: 1.55;
   color: rgba(15, 23, 42, 0.78);
 }
 
@@ -171,7 +275,7 @@ const projects: ProjectCard[] = (await getCollection('projects'))
   border-radius: 14px;
   overflow: hidden;
   background: rgba(15, 23, 42, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
 }
 
 .project-card__media :where(picture){
@@ -182,7 +286,7 @@ const projects: ProjectCard[] = (await getCollection('projects'))
   display: block;
   width: 100%;
   height: auto;
-  object-fit:fill;
+  object-fit: cover;
 }
 
 .project-card__tags{
@@ -196,21 +300,27 @@ const projects: ProjectCard[] = (await getCollection('projects'))
 
 .project-card__tags li{
   font-family: 'Golos Text', sans-serif;
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 600;
-  padding: 0.25rem 0.6rem;
+  padding: 0.24rem 0.55rem;
   border-radius: 999px;
   border: 1px solid rgba(15, 23, 42, 0.08);
   background: rgba(255, 255, 255, 0.55);
-  color: rgba(15, 23, 42, 0.75);
+  color: rgba(15, 23, 42, 0.74);
   letter-spacing: 0.01em;
+}
+
+.project-card__cta{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
 }
 
 .project-card__link{
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  align-self: flex-start;
   font-family: 'Golos Text', sans-serif;
   font-weight: 600;
   font-size: 0.9rem;
@@ -219,37 +329,201 @@ const projects: ProjectCard[] = (await getCollection('projects'))
   padding: 0.45rem 0.9rem;
   border-radius: 999px;
   border: 1px solid rgba(15, 23, 42, 0.12);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   background: rgba(255, 255, 255, 0.65);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.project-card__link:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(15, 23, 42, 0.16);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .project-card__links{
-  display: grid;
-  gap: 0.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
 }
 
 .project-card__link-line{
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.82rem;
   font-weight: 600;
-  color: inherit;
+  color: rgba(15, 23, 42, 0.78);
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.55);
   text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.project-card__link-line:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 10px 16px rgba(15, 23, 42, 0.14);
 }
 
 .project-link__icon{
   display: inline-flex;
-  color: rgba(15, 23, 42, 0.75);
+  color: rgba(15, 23, 42, 0.74);
 }
 
-.project-card__link:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
-  background: rgba(255, 255, 255, 0.9);
+.project-card__body{
+  display: grid;
+  gap: 1rem;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-0.3rem);
+  transition: max-height 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.35s ease, transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.project-card__arrow{
-  font-weight: 700;
+.project-card__body :where(p, ul){
+  margin: 0;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.58;
+  color: rgba(15, 23, 42, 0.85);
+}
+
+.project-card__body :where(p + *, ul + *){
+  margin-top: 0.85rem;
+}
+
+.project-card__body :where(a){
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.project-tech-breakdown{
+  display: grid;
+  gap: 0.85rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.project-tech-breakdown__item{
+  display: grid;
+  gap: 0.35rem;
+}
+
+.project-tech-breakdown__item h4{
+  margin: 0;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.84);
+}
+
+.project-tech-breakdown__item p{
+  margin: 0;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.project-overlay{
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+  z-index: 1200;
+}
+
+.project-overlay.is-open{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.project-overlay__backdrop{
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.34);
+  backdrop-filter: blur(6px) saturate(120%);
+  -webkit-backdrop-filter: blur(6px) saturate(120%);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+.project-overlay.is-open .project-overlay__backdrop{
+  opacity: 1;
+}
+
+.project-overlay__shell{
+  position: relative;
+  width: min(92vw, 720px);
+  max-height: min(88vh, 900px);
+  overflow: hidden auto;
+  border-radius: 20px;
+  transform: translateY(18px) scale(0.94);
+  transition: transform 0.36s cubic-bezier(0.2, 0.75, 0.2, 1);
+}
+
+.project-overlay.is-open .project-overlay__shell{
+  transform: translateY(0) scale(1);
+}
+
+.project-overlay__close{
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  inline-size: 32px;
+  block-size: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  color: rgba(15, 23, 42, 0.85);
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.project-overlay__close:hover{
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 10px 16px rgba(15, 23, 42, 0.18);
+}
+
+.project-overlay__close:focus-visible{
+  outline: 2px solid rgba(15, 23, 42, 0.6);
+  outline-offset: 2px;
+}
+
+.project-overlay__content{
+  padding: clamp(0.75rem, 1.2vw, 1.4rem);
+}
+
+.project-card--overlay{
+  cursor: default;
+  box-shadow: none;
+  padding: clamp(1.9rem, 3vw, 2.4rem);
+  gap: 1.4rem;
+  background: rgba(224, 231, 248, 0.92);
+  border: 1px solid rgba(224, 231, 248, 0.65);
+  backdrop-filter: none;
+}
+
+.project-card--overlay .project-card__body{
+  max-height: none;
+  opacity: 1;
+  transform: none;
+}
+
+.project-card--overlay .project-card__cta{
+  flex-wrap: wrap;
 }
 
 .carousel-arrow{
@@ -258,7 +532,6 @@ const projects: ProjectCard[] = (await getCollection('projects'))
   place-items: center;
   inline-size: 48px;
   block-size: 48px;
-  align-self: center;
   border-radius: 50%;
   border: 1px solid rgba(224, 231, 248, 0.48);
   background: rgba(224, 231, 248, 0.4);
@@ -270,12 +543,19 @@ const projects: ProjectCard[] = (await getCollection('projects'))
   font-weight: 700;
   font-size: 1.6rem;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, background 0.2s ease;
 }
 
 .carousel-arrow:hover{
   transform: translateY(-2px);
   box-shadow: 0 16px 24px rgba(15, 23, 42, 0.2);
+  background: rgba(224, 231, 248, 0.6);
+}
+
+.carousel-arrow:disabled{
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
 }
 
 .carousel-arrow::before{
@@ -299,28 +579,31 @@ const projects: ProjectCard[] = (await getCollection('projects'))
   border-width: 1.5px;
 }
 
-@media (max-width: 720px){
+@media (max-width: 960px){
   .projects-carousel{
     grid-template-columns: 1fr;
-    gap: 0.75rem;
   }
 
   .projects-track{
-    grid-auto-columns: minmax(80vw, 1fr);
-    padding-inline: 0.5rem;
+    gap: 1rem;
+    padding-inline: clamp(0.4rem, 3vw, 1rem);
+  }
+}
+
+@media (max-width: 720px){
+  .projects-track{
+    --carousel-card-size: calc(100% - 1rem);
     mask-image: none;
     -webkit-mask-image: none;
   }
 
-  .carousel-arrow{
-    justify-self: center;
+  .project-card{
+    padding: 1.7rem 1.8rem;
+  }
+
+  .project-overlay__shell{
+    width: min(96vw, 640px);
   }
 }
 </style>
-
-
-
-
-
-
 

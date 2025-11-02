@@ -19,6 +19,32 @@ const timeline = defineCollection({
     year: z.number(),
     order: z.number().optional(),
     subtitle: z.string().optional(),
+    links: z
+      .array(
+        z.object({
+          label: z.string().optional(),
+          href: z.string().url(),
+          icon: z.enum([
+            'github',
+            'scholar',
+            'instagram',
+            'linkedin',
+            'twitter',
+            'rss',
+            'pdf',
+            'hyperlink',
+            'blog',
+            'youtube',
+          ]).optional(),
+        }),
+      )
+      .optional(),
+    plumx: z
+      .object({
+        href: z.string().url(),
+        label: z.string().optional(),
+      })
+      .optional(),
   }),
 });
 
@@ -29,7 +55,15 @@ const projects = defineCollection({
     title: z.string(),
     summary: z.string(),
     href: z.string().url(),
-    stack: z.array(z.string()),
+    year: z.number().optional(),
+    technologies: z
+      .array(
+        z.object({
+          language: z.string(),
+          tools: z.array(z.string()).optional(),
+        }),
+      )
+      .optional(),
     order: z.number().optional(),
     image: z.union([z.string(), z.custom<ImageMetadata>()]).optional(),
     imageAlt: z.string().optional(),

@@ -129,7 +129,7 @@ const aboutTitle = aboutEntry.data.title ?? "About";
     </main>
 
     <nav class="side-nav">
-      <span class="nav-arrow">⏵</span>
+      <span class="nav-arrow">&#x23F5;</span>
       <ul>
         <li><a href="#about">About</a></li>
         <li><a href="#experience">Experience</a></li>
@@ -142,7 +142,7 @@ const aboutTitle = aboutEntry.data.title ?? "About";
     <script src="https://cdn.jsdelivr.net/npm/marching-squares@1.0.0/dist/bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
 
-    <script is:inline>
+        <script is:inline>
       (() => {
         const sentinel = document.getElementById('hero-sentinel');
         if (sentinel) {
@@ -158,7 +158,8 @@ const aboutTitle = aboutEntry.data.title ?? "About";
         const aboutToggle = aboutSection?.querySelector('.about-toggle');
 
         const isExpanded = () => !!aboutCard?.hasAttribute('data-expanded');
-        const setExpanded = (on) => {
+
+        const setAboutExpanded = (on) => {
           if (!aboutCard) return;
           if (on) {
             aboutCard.setAttribute('data-expanded', '');
@@ -169,13 +170,13 @@ const aboutTitle = aboutEntry.data.title ?? "About";
           }
         };
 
-        const toggle = () => setExpanded(!isExpanded());
+        const toggleAbout = () => setAboutExpanded(!isExpanded());
 
         if (aboutToggle && aboutCard) {
           aboutToggle.addEventListener('click', (event) => {
             event.preventDefault();
             event.stopPropagation();
-            toggle();
+            toggleAbout();
           });
         }
 
@@ -183,7 +184,7 @@ const aboutTitle = aboutEntry.data.title ?? "About";
         if (!expandedOnce) {
           const observer = new MutationObserver(() => {
             if (!expandedOnce && document.body.classList.contains('show-header')) {
-              setExpanded(true);
+              setAboutExpanded(true);
               expandedOnce = true;
               observer.disconnect();
             }
@@ -191,25 +192,176 @@ const aboutTitle = aboutEntry.data.title ?? "About";
           observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
         }
 
-        const carousels = document.querySelectorAll('[data-carousel]');
-        carousels.forEach((carousel) => {
+        const carousels = Array.from(document.querySelectorAll('[data-carousel]'));
+        const activeFilters = new Set();
+
+        const overlay = document.querySelector('[data-project-overlay]');
+        const overlayContent = overlay?.querySelector('[data-overlay-content]');
+        const overlayClose = overlay?.querySelector('[data-overlay-close]');
+        const overlayBackdrop = overlay?.querySelector('[data-overlay-backdrop]');
+        let activeCardId = null;
+        let lastFocusedElement = null;
+
+        const rafThrottle = (callback) => {
+          let ticking = false;
+          return (...args) => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+              ticking = false;
+              callback(...args);
+            });
+          };
+        };
+
+        const updateArrows = (carousel) => {
           const track = carousel.querySelector('[data-track]');
           if (!track) return;
-          const buttons = carousel.querySelectorAll('[data-dir]');
+          const maxScroll = track.scrollWidth - track.clientWidth - 1;
+          const prev = carousel.querySelector('[data-dir="-1"]');
+          const next = carousel.querySelector('[data-dir="1"]');
+          if (prev instanceof HTMLButtonElement) {
+            prev.disabled = track.scrollLeft <= 1;
+          }
+          if (next instanceof HTMLButtonElement) {
+            next.disabled = maxScroll <= 1 || track.scrollLeft >= maxScroll;
+          }
+        };
+
+        const closeOverlay = () => {
+          if (!overlay) return;
+          overlay.classList.remove('is-open');
+          overlay.setAttribute('aria-hidden', 'true');
+          document.body.classList.remove('project-overlay-open');
+          window.setTimeout(() => {
+            overlay?.setAttribute('hidden', 'true');
+            if (overlayContent) {
+              overlayContent.innerHTML = '';
+            }
+          }, 220);
+          if (lastFocusedElement instanceof HTMLElement) {
+            lastFocusedElement.focus();
+          }
+          activeCardId = null;
+        };
+
+        const openOverlay = (card) => {
+          if (!overlay || !overlayContent) return;
+          const clone = card.cloneNode(true);
+          clone.classList.add('project-card--overlay');
+          clone.removeAttribute('tabindex');
+          clone.removeAttribute('role');
+          clone.setAttribute('aria-expanded', 'true');
+          clone.querySelectorAll('[data-project-body]').forEach((body) => {
+            body.removeAttribute('data-project-body');
+            body.setAttribute('aria-hidden', 'false');
+            body.style.removeProperty('max-height');
+          });
+          overlayContent.innerHTML = '';
+          overlayContent.appendChild(clone);
+          overlay.removeAttribute('hidden');
+          overlay.setAttribute('aria-hidden', 'false');
+          overlay.classList.add('is-open');
+          document.body.classList.add('project-overlay-open');
+          const closeButton = overlayClose;
+          if (closeButton instanceof HTMLElement) {
+            closeButton.focus();
+          }
+        };
+
+        const handleCardActivation = (card) => {
+          lastFocusedElement = card;
+          activeCardId = card.dataset.cardId ?? null;
+          openOverlay(card);
+        };
+
+        const applyFilter = (carousel) => {
+          const track = carousel.querySelector('[data-track]');
+          if (!track) return;
+          const cards = Array.from(track.querySelectorAll('[data-card]'));
+          const hasFilters = activeFilters.size > 0;
+          cards.forEach((card) => {
+            const values = (card.dataset.tech ?? '').split(/\s+/).filter(Boolean);
+            const matches = !hasFilters || values.some((value) => activeFilters.has(value));
+            card.toggleAttribute('hidden', !matches);
+            if (!matches && activeCardId && card.dataset.cardId === activeCardId) {
+              closeOverlay();
+            }
+          });
+          updateArrows(carousel);
+        };
+
+        const initCarousel = (carousel) => {
+          const track = carousel.querySelector('[data-track]');
+          if (!track) return;
+          const cards = Array.from(track.querySelectorAll('[data-card]'));
+          const buttons = Array.from(carousel.querySelectorAll('[data-dir]'));
+
           const getDistance = () => {
-            const firstCard = track.querySelector('[data-card]');
+            const firstCard = track.querySelector('[data-card]:not([hidden])');
             const rect = firstCard?.getBoundingClientRect();
             const style = window.getComputedStyle(track);
-            const gap = parseFloat(style.columnGap || style.gap || '0');
+            const gap = parseFloat(style.gap || '0');
             return (rect?.width ?? track.clientWidth) + gap;
           };
+
           buttons.forEach((btn) => {
+            if (!(btn instanceof HTMLButtonElement)) return;
+            const direction = Number(btn.getAttribute('data-dir') ?? '0');
+            if (!direction) return;
             btn.addEventListener('click', () => {
-              const direction = Number(btn.getAttribute('data-dir') ?? '0');
-              if (!direction) return;
               track.scrollBy({ left: direction * getDistance(), behavior: 'smooth' });
             });
           });
+
+          const updateArrowsThrottled = rafThrottle(() => updateArrows(carousel));
+          track.addEventListener('scroll', updateArrowsThrottled);
+          window.addEventListener('resize', updateArrowsThrottled);
+
+          cards.forEach((card) => {
+            card.addEventListener('click', (event) => {
+              const target = event.target;
+              if (target instanceof HTMLElement && target.closest('a')) {
+                return;
+              }
+              handleCardActivation(card);
+            });
+            card.addEventListener('keydown', (event) => {
+              if (event.target !== card) return;
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                handleCardActivation(card);
+              }
+            });
+          });
+
+          track.querySelectorAll('a').forEach((anchor) => {
+            anchor.addEventListener('click', (event) => event.stopPropagation());
+          });
+
+          applyFilter(carousel);
+          updateArrows(carousel);
+        };
+
+        if (overlayBackdrop instanceof HTMLElement) {
+          overlayBackdrop.addEventListener('click', closeOverlay);
+        }
+        if (overlayClose instanceof HTMLElement) {
+          overlayClose.addEventListener('click', closeOverlay);
+        }
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            closeOverlay();
+          }
+        });
+
+        carousels.forEach(initCarousel);
+
+        window.addEventListener('tech-filter-change', (event) => {
+          activeFilters.clear();
+          const values = Array.isArray(event.detail?.values) ? event.detail.values : [];
+          values.forEach((value) => activeFilters.add(value));
+          carousels.forEach(applyFilter);
         });
       })();
     </script>
@@ -593,6 +745,12 @@ body.show-header .site-header {
   opacity: 1;
 }
 </style>
+
+
+
+
+
+
 
 
 

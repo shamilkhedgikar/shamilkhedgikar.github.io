@@ -1,0 +1,55 @@
+---
+const {
+  href,
+  label,
+} = Astro.props as {
+  href: string;
+  label?: string;
+};
+
+const linkLabel = label ?? 'View PlumX metrics';
+const scriptSrc = '//cdn.plu.mx/widget-popup.js';
+---
+
+<div class="plumx-widget">
+  <a
+    href={href}
+    class="plumx-plum-print-popup"
+    data-popup="hidden"
+    data-badge="true"
+    data-site="plum"
+    data-hide-when-empty="true"
+  >
+    {linkLabel}
+  </a>
+</div>
+
+<script is:inline>
+  (() => {
+    const src = "${scriptSrc}";
+    if (!document.querySelector(`script[src="${src}"]`)) {
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      document.head.appendChild(script);
+    }
+  })();
+</script>
+
+<style>
+.plumx-widget{
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.8);
+  text-decoration: none;
+  gap: 0.4rem;
+}
+
+.plumx-widget :where(a){
+  color: inherit;
+  text-decoration: underline;
+}
+</style>
