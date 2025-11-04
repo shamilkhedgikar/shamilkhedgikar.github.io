@@ -44,6 +44,20 @@ const formatBlogDate = (date: Date) =>
   </head>
   <body>
     <div class="bg-image-layer" aria-hidden="true"></div>
+    <div class="theme-switcher" role="group" aria-label="Background themes">
+      <button type="button" class="theme-switcher__button is-active" data-theme="moon" title="Moon">
+        ⚪
+      </button>
+      <button type="button" class="theme-switcher__button" data-theme="bone" title="Bone">
+        🦴
+      </button>
+      <button type="button" class="theme-switcher__button" data-theme="sand" title="Sand">
+        ⏳
+      </button>
+      <button type="button" class="theme-switcher__button" data-theme="charcoal" title="Charcoal">
+        ◼️
+      </button>
+    </div>
     <div class="glass-ring">
       <Image src={profilePic} alt="Profile Pic" class="profile-photo" loading="eager" decoding="auto"/>
     </div>
@@ -168,6 +182,45 @@ const formatBlogDate = (date: Date) =>
 
         <script is:inline>
       (() => {
+        const themeButtons = Array.from(document.querySelectorAll('.theme-switcher__button'));
+        const THEME_COLORS = {
+          sand: '#F4F1ED',
+          charcoal: 'slategray',
+          bone: "#FDFCFB",
+        };
+
+        const setTheme = (theme, persist = true) => {
+          if (theme === 'moon' || !(theme in THEME_COLORS)) {
+            document.documentElement.style.removeProperty('--bg-layer-color');
+          } else {
+            document.documentElement.style.setProperty('--bg-layer-color', THEME_COLORS[theme]);
+          }
+          themeButtons.forEach((button) => {
+            button.classList.toggle('is-active', button.dataset.theme === theme);
+          });
+          if (persist) {
+            localStorage.setItem('bg-theme', theme);
+          }
+        };
+
+        const storedTheme = localStorage.getItem('bg-theme');
+        if (storedTheme) {
+          setTheme(storedTheme, false);
+        } else {
+          setTheme('moon', false);
+        }
+
+        themeButtons.forEach((button) => {
+          const theme = button.dataset.theme ?? 'moon';
+          button.addEventListener('click', () => setTheme(theme));
+          button.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              setTheme(theme);
+            }
+          });
+        });
+
         const sentinel = document.getElementById('hero-sentinel');
         if (sentinel) {
           const io = new IntersectionObserver(([entry]) => {
@@ -425,7 +478,52 @@ html {
   pointer-events: none;
   background-image: url('/textures/paper-texture.svg');
   background-size: auto;
-  background-color: rgba(224, 231, 248, 0.48);
+  background-color: var(--bg-layer-color, rgba(224, 231, 248, 0.48));
+}
+
+.theme-switcher{
+  position: fixed;
+  bottom: clamp(0.65rem, 2vw, 1.2rem);
+  right: clamp(0.75rem, 2.4vw, 2.1rem);
+  display: inline-flex;
+  gap: 0.4rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(224, 231, 248, 0.6);
+  box-shadow: 0 18px 28px rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  z-index: 1201;
+}
+
+.theme-switcher__button{
+  border: none;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0.35rem;
+  border-radius: 50%;
+  font-size: 1.05rem;
+  cursor: pointer;
+  color: rgba(15, 23, 42, 0.75);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.theme-switcher__button:hover,
+.theme-switcher__button:focus-visible{
+  background: rgba(224, 231, 248, 0.85);
+  color: rgba(15, 23, 42, 0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 16px rgba(15, 23, 42, 0.14);
+  outline: none;
+}
+
+.theme-switcher__button.is-active{
+  background: rgba(15, 23, 42, 0.1);
+  color: rgba(15, 23, 42, 0.98);
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.15);
 }
 
 .text-wrapper {

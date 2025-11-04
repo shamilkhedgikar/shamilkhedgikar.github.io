@@ -492,6 +492,33 @@ const projects: ProjectCard[] = await Promise.all(
   outline-offset: 2px;
 }
 
+.project-overlay__shell{
+  position: relative;
+  width: min(96vw, 1120px);
+  max-width: 720px;
+  max-height: min(92vh, 960px);
+  overflow-y: auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  border-radius: 20px;
+  transform: translateY(18px);
+  transition: transform 0.36s cubic-bezier(0.2, 0.75, 0.2, 1);
+}
+
+.project-overlay__shell::-webkit-scrollbar{
+  display: none;
+}
+
+.project-overlay__shell::-webkit-scrollbar-thumb{
+  background: rgba(15, 23, 42, 0.18);
+  border-radius: 999px;
+}
+
+.project-overlay.is-open .project-overlay__shell{
+  transform: translateY(0) scale(1);
+}
+
 .project-overlay__content{
   padding: clamp(0.75rem, 1.2vw, 1.4rem);
 }
@@ -501,12 +528,10 @@ const projects: ProjectCard[] = await Promise.all(
   box-shadow: none;
   padding: clamp(1.6rem, 2.6vw, 2rem);
   gap: 1.25rem;
-  inline-size: min(100%, 860px);
   margin-inline: auto;
   background: rgba(224, 231, 248, 0.9);
   border: 1px solid rgba(224, 231, 248, 0.55);
   backdrop-filter: none;
-  overflow: hidden;
 }
 
 .project-card--overlay .project-card__body{
@@ -603,4 +628,15 @@ const projects: ProjectCard[] = await Promise.all(
   }
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+
 
