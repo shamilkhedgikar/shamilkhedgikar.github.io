@@ -1,0 +1,259 @@
+---
+import { getCollection } from 'astro:content';
+import "@/styles/markdown.css";
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => {
+    const orderDelta = (b.data.order ?? 0) - (a.data.order ?? 0);
+    if (orderDelta !== 0) return orderDelta;
+    return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+  });
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat('en', { month: 'long', day: 'numeric', year: 'numeric' }).format(date);
+const resolveText = (...values: Array<string | null | undefined>) => {
+  for (const value of values) {
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (trimmed.length > 0) return trimmed;
+    }
+  }
+  return undefined;
+};
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Golos+Text:wght@400..900&display=swap" rel="stylesheet">
+    <title>Blog</title>
+  </head>
+  <body>
+    <div class="bg-image-layer" aria-hidden="true"></div>
+    <main class="blog-shell">
+      <header class="blog-header">
+        <a class="breadcrumb" href="/">&larr; Back to home</a>
+        <h1>Geographein.</h1>
+        <p>
+          /ˈdʒiː.oʊˌɡræf.eɪn/ (n.) 
+        </p>
+      </header>
+
+      <section class="post-list" aria-label="Articles">
+        {posts.length === 0 ? (
+          <p class="empty-state">No posts yet -- check back soon!</p>
+        ) : (
+          posts.map((post) => {
+            const updated = post.data.updatedDate ?? post.data.pubDate;
+            const summary = resolveText(post.data.summary, post.data.description) ?? '';
+            return (
+              <article class="post-card">
+                <header class="post-card__head">
+                  <h2>
+                    <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+                  </h2>
+                  <time datetime={updated.toISOString()}>{formatDate(updated)}</time>
+                </header>
+                {summary && <p class="post-card__summary">{summary}</p>}
+                {post.data.tags && post.data.tags.length > 0 && (
+                  <ul class="tag-list">
+                    {post.data.tags.map((tag) => (
+                      <li>{tag}</li>
+                    ))}
+                  </ul>
+                )}
+                <div class="post-card__cta">
+                  <a href={`/blog/${post.slug}`} class="post-card__link">Read guide</a>
+                </div>
+              </article>
+            );
+          })
+        )}
+      </section>
+    </main>
+  </body>
+</html>
+
+<style>
+html, body{
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: 'Golos Text', sans-serif;
+}
+
+.bg-image-layer{
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url('/textures/paper-texture.svg');
+  background-size: auto;
+  opacity: 0.9;
+}
+
+.blog-shell{
+  max-width: min(840px, 92vw);
+  margin: clamp(3rem, 6vw, 4.5rem) auto;
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 3.5rem);
+}
+
+.blog-header{
+  display: grid;
+  gap: 1rem;
+  text-align: left;
+}
+
+.breadcrumb{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'Golos Text', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: rgba(15, 23, 42, 0.8);
+  text-decoration: none;
+}
+
+.blog-header h1{
+  margin: 0;
+  font-size: clamp(2rem, 2.2rem + 1vw, 2.8rem);
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.92);
+}
+
+.blog-header p{
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(15, 23, 42, 0.78);
+}
+
+.post-list{
+  display: grid;
+  gap: 1.75rem;
+}
+
+.empty-state{
+  margin: 0;
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px dashed rgba(148, 163, 184, 0.45);
+  background: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  color: rgba(15, 23, 42, 0.62);
+}
+
+.post-card{
+  display: grid;
+  gap: 0.9rem;
+  padding: 2rem 2.2rem;
+  border-radius: 18px;
+  border: 1px solid rgba(224, 231, 248, 0.48);
+  background: rgba(224, 231, 248, 0.42);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: 0 18px 24px rgba(15, 23, 42, 0.12);
+}
+
+.post-card__head{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.post-card__head h2{
+  margin: 0;
+  font-size: clamp(1.4rem, 1.1rem + 0.8vw, 1.75rem);
+}
+
+.post-card__head a{
+  color: rgba(15, 23, 42, 0.92);
+  text-decoration: none;
+}
+
+.post-card__head a:hover{
+  text-decoration: underline;
+  text-decoration-thickness: 0.1em;
+}
+
+.post-card__head time{
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.post-card__summary{
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: rgba(15, 23, 42, 0.76);
+}
+
+.tag-list{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tag-list li{
+  padding: 0.28rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: rgba(255, 255, 255, 0.65);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: rgba(15, 23, 42, 0.66);
+}
+
+.post-card__cta{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.post-card__link{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.post-card__link:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+@media (max-width: 640px){
+  .blog-shell{
+    gap: 2.25rem;
+    margin: clamp(2.5rem, 9vw, 3.5rem) auto;
+  }
+
+  .post-card{
+    padding: 1.6rem 1.5rem;
+  }
+}
+</style>

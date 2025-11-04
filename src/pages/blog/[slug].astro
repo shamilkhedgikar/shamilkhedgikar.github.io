@@ -1,0 +1,185 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import "@/styles/markdown.css";
+
+type BlogEntry = CollectionEntry<'blog'>;
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props as { post: BlogEntry };
+const { Content } = await post.render();
+const updated = post.data.updatedDate ?? post.data.pubDate;
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat('en', { month: 'long', day: 'numeric', year: 'numeric' }).format(date);
+const resolveText = (...values: Array<string | null | undefined>) => {
+  for (const value of values) {
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (trimmed.length > 0) return trimmed;
+    }
+  }
+  return undefined;
+};
+const metaDescription = resolveText(post.data.description, post.data.summary) ?? post.data.title;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{post.data.title} | Writing</title>
+    <meta name="description" content={metaDescription} />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Golos+Text:wght@400..900&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="bg-image-layer" aria-hidden="true"></div>
+    <main class="post-shell">
+      <header class="post-header">
+        <a class="breadcrumb" href="/blog">&larr; Back to articles</a>
+        <p class="post-meta">
+          <time datetime={post.data.pubDate.toISOString()}>
+            Published {formatDate(post.data.pubDate)}
+          </time>
+          {post.data.updatedDate && (
+            <span class="meta-separator" aria-hidden="true">&bull;</span>
+          )}
+          {post.data.updatedDate && (
+            <time datetime={post.data.updatedDate.toISOString()}>
+              Updated {formatDate(post.data.updatedDate)}
+            </time>
+          )}
+        </p>
+        <h1>{post.data.title}</h1>
+        {post.data.tags && post.data.tags.length > 0 && (
+          <ul class="tag-list">
+            {post.data.tags.map((tag) => (
+              <li>{tag}</li>
+            ))}
+          </ul>
+        )}
+      </header>
+
+      <article class="post-body md">
+        <Content />
+      </article>
+    </main>
+  </body>
+</html>
+
+<style>
+html, body{
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: 'Golos Text', sans-serif;
+  background: rgba(224, 231, 248, 0.48);
+}
+
+.bg-image-layer{
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url('/textures/paper-texture.svg');
+  background-size: auto;
+  opacity: 0.9;
+}
+
+.post-shell{
+  max-width: min(860px, 94vw);
+  margin: clamp(3rem, 6vw, 4.5rem) auto clamp(4rem, 7vw, 6rem);
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 3.5rem);
+  padding-bottom: 3rem;
+}
+
+.post-header{
+  display: grid;
+  gap: 0.85rem;
+}
+
+.breadcrumb{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'Golos Text', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: rgba(15, 23, 42, 0.78);
+  text-decoration: none;
+}
+
+.breadcrumb:hover{
+  text-decoration: underline;
+}
+
+.post-meta{
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.post-header h1{
+  margin: 0;
+  font-size: clamp(2.1rem, 2.1rem + 1vw, 2.9rem);
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.92);
+}
+
+.meta-separator{
+  color: rgba(15, 23, 42, 0.45);
+}
+
+.tag-list{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tag-list li{
+  padding: 0.28rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: rgba(255, 255, 255, 0.65);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: rgba(15, 23, 42, 0.66);
+}
+
+.post-body{
+  padding: clamp(2rem, 2.5vw, 2.6rem);
+  background: transparent;
+  border-radius: 20px;
+  border: none;
+  box-shadow: none;
+}
+
+.post-body > :first-child{
+  margin-top: 0;
+}
+
+@media (max-width: 640px){
+  .post-body{
+    padding: 1.6rem 1.5rem;
+  }
+}
+</style>

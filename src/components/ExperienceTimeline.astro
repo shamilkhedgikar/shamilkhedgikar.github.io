@@ -364,7 +364,14 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
 
 .timeline-link__icon{
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: rgba(15, 23, 42, 0.72);
+}
+
+.timeline-link__icon :where(svg){
+  transform: scale(0.75);
+  transform-origin: center;
 }
 
 @media (max-width: 720px){

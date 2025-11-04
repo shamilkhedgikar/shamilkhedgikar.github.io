@@ -1,4 +1,4 @@
-﻿---
+---
 import type { ImageMetadata } from 'astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
@@ -134,7 +134,6 @@ const projects: ProjectCard[] = await Promise.all(
           )}
         </div>
         <div class="project-card__body" data-project-body aria-hidden="true">
-          <project.Content />
           {project.technologies && project.technologies.length > 0 && (
             <div class="project-tech-breakdown">
               {project.technologies.map((tech) => (
@@ -145,6 +144,9 @@ const projects: ProjectCard[] = await Promise.all(
               ))}
             </div>
           )}
+          <div class="project-card__details">
+            <project.Content />
+          </div>
         </div>
       </article>
     ))}
@@ -293,8 +295,9 @@ const projects: ProjectCard[] = await Promise.all(
   flex-wrap: wrap;
   gap: 0.4rem;
   margin: 0;
-  padding: 0;
+  padding: 1rem 0 0;
   list-style: none;
+  border-top: 1px solid rgba(15, 23, 42, 0.12);
 }
 
 .project-card__tags li{
@@ -385,6 +388,8 @@ const projects: ProjectCard[] = await Promise.all(
 
 .project-card__body :where(p + *, ul + *){
   margin-top: 0.85rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.12);
+
 }
 
 .project-card__body :where(a){
@@ -396,6 +401,11 @@ const projects: ProjectCard[] = await Promise.all(
 .project-tech-breakdown{
   display: grid;
   gap: 0.85rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.project-card__details{
   padding-top: 1rem;
   border-top: 1px solid rgba(15, 23, 42, 0.12);
 }
@@ -428,7 +438,7 @@ const projects: ProjectCard[] = await Promise.all(
   padding: clamp(1.25rem, 3vw, 2.5rem);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.28s ease;
+  transition: opacity 0.24s ease;
   z-index: 1200;
 }
 
@@ -444,37 +454,17 @@ const projects: ProjectCard[] = await Promise.all(
   backdrop-filter: blur(6px) saturate(120%);
   -webkit-backdrop-filter: blur(6px) saturate(120%);
   opacity: 0;
-  transition: opacity 0.28s ease;
+  transition: opacity 0.24s ease;
 }
 
 .project-overlay.is-open .project-overlay__backdrop{
   opacity: 1;
 }
 
-.project-overlay__shell{
-  position: relative;
-  width: min(92vw, 720px);
-  max-height: min(88vh, 900px);
-  overflow: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  border-radius: 20px;
-  transform: translateY(18px) scale(0.94);
-  transition: transform 0.36s cubic-bezier(0.2, 0.75, 0.2, 1);
-}
-
-.project-overlay__shell::-webkit-scrollbar{
-  display: none;
-}
-
-.project-overlay.is-open .project-overlay__shell{
-  transform: translateY(0) scale(1);
-}
-
 .project-overlay__close{
   position: absolute;
-  top: 0.05rem;
-  right: 0.05rem;
+  top: clamp(0.4rem, 1.2vw, 0.75rem);
+  right: clamp(0.4rem, 1.2vw, 0.75rem);
   inline-size: 32px;
   block-size: 32px;
   border: none;
@@ -511,6 +501,8 @@ const projects: ProjectCard[] = await Promise.all(
   box-shadow: none;
   padding: clamp(1.6rem, 2.6vw, 2rem);
   gap: 1.25rem;
+  inline-size: min(100%, 860px);
+  margin-inline: auto;
   background: rgba(224, 231, 248, 0.9);
   border: 1px solid rgba(224, 231, 248, 0.55);
   backdrop-filter: none;
@@ -611,3 +603,4 @@ const projects: ProjectCard[] = await Promise.all(
   }
 }
 </style>
+

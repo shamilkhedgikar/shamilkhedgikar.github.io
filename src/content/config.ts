@@ -90,9 +90,26 @@ const projects = defineCollection({
   }),
 });
 
+const blog = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string().nullable().optional(),
+    summary: z.string().nullable().optional(),
+    pubDate: z.date(),
+    updatedDate: z.date().optional(),
+    tags: z.array(z.string()).optional(),
+    draft: z.boolean().optional(),
+    heroImage: z.union([z.string(), z.custom<ImageMetadata>()]).optional(),
+    heroAlt: z.string().optional(),
+    order: z.number().optional(),
+  }),
+});
+
 
 export const collections = {
   profile,
   timeline,
   projects,
+  blog,
 };

@@ -1,5 +1,6 @@
-﻿---
+---
 import { skills } from '../data/skills';
+import { timelineCategories } from '../data/timelineCategories';
 import { slugify } from '../utils/slugify';
 
 type SkillInput =
@@ -43,7 +44,139 @@ const { items = skills, heading = 'Technologies' } = Astro.props as SkillProps;
 
 const seen = new Set<string>();
 
-const groups = items
+const palette =
+  timelineCategories?.map((category) => ({
+    color: category.color,
+    halo: category.halo,
+  })) ?? [];
+
+const ensurePalette = palette.length > 0
+  ? palette
+  : [
+      { color: '#3b82f6', halo: 'rgba(59, 130, 246, 0.18)' },
+      { color: '#f59e0b', halo: 'rgba(245, 158, 11, 0.18)' },
+      { color: '#22c55e', halo: 'rgba(34, 197, 94, 0.18)' },
+      { color: '#a855f7', halo: 'rgba(168, 85, 247, 0.18)' },
+    ];
+
+const normalize = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9\+]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const defineLanguages = [
+  {
+    name: 'Python',
+    slug: 'python',
+    keywords: [
+      'python',
+      'geopandas',
+      'arcpy',
+      'pysal',
+      'whitebox',
+      'gdal',
+      'google earth engine',
+      'q arc gis',
+      'arc gis',
+      'qgis',
+      'rasterio',
+      'scikit learn',
+      'pytorch',
+      'pandas',
+      'numpy',
+      'dask',
+      'duckdb',
+      'xarray',
+      'zarr',
+      'xgboost',
+      'lightgbm',
+      'matplotlib',
+      'plotly',
+      'folium',
+      'streamlit',
+      'fastapi',
+      'flask',
+      'selenium',
+      'beautiful soup',
+    ],
+  },
+  {
+    name: 'R',
+    slug: 'r',
+    keywords: [
+      'tidyverse',
+      'ggplot',
+      'sf',
+      'sp',
+      'sfdep',
+      'spatialreg',
+      'spatstat',
+      'rgeoda',
+      'terra',
+      'raster',
+      'tmap',
+      'leaflet',
+      'shiny',
+      'highcharter',
+      'caret',
+      'mlr3',
+      'httr',
+      'jsonlite',
+      'data table',
+      'readr',
+    ],
+  },
+  {
+    name: 'JavaScript & TypeScript',
+    slug: 'javascript',
+    keywords: [
+      'javascript',
+      'typescript',
+      'd3',
+      'astro',
+      'vite',
+      'node',
+      'react',
+      'arcgis js',
+      'leaflet',
+      'arcgis js sdk',
+      'fused',
+    ],
+  },
+  {
+    name: 'SQL & Analytics',
+    slug: 'sql',
+    keywords: ['postgis', 'duckdb', 'power bi', 'tableau'],
+  },
+  {
+    name: 'Shell & Automation',
+    slug: 'shell',
+    keywords: ['bash', 'powershell', 'zsh', 'docker', 'git'],
+  },
+] as const;
+
+const languageFilters = defineLanguages.map((language, index) => {
+  const paletteEntry = ensurePalette[index % ensurePalette.length];
+  const slug = 'slug' in language && language.slug ? language.slug : slugify(language.name);
+  return {
+    name: language.name,
+    slug,
+    color: paletteEntry.color,
+    halo: paletteEntry.halo,
+    keywords: language.keywords.map((keyword) => normalize(keyword)),
+  };
+});
+
+const matchLanguagesForValue = (value: string) => {
+  const normalized = normalize(value);
+  return languageFilters
+    .filter((language) => language.keywords.some((keyword) => normalized.includes(keyword)))
+    .map((language) => language.slug);
+};
+
+const baseGroups = items
   .flatMap(toGroups)
   .filter((group) => group.language.length > 0)
   .map((group) => {
@@ -56,26 +189,81 @@ const groups = items
     seen.add(group.slug);
     return true;
   });
+
+const groups = baseGroups.map((group) => {
+  const tools = group.tools.map((tool) => {
+    const languages = matchLanguagesForValue(tool);
+    return {
+      name: tool,
+      slug: slugify(`${group.slug}-${tool}`),
+      languages,
+    };
+  });
+
+  const groupLanguages = Array.from(
+    new Set(tools.flatMap((tool) => tool.languages).filter(Boolean)),
+  );
+
+  return {
+    ...group,
+    tools,
+    languages: groupLanguages,
+  };
+});
+
+const legendLanguages = languageFilters.filter((language) =>
+  groups.some((group) => group.languages.includes(language.slug)),
+);
 ---
 
 <article class="skills-card glass-card" data-tech-filter>
   <header class="skills-card__header">
     <h3>{heading}</h3>
+    <ul class="skills-card__legend" role="list">
+      {legendLanguages.map((language) => (
+        <li class="skills-card__legend-item" role="listitem">
+          <button
+            type="button"
+            class="skills-card__legend-trigger"
+            data-language-slug={language.slug}
+            aria-pressed="false"
+            style={`--legend-color:${language.color}; --legend-halo:${language.halo};`}
+          >
+            <span class="skills-card__legend-dot" aria-hidden="true"></span>
+            <span class="skills-card__legend-label">{language.name}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
   </header>
   <div class="tech-groups">
     {groups.map((group) => (
-  <section class="tech-group">
+  <section
+    class="tech-group"
+    data-tech-group={group.slug}
+    data-group-languages={group.languages.join(' ')}
+  >
     <button
       type="button"
       class="atlas-tag is-language"
       data-filter-value={group.slug}
-      data-level="language"
       aria-pressed="false"
     >
       {group.language}
     </button>
     {group.tools.length > 0 && (
-      <p class="tech-group__details">{group.tools.join(', ')}</p>
+      <div class="tech-group__details" role="list">
+        {group.tools.map((tool) => (
+          <span
+            class="tech-tool"
+            role="listitem"
+            data-tool={tool.slug}
+            data-tool-languages={tool.languages.join(' ')}
+          >
+            {tool.name}
+          </span>
+        ))}
+      </div>
     )}
   </section>
 ))}
@@ -83,9 +271,18 @@ const groups = items
 </article>
 
 <script is:inline>
-  document.addEventListener('astro:load', () => {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSkillsCard);
+  } else {
+    initSkillsCard();
+  }
+
+  function initSkillsCard(){
     document.querySelectorAll('[data-tech-filter]').forEach((root) => {
       const selected = new Set();
+      let hovered = null;
+      const languageControls = Array.from(root.querySelectorAll('[data-language-slug]'));
+      const buttons = Array.from(root.querySelectorAll('[data-filter-value]'));
 
       const dispatch = () => {
         window.dispatchEvent(
@@ -95,44 +292,108 @@ const groups = items
         );
       };
 
-      const toggle = (button) => {
-        const value = button?.dataset.filterValue;
-        if (!value) return;
-        const nextState = !button.classList.contains('is-active');
-        button.classList.toggle('is-active', nextState);
-        button.setAttribute('aria-pressed', String(nextState));
-        if (nextState) {
-          selected.add(value);
+      const updateLegendState = () => {
+        languageControls.forEach((trigger) => {
+          const slug = trigger.dataset.languageSlug ?? '';
+          const isActive = selected.has(slug);
+          trigger.classList.toggle('is-active', isActive);
+          trigger.classList.toggle('is-hovered', hovered === slug);
+          trigger.setAttribute('aria-pressed', String(isActive));
+        });
+      };
+
+      const updateButtonState = () => {
+        buttons.forEach((button) => {
+          if (!(button instanceof HTMLButtonElement)) return;
+          const value = button.dataset.filterValue ?? '';
+          const isActive = selected.has(value);
+          button.classList.toggle('is-active', isActive);
+          button.classList.toggle('is-hovered', hovered === value);
+          button.setAttribute('aria-pressed', String(isActive));
+        });
+      };
+
+      const updateActiveLanguages = () => {
+        const activeValues =
+          hovered !== null
+            ? new Set([hovered])
+            : selected.size > 0
+              ? new Set(selected)
+              : null;
+        const list = activeValues ? Array.from(activeValues) : [];
+        if (list.length > 0) {
+          root.dataset.activeLanguages = list.join(' ');
+          root.dataset.activeCount = String(list.length);
+          root.classList.add('has-active-languages');
         } else {
-          selected.delete(value);
+          root.removeAttribute('data-active-languages');
+          root.removeAttribute('data-active-count');
+          root.classList.remove('has-active-languages');
         }
+        updateLegendState();
+        updateButtonState();
+      };
+
+      const toggleLanguageValue = (value) => {
+        if (!value) return;
+        if (selected.has(value)) {
+          selected.delete(value);
+        } else {
+          selected.add(value);
+        }
+        updateActiveLanguages();
         dispatch();
       };
 
-      const buttons = Array.from(
-        root.querySelectorAll('button[data-filter-value][data-level="language"]'),
-      );
+      languageControls.forEach((trigger) => {
+        const value = trigger.dataset.languageSlug ?? '';
+        trigger.addEventListener('click', () => toggleLanguageValue(value));
+        trigger.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggleLanguageValue(value);
+          }
+        });
+        trigger.addEventListener('mouseenter', () => {
+          hovered = value || null;
+          updateActiveLanguages();
+        });
+        trigger.addEventListener('mouseleave', () => {
+          hovered = null;
+          updateActiveLanguages();
+        });
+        trigger.addEventListener('focus', () => {
+          hovered = value || null;
+          updateActiveLanguages();
+        });
+        trigger.addEventListener('blur', () => {
+          hovered = null;
+          updateActiveLanguages();
+        });
+      });
 
       buttons.forEach((button) => {
-        button.addEventListener('click', () => toggle(button));
+        if (!(button instanceof HTMLButtonElement)) return;
+        const value = button.dataset.filterValue ?? '';
+        button.addEventListener('click', () => toggleLanguageValue(value));
         button.addEventListener('keydown', (event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-            toggle(button);
+            toggleLanguageValue(value);
           }
         });
       });
 
       root.addEventListener('tech-filter-reset', () => {
         selected.clear();
-        buttons.forEach((button) => {
-          button.classList.remove('is-active');
-          button.setAttribute('aria-pressed', 'false');
-        });
+        hovered = null;
+        updateActiveLanguages();
         dispatch();
       });
+
+      updateActiveLanguages();
     });
-  });
+  }
 </script>
 
 <style>
@@ -151,8 +412,11 @@ const groups = items
 }
 
 .skills-card__header{
-  display: grid;
-  gap: 0.35rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  flex-wrap: wrap;
 }
 
 .skills-card__header h3{
@@ -170,6 +434,67 @@ const groups = items
   color: rgba(15, 23, 42, 0.6);
 }
 
+.skills-card__legend{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skills-card__legend-item{
+  display: flex;
+}
+
+.skills-card__legend-dot{
+  inline-size: 0.65rem;
+  block-size: 0.65rem;
+  border-radius: 50%;
+  background: var(--legend-color);
+  box-shadow: 0 0 0 5px var(--legend-halo);
+}
+
+.skills-card__legend-label{
+  white-space: nowrap;
+}
+
+.skills-card__legend-trigger{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(224, 231, 248, 0.6);
+  background: rgba(255, 255, 255, 0.55);
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(15, 23, 42, 0.7);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.skills-card__legend-trigger:is(:hover, :focus-visible),
+.skills-card__legend-trigger.is-hovered{
+  background: rgba(224, 231, 248, 0.85);
+  color: rgba(15, 23, 42, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.18);
+}
+
+.skills-card__legend-trigger.is-active{
+  background: rgba(224, 231, 248, 0.95);
+  color: rgba(15, 23, 42, 0.95);
+  box-shadow: 0 16px 20px rgba(15, 23, 42, 0.22);
+}
+
+.skills-card__legend-trigger:focus-visible{
+  outline: 2px solid rgba(89, 102, 157, 0.65);
+  outline-offset: 2px;
+}
+
 .tech-groups{
   display: ruby;
   ruby-position: over;
@@ -180,6 +505,7 @@ const groups = items
   gap: 0.6rem;
   margin-inline-end: clamp(1.8rem, 3.2vw, 2.8rem);
   margin-block-end: 1.1rem;
+  transition: opacity 0.24s ease, filter 0.24s ease;
 }
 
 .tech-group:last-child{
@@ -188,6 +514,9 @@ const groups = items
 
 .tech-group__details{
   margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.7rem;
   font-family: 'Golos Text', sans-serif;
   font-size: 0.8rem;
   color: rgba(15, 23, 42, 0.58);
@@ -195,8 +524,39 @@ const groups = items
   opacity: 0;
   max-height: 0;
   transform: translateY(0rem);
-  transition: opacity 0.24s ease, max-height 0.1s ease, transform 0.24s ease;
+  transition: opacity 0.24s ease, max-height 0.12s ease;
   pointer-events: none;
+  overflow: hidden;
+}
+
+.tech-tool{
+  position: relative;
+  transition: color 0.2s ease, font-weight 0.2s ease, opacity 0.2s ease;
+}
+
+.tech-tool::after{
+  content: ',\00a0';
+}
+
+.tech-tool:last-child::after{
+  content: '';
+}
+
+.tech-group:hover .atlas-tag.is-language,
+.tech-group:focus-within .atlas-tag.is-language{
+  background: rgba(224, 231, 248, 0.98);
+  border-color: rgba(224, 231, 248, 1);
+  color: rgba(15, 23, 42, 0.96);
+  box-shadow: -6px 9px 16px 1px rgba(15, 23, 42, 0.18);
+}
+
+.atlas-tag.is-language.is-active + .tech-group__details,
+.tech-group:hover .tech-group__details,
+.tech-group:focus-within .tech-group__details{
+  opacity: 1;
+  max-height: 6rem;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .atlas-tag{
@@ -220,7 +580,7 @@ const groups = items
   background: rgba(224, 231, 248, 0.92);
   border-color: rgba(224, 231, 248, 0.92);
   padding: 0.45rem 1rem;
-  box-shadow: -7px -2px 16px 1px rgba(15, 23, 42, 0.18)
+  box-shadow: -7px -2px 16px 1px rgba(15, 23, 42, 0.18);
 }
 
 .atlas-tag.is-active{
@@ -231,7 +591,7 @@ const groups = items
 }
 
 .atlas-tag:is(:hover, :focus-visible){
-  transform: translateY(-1px);
+  transform: translateY(0.25px);
   box-shadow: 0 10px 16px rgba(15, 23, 42, 0.16);
 }
 
@@ -244,21 +604,60 @@ button.atlas-tag{
   background-color: transparent;
 }
 
-.tech-group:hover .atlas-tag.is-language,
-.tech-group:focus-within .atlas-tag.is-language{
+[data-tech-filter][data-active-languages~="python"] .tech-group[data-group-languages~="python"],
+[data-tech-filter][data-active-languages~="r"] .tech-group[data-group-languages~="r"],
+[data-tech-filter][data-active-languages~="javascript"] .tech-group[data-group-languages~="javascript"],
+[data-tech-filter][data-active-languages~="sql"] .tech-group[data-group-languages~="sql"],
+[data-tech-filter][data-active-languages~="shell"] .tech-group[data-group-languages~="shell"]{
+  opacity: 1;
+  filter: saturate(1);
+}
+
+[data-tech-filter][data-active-languages~="python"] .tech-group[data-group-languages~="python"] .atlas-tag.is-language,
+[data-tech-filter][data-active-languages~="r"] .tech-group[data-group-languages~="r"] .atlas-tag.is-language,
+[data-tech-filter][data-active-languages~="javascript"] .tech-group[data-group-languages~="javascript"] .atlas-tag.is-language,
+[data-tech-filter][data-active-languages~="sql"] .tech-group[data-group-languages~="sql"] .atlas-tag.is-language,
+[data-tech-filter][data-active-languages~="shell"] .tech-group[data-group-languages~="shell"] .atlas-tag.is-language{
   background: rgba(224, 231, 248, 0.98);
   border-color: rgba(224, 231, 248, 1);
   color: rgba(15, 23, 42, 0.96);
-  box-shadow: -6px 9px 16px 1px rgba(15, 23, 42, 0.18)
+  box-shadow: -6px 9px 16px 1px rgba(15, 23, 42, 0.18);
 }
 
-.tech-group:hover .tech-group__details,
-.tech-group:focus-within .tech-group__details,
-.atlas-tag.is-language.is-active + .tech-group__details{
+[data-tech-filter][data-active-languages~="python"] .tech-group[data-group-languages~="python"] .tech-group__details,
+[data-tech-filter][data-active-languages~="r"] .tech-group[data-group-languages~="r"] .tech-group__details,
+[data-tech-filter][data-active-languages~="javascript"] .tech-group[data-group-languages~="javascript"] .tech-group__details,
+[data-tech-filter][data-active-languages~="sql"] .tech-group[data-group-languages~="sql"] .tech-group__details,
+[data-tech-filter][data-active-languages~="shell"] .tech-group[data-group-languages~="shell"] .tech-group__details{
   opacity: 1;
-  max-height: 6rem;
-  transform: translateY(0);
+  max-height: 14rem;
   pointer-events: auto;
+}
+
+[data-tech-filter][data-active-languages~="python"] .tech-tool[data-tool-languages~="python"],
+[data-tech-filter][data-active-languages~="r"] .tech-tool[data-tool-languages~="r"],
+[data-tech-filter][data-active-languages~="javascript"] .tech-tool[data-tool-languages~="javascript"],
+[data-tech-filter][data-active-languages~="sql"] .tech-tool[data-tool-languages~="sql"],
+[data-tech-filter][data-active-languages~="shell"] .tech-tool[data-tool-languages~="shell"]{
+  opacity: 1;
+  color: rgba(15, 23, 42, 0.96);
+  font-weight: 700;
+}
+
+[data-tech-filter].has-active-languages .tech-group .tech-group__details{
+  opacity: 1;
+  max-height: 14rem;
+  pointer-events: auto;
+}
+
+[data-tech-filter][data-active-languages~="python"] .tech-group .tech-tool[data-tool-languages~="python"],
+[data-tech-filter][data-active-languages~="r"] .tech-group .tech-tool[data-tool-languages~="r"],
+[data-tech-filter][data-active-languages~="javascript"] .tech-group .tech-tool[data-tool-languages~="javascript"],
+[data-tech-filter][data-active-languages~="sql"] .tech-group .tech-tool[data-tool-languages~="sql"],
+[data-tech-filter][data-active-languages~="shell"] .tech-group .tech-tool[data-tool-languages~="shell"]{
+  opacity: 1;
+  color: rgba(15, 23, 42, 0.96);
+  font-weight: 700;
 }
 
 @media (max-width: 720px){
@@ -267,3 +666,4 @@ button.atlas-tag{
   }
 }
 </style>
+
