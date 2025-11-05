@@ -72,6 +72,23 @@ const metaDescription = resolveText(post.data.description, post.data.summary) ??
         <Content />
       </article>
     </main>
+    <script is:inline>
+      (() => {
+        if (typeof window === 'undefined') return;
+        try {
+          const colors = { sand: 'lightyellow', charcoal: 'slategray', bone: '#858483' };
+          const stored = localStorage.getItem('bg-theme');
+          if (!stored || stored === 'moon' || !(stored in colors)) {
+            document.documentElement.style.removeProperty('--bg-layer-color');
+            return;
+          }
+          document.documentElement.style.setProperty('--bg-layer-color', colors[stored]);
+        } catch (err) {
+          /* ignore */
+        }
+      })();
+    </script>
+
   </body>
 </html>
 
@@ -90,6 +107,7 @@ html, body{
   pointer-events: none;
   background-image: url('/textures/paper-texture.svg');
   background-size: auto;
+  background-color: var(--bg-layer-color, transparent);
   opacity: 0.9;
 }
 

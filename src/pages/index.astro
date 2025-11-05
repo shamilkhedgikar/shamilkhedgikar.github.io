@@ -45,18 +45,23 @@ const formatBlogDate = (date: Date) =>
   <body>
     <div class="bg-image-layer" aria-hidden="true"></div>
     <div class="theme-switcher" role="group" aria-label="Background themes">
-      <button type="button" class="theme-switcher__button is-active" data-theme="moon" title="Moon">
+      <button type="button" class="theme-switcher__button theme-switcher__main is-active" data-theme="moon" title="Moon" aria-pressed="true">
         ⚪
       </button>
-      <button type="button" class="theme-switcher__button" data-theme="bone" title="Bone">
-        🦴
-      </button>
-      <button type="button" class="theme-switcher__button" data-theme="sand" title="Sand">
-        ⏳
-      </button>
-      <button type="button" class="theme-switcher__button" data-theme="charcoal" title="Charcoal">
-        ◼️
-      </button>
+      <div class="theme-switcher__menu">
+        <button type="button" class="theme-switcher__button" data-theme="charcoal" title="Charcoal" aria-pressed="false">
+          ⬛
+        </button>
+        <button type="button" class="theme-switcher__button" data-theme="sand" title="Sand" aria-pressed="false">
+          ⏳
+        </button>
+        <button type="button" class="theme-switcher__button" data-theme="bone" title="Bone" aria-pressed="false">
+          🦴
+        </button>
+        <button type="button" class="theme-switcher__button" data-theme="moon" title="Moon" aria-pressed="false">
+          ⚪
+        </button>
+      </div>
     </div>
     <div class="glass-ring">
       <Image src={profilePic} alt="Profile Pic" class="profile-photo" loading="eager" decoding="auto"/>
@@ -182,11 +187,69 @@ const formatBlogDate = (date: Date) =>
 
         <script is:inline>
       (() => {
-        const themeButtons = Array.from(document.querySelectorAll('.theme-switcher__button'));
+        const switcher = document.querySelector('.theme-switcher');
+        if (!switcher) return;
+        const themeButtons = Array.from(switcher.querySelectorAll('.theme-switcher__button'));
+        if (themeButtons.length === 0) return;
+        const mainButton = switcher.querySelector('.theme-switcher__main');
+        const menuButtons = themeButtons.filter((button) => button !== mainButton);
+
+        const buttonMeta = new Map();
+        themeButtons.forEach((button) => {
+          const theme = button.dataset.theme;
+          if (!theme) return;
+          const symbol = (button.textContent || '').trim();
+          const title = button.getAttribute('title') || '';
+          buttonMeta.set(theme, { symbol, title });
+        });
+
         const THEME_COLORS = {
-          sand: '#F4F1ED',
+          sand: '#fff4d2',
           charcoal: 'slategray',
-          bone: "#FDFCFB",
+          bone: '#F2F0EF',
+        };
+
+        let collapseHandler = null;
+        const clearCollapseWatcher = () => {
+          if (!collapseHandler) return;
+          document.removeEventListener('pointermove', collapseHandler);
+          document.removeEventListener('pointerdown', collapseHandler);
+          collapseHandler = null;
+        };
+
+        const toggleExpanded = (on) => {
+          if (on) {
+            clearCollapseWatcher();
+            switcher.classList.add('is-expanded');
+          } else {
+            clearCollapseWatcher();
+            switcher.classList.remove('is-expanded');
+          }
+        };
+
+        const scheduleCollapseWatcher = () => {
+          if (collapseHandler) return;
+          collapseHandler = (event) => {
+            const target = event.target;
+            if (target && switcher.contains(target)) return;
+            toggleExpanded(false);
+          };
+          document.addEventListener('pointermove', collapseHandler);
+          document.addEventListener('pointerdown', collapseHandler);
+        };
+
+        const updateMain = (theme) => {
+          if (!(mainButton instanceof HTMLButtonElement)) return;
+          const meta = buttonMeta.get(theme) ?? buttonMeta.get('moon');
+          if (meta) {
+            mainButton.textContent = meta.symbol;
+            if (meta.title) {
+              mainButton.setAttribute('title', meta.title);
+            }
+          }
+          mainButton.dataset.theme = theme;
+          mainButton.classList.add('is-active');
+          mainButton.setAttribute('aria-pressed', 'true');
         };
 
         const setTheme = (theme, persist = true) => {
@@ -195,24 +258,49 @@ const formatBlogDate = (date: Date) =>
           } else {
             document.documentElement.style.setProperty('--bg-layer-color', THEME_COLORS[theme]);
           }
-          themeButtons.forEach((button) => {
-            button.classList.toggle('is-active', button.dataset.theme === theme);
+
+          menuButtons.forEach((button) => {
+            const isCurrent = button.dataset.theme === theme;
+            button.classList.remove('is-active');
+            button.setAttribute('aria-pressed', String(isCurrent));
           });
+
+          updateMain(theme);
+          clearCollapseWatcher();
+          toggleExpanded(true);
+
+          if (!switcher.matches(':hover') && !switcher.matches(':focus-within')) {
+            toggleExpanded(false);
+          } else {
+            scheduleCollapseWatcher();
+          }
+
           if (persist) {
-            localStorage.setItem('bg-theme', theme);
+            try {
+              localStorage.setItem('bg-theme', theme);
+            } catch (err) {
+              /* ignore */
+            }
           }
         };
 
-        const storedTheme = localStorage.getItem('bg-theme');
-        if (storedTheme) {
-          setTheme(storedTheme, false);
-        } else {
-          setTheme('moon', false);
+        let storedTheme = null;
+        try {
+          storedTheme = localStorage.getItem('bg-theme');
+        } catch (err) {
+          storedTheme = null;
         }
+        const initialTheme =
+          !storedTheme || (storedTheme !== 'moon' && !(storedTheme in THEME_COLORS))
+            ? 'moon'
+            : storedTheme;
+        setTheme(initialTheme, false);
 
         themeButtons.forEach((button) => {
           const theme = button.dataset.theme ?? 'moon';
-          button.addEventListener('click', () => setTheme(theme));
+          button.addEventListener('click', () => {
+            setTheme(theme);
+          });
           button.addEventListener('keydown', (event) => {
             if (event.key === 'Enter' || event.key === ' ') {
               event.preventDefault();
@@ -221,7 +309,16 @@ const formatBlogDate = (date: Date) =>
           });
         });
 
-        const sentinel = document.getElementById('hero-sentinel');
+        switcher.addEventListener('mouseenter', () => toggleExpanded(true));
+        switcher.addEventListener('mouseleave', () => toggleExpanded(false));
+        switcher.addEventListener('focusin', () => toggleExpanded(true));
+        switcher.addEventListener('focusout', (event) => {
+          if (!switcher.contains(event.relatedTarget)) {
+            toggleExpanded(false);
+          }
+        });
+
+const sentinel = document.getElementById('hero-sentinel');
         if (sentinel) {
           const io = new IntersectionObserver(([entry]) => {
             if (!entry) return;
@@ -478,23 +575,41 @@ html {
   pointer-events: none;
   background-image: url('/textures/paper-texture.svg');
   background-size: auto;
-  background-color: var(--bg-layer-color, rgba(224, 231, 248, 0.48));
+  background-color: var(--bg-layer-color, transparent);
 }
 
 .theme-switcher{
   position: fixed;
   bottom: clamp(0.65rem, 2vw, 1.2rem);
   right: clamp(0.75rem, 2.4vw, 2.1rem);
-  display: inline-flex;
-  gap: 0.4rem;
-  padding: 0.4rem 0.55rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(224, 231, 248, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem;
+  border-radius: 12px;
   box-shadow: 0 18px 28px rgba(15, 23, 42, 0.18);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
   z-index: 1201;
+}
+
+.theme-switcher__menu{
+  display: grid;
+  gap: 0.35rem;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(6px) scale(0.96);
+  pointer-events: none;
+  overflow: hidden;
+  transition: opacity 0.24s ease, transform 0.24s ease, max-height 0.24s ease;
+}
+
+.theme-switcher:hover .theme-switcher__menu,
+.theme-switcher.is-expanded .theme-switcher__menu,
+.theme-switcher:focus-within .theme-switcher__menu{
+  max-height: 14rem;
+  opacity: 1;
+  transform: translateY(0.25) scale(1);
+  pointer-events: auto;
 }
 
 .theme-switcher__button{
@@ -511,12 +626,17 @@ html {
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
+.theme-switcher__main{
+  order: 2;
+  font-size: 1.1rem;
+}
+
 .theme-switcher__button:hover,
 .theme-switcher__button:focus-visible{
   background: rgba(224, 231, 248, 0.85);
   color: rgba(15, 23, 42, 0.95);
   transform: translateY(-1px);
-  box-shadow: 0 10px 16px rgba(15, 23, 42, 0.14);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.14);
   outline: none;
 }
 
