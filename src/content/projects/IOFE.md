@@ -3,8 +3,8 @@ title: Initiative on Forest Economy
 summary: Technology charter and applications for creating partnerships between local forest communities, industries, and governments.
 href: https://forestgovernance.in/
 year: 2021
-image: ./IOFE.png
-order: 40
+image: ./images/IOFE.png
+order: 50
 technologies:
   - language: JavaScript
     tools:
