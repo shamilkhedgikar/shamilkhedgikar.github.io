@@ -204,7 +204,7 @@ const formatBlogDate = (date: Date) =>
         });
 
         const THEME_COLORS = {
-          sand: '#fff4d2',
+          sand: '#fff4d1',
           charcoal: 'slategray',
           bone: '#F2F0EF',
         };
@@ -267,13 +267,27 @@ const formatBlogDate = (date: Date) =>
 
           updateMain(theme);
           clearCollapseWatcher();
-          toggleExpanded(true);
 
-          if (!switcher.matches(':hover') && !switcher.matches(':focus-within')) {
+          // I want this to collapse when i move away after selection without clicking outside
+          switcher.classList.remove('is-expanded');
+          scheduleCollapseWatcher();
+
+          let __collapseTimer = window.setTimeout(() => {
             toggleExpanded(false);
-          } else {
-            scheduleCollapseWatcher();
-          }
+            __collapseTimer = null;
+          }, 200);
+
+          // If the user re-enters (pointer or keyboard focus), cancel the timer
+          const __cancelCollapse = () => {
+            if (__collapseTimer) {
+              clearTimeout(__collapseTimer);
+              __collapseTimer = null;
+            }
+            switcher.removeEventListener('pointerenter', __cancelCollapse);
+            switcher.removeEventListener('focusin', __cancelCollapse);
+          };
+          switcher.addEventListener('pointerenter', __cancelCollapse, { once: true });
+          switcher.addEventListener('focusin', __cancelCollapse, { once: true });
 
           if (persist) {
             try {
@@ -858,14 +872,13 @@ html {
   border: 1px solid rgba(224, 231, 248, 0.6);
   background: rgba(255, 255, 255, 0.55);
   color: rgba(15, 23, 42, 0.85);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
 }
 
 .blog-card__entry:hover,
 .blog-card__entry:focus-visible{
   transform: translateY(-1px);
-  border-color: rgba(15, 23, 42, 0.2);
-  box-shadow: 0 12px 18px rgba(15, 23, 42, 0.14);
+  border-color: 1px solid rgba(15,23,42,0.12);
   outline: none;
 }
 
