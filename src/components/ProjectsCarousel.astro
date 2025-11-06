@@ -8,9 +8,18 @@ import { slugify } from '../utils/slugify';
 type ProjectsCollectionEntry = Awaited<ReturnType<typeof getCollection<'projects'>>>[number];
 type ProjectLink = NonNullable<ProjectsCollectionEntry['data']['links']>[number];
 type ProjectTechnology = NonNullable<ProjectsCollectionEntry['data']['technologies']>[number];
-type ProjectCard = Omit<ProjectsCollectionEntry['data'], 'image' | 'links' | 'technologies'> & {
+type ProjectMediaItem = {
+  image: ImageMetadata;
+  alt: string;
+};
+type ProjectCard = Omit<
+  ProjectsCollectionEntry['data'],
+  'image' | 'imageAlt' | 'links' | 'technologies'
+> & {
   id: string;
   image?: ImageMetadata;
+  imageAlt?: string;
+  media: ProjectMediaItem[];
   links?: ProjectLink[];
   technologies?: ProjectTechnology[];
   techSlugs: string[];
@@ -30,17 +39,70 @@ const projects: ProjectCard[] = await Promise.all(
     .sort((a, b) => (b.data.order ?? 0) - (a.data.order ?? 0))
     .map(async (entry) => {
       const { Content } = await entry.render();
-      const { image: rawImage, links, technologies, ...rest } = entry.data;
-      let image: ImageMetadata | undefined;
+      const { image: rawImage, imageAlt: rawImageAlt, links, technologies, ...rest } = entry.data;
 
-      if (typeof rawImage === 'string') {
-        const normalized = rawImage.startsWith('./') ? rawImage.slice(2) : rawImage;
-        const directPath = `../content/projects/${normalized}`;
-        const slugPath = entry.slug ? `../content/projects/${entry.slug}/${normalized}` : undefined;
-        image = imageModules[directPath] ?? (slugPath ? imageModules[slugPath] : undefined);
-      } else if (rawImage && typeof rawImage === 'object' && 'src' in rawImage) {
-        image = rawImage as ImageMetadata;
-      }
+      const toList = <T,>(value: T | T[] | null | undefined): T[] => {
+        if (!value) return [];
+        if (Array.isArray(value)) return value.filter(Boolean) as T[];
+        return [value];
+      };
+
+      const imageValues = toList(rawImage)
+        .flatMap((value) => {
+          if (typeof value === 'string') {
+            return value
+              .split(',')
+              .map((segment) => segment.trim())
+              .filter(Boolean);
+          }
+          return [value];
+        })
+        .filter(Boolean);
+
+      const altValues = toList(rawImageAlt)
+        .flatMap((value) =>
+          typeof value === 'string'
+            ? value
+                .split(',')
+                .map((segment) => segment.trim())
+                .filter(Boolean)
+            : [value],
+        )
+        .filter((value): value is string => typeof value === 'string' && value.length > 0);
+
+      const resolveImage = (value: unknown): ImageMetadata | undefined => {
+        if (!value) return undefined;
+        if (typeof value === 'string') {
+          const normalized = value.startsWith('./') ? value.slice(2) : value.replace(/^\/+/, '');
+          if (!normalized) return undefined;
+          const directPath = `../content/projects/${normalized}`;
+          const slugPath =
+            entry.slug && normalized
+              ? `../content/projects/${entry.slug}/${normalized}`
+              : undefined;
+          return imageModules[directPath] ?? (slugPath ? imageModules[slugPath] : undefined);
+        }
+        if (typeof value === 'object' && value && 'src' in value) {
+          return value as ImageMetadata;
+        }
+        return undefined;
+      };
+
+      const media =
+        imageValues
+          .map((value, index) => {
+            const image = resolveImage(value);
+            if (!image) return null;
+            const fallbackAlt =
+              (typeof rest.title === 'string' && rest.title) || entry.slug || 'Project media';
+            const candidateAlt = altValues[index] ?? altValues[0] ?? fallbackAlt;
+            const alt = candidateAlt.trim().length > 0 ? candidateAlt.trim() : fallbackAlt;
+            return { image, alt } as ProjectMediaItem;
+          })
+          .filter(Boolean) ?? [];
+
+      const image = media[0]?.image;
+      const imageAlt = media[0]?.alt;
 
       const normalisedLinks =
         links?.map((link) => {
@@ -61,6 +123,8 @@ const projects: ProjectCard[] = await Promise.all(
         id: entry.id,
         ...rest,
         image,
+        imageAlt,
+        media,
         links: normalisedLinks,
         technologies,
         Content,
@@ -89,14 +153,38 @@ const projects: ProjectCard[] = await Promise.all(
           {project.year && <span class="project-card__year">{project.year}</span>}
         </header>
         <p class="project-card__summary">{project.summary}</p>
-        {project.image && (
-          <figure class="project-card__media">
-            <Image
-              src={project.image}
-              alt={project.imageAlt ?? project.title}
-              loading="lazy"
-              class="project-card__media-img"
-            />
+        {project.media.length > 0 && (
+          <figure class="project-card__media" data-media>
+            <div class="project-card__media-track" data-media-track>
+              {project.media.map((item, index) => (
+                <div
+                  class="project-card__media-slide"
+                  data-media-slide
+                  data-active={index === 0 ? 'true' : 'false'}
+                >
+                  <Image
+                    src={item.image}
+                    alt={item.alt}
+                    loading="lazy"
+                    class="project-card__media-img"
+                  />
+                </div>
+              ))}
+            </div>
+            {project.media.length > 1 && (
+              <div class="project-card__media-dots" data-media-dots role="tablist">
+                {project.media.map((item, index) => (
+                  <button
+                    type="button"
+                    class="project-card__media-dot"
+                    data-media-dot
+                    role="tab"
+                    aria-selected={index === 0 ? 'true' : 'false'}
+                    aria-label={`Show image ${index + 1} of ${project.media.length}`}
+                  ></button>
+                ))}
+              </div>
+            )}
           </figure>
         )}
         {project.technologies && project.technologies.length > 0 && (
@@ -273,21 +361,69 @@ const projects: ProjectCard[] = await Promise.all(
 
 .project-card__media{
   margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.project-card__media-track{
+  position: relative;
   border-radius: 14px;
   overflow: hidden;
   background: rgba(15, 23, 42, 0.08);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
 }
 
-.project-card__media :where(picture){
+.project-card__media-slide{
+  display: none;
+}
+
+.project-card__media-slide[data-active="true"]{
   display: block;
 }
 
-.project-card__media :where(img){
+.project-card__media-slide :where(picture){
+  display: block;
+}
+
+.project-card__media-slide :where(img){
   display: block;
   width: 100%;
   height: auto;
   object-fit: cover;
+}
+
+.project-card__media-dots{
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.project-card__media-dot{
+  inline-size: 10px;
+  block-size: 10px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(15, 23, 42, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+  opacity: 0.7;
+}
+
+.project-card__media-dot:hover,
+.project-card__media-dot:focus-visible{
+  opacity: 1;
+}
+
+.project-card__media-dot:focus-visible{
+  outline: 2px solid rgba(15, 23, 42, 0.65);
+  outline-offset: 3px;
+}
+
+.project-card__media-dot[aria-selected="true"]{
+  transform: scale(1.28);
+  background: rgba(15, 23, 42, 0.85);
+  opacity: 1;
 }
 
 .project-card__tags{
@@ -536,7 +672,20 @@ const projects: ProjectCard[] = await Promise.all(
 }
 
 .project-card--overlay .project-card__media{
+  gap: 0.75rem;
+}
+
+.project-card--overlay .project-card__media-track{
   border-radius: 16px;
+}
+
+.project-card--overlay .project-card__media-dots{
+  display: inline-flex;
+}
+
+.project-card--overlay .project-card__media-dot{
+  inline-size: 11px;
+  block-size: 11px;
 }
 
 .project-card--overlay .project-card__cta{

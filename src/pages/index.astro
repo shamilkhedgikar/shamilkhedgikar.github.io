@@ -389,6 +389,71 @@ const sentinel = document.getElementById('hero-sentinel');
         const overlayBackdrop = overlay?.querySelector('[data-overlay-backdrop]');
         let activeCardId = null;
         let lastFocusedElement = null;
+        const mediaInitialized = new WeakSet();
+
+        const initCardMedia = (card) => {
+          if (!(card instanceof HTMLElement)) return;
+          if (mediaInitialized.has(card)) return;
+          const media = card.querySelector('[data-media]');
+          if (!(media instanceof HTMLElement)) return;
+          const track = media.querySelector('[data-media-track]');
+          if (!(track instanceof HTMLElement)) {
+            mediaInitialized.add(card);
+            return;
+          }
+          const slides = Array.from(track.querySelectorAll('[data-media-slide]'));
+          if (slides.length === 0) {
+            mediaInitialized.add(card);
+            return;
+          }
+          const dots = Array.from(media.querySelectorAll('[data-media-dot]'));
+
+          const applyVisibility = (current) => {
+            slides.forEach((slide, index) => {
+              const isActive = index === current;
+              slide.setAttribute('data-active', isActive ? 'true' : 'false');
+              slide.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+            });
+            dots.forEach((dot, index) => {
+              const isActive = index === current;
+              dot.setAttribute('aria-selected', isActive ? 'true' : 'false');
+              dot.setAttribute('tabindex', isActive ? '0' : '-1');
+              dot.classList.toggle('is-active', isActive);
+            });
+          };
+
+          if (slides.length <= 1 || dots.length === 0) {
+            applyVisibility(0);
+            mediaInitialized.add(card);
+            return;
+          }
+
+          let index = slides.findIndex((slide) => slide.getAttribute('data-active') === 'true');
+          if (index < 0) index = 0;
+          applyVisibility(index);
+
+          const setActive = (nextIndex) => {
+            const total = slides.length;
+            index = ((nextIndex % total) + total) % total;
+            applyVisibility(index);
+          };
+
+          dots.forEach((dot, dotIndex) => {
+            if (!(dot instanceof HTMLButtonElement)) return;
+            dot.addEventListener('click', () => setActive(dotIndex));
+            dot.addEventListener('keydown', (event) => {
+              if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                setActive(index + 1);
+              } else if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                setActive(index - 1);
+              }
+            });
+          });
+
+          mediaInitialized.add(card);
+        };
 
         const rafThrottle = (callback) => {
           let ticking = false;
@@ -447,6 +512,7 @@ const sentinel = document.getElementById('hero-sentinel');
           });
           overlayContent.innerHTML = '';
           overlayContent.appendChild(clone);
+          initCardMedia(clone);
           overlay.removeAttribute('hidden');
           overlay.setAttribute('aria-hidden', 'false');
           overlay.classList.add('is-open');
@@ -507,6 +573,7 @@ const sentinel = document.getElementById('hero-sentinel');
           window.addEventListener('resize', updateArrowsThrottled);
 
           cards.forEach((card) => {
+            initCardMedia(card);
             card.addEventListener('click', (event) => {
               const target = event.target;
               if (target instanceof HTMLElement && target.closest('a')) {
