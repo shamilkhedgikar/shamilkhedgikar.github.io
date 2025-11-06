@@ -41,34 +41,52 @@ const projects: ProjectCard[] = await Promise.all(
       const { Content } = await entry.render();
       const { image: rawImage, imageAlt: rawImageAlt, links, technologies, ...rest } = entry.data;
 
-      const toList = <T,>(value: T | T[] | null | undefined): T[] => {
-        if (!value) return [];
-        if (Array.isArray(value)) return value.filter(Boolean) as T[];
-        return [value];
-      };
-
-      const imageValues = toList(rawImage)
-        .flatMap((value) => {
+      const collectMediaSources = (input: unknown): Array<string | ImageMetadata> => {
+        const results: Array<string | ImageMetadata> = [];
+        const visit = (value: unknown) => {
+          if (value == null) return;
+          if (Array.isArray(value)) {
+            value.forEach(visit);
+            return;
+          }
           if (typeof value === 'string') {
-            return value
+            value
               .split(',')
               .map((segment) => segment.trim())
-              .filter(Boolean);
+              .filter(Boolean)
+              .forEach((segment) => results.push(segment));
+            return;
           }
-          return [value];
-        })
-        .filter(Boolean);
+          if (typeof value === 'object' && 'src' in (value as Record<string, unknown>)) {
+            results.push(value as ImageMetadata);
+          }
+        };
+        visit(input);
+        return results;
+      };
 
-      const altValues = toList(rawImageAlt)
-        .flatMap((value) =>
-          typeof value === 'string'
-            ? value
-                .split(',')
-                .map((segment) => segment.trim())
-                .filter(Boolean)
-            : [value],
-        )
-        .filter((value): value is string => typeof value === 'string' && value.length > 0);
+      const collectAltTexts = (input: unknown): string[] => {
+        const results: string[] = [];
+        const visit = (value: unknown) => {
+          if (value == null) return;
+          if (Array.isArray(value)) {
+            value.forEach(visit);
+            return;
+          }
+          if (typeof value === 'string') {
+            value
+              .split(',')
+              .map((segment) => segment.trim())
+              .filter(Boolean)
+              .forEach((segment) => results.push(segment));
+          }
+        };
+        visit(input);
+        return results;
+      };
+
+      const imageValues = collectMediaSources(rawImage);
+      const altValues = collectAltTexts(rawImageAlt);
 
       const resolveImage = (value: unknown): ImageMetadata | undefined => {
         if (!value) return undefined;

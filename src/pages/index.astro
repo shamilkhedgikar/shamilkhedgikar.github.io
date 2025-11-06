@@ -452,6 +452,15 @@ const sentinel = document.getElementById('hero-sentinel');
             });
           });
 
+          if (card.classList.contains('project-card--overlay')) {
+            media.addEventListener('click', (event) => {
+              if (event.target instanceof HTMLElement && event.target.closest('[data-media-dot]')) {
+                return;
+              }
+              setActive(index + 1);
+            });
+          }
+
           mediaInitialized.add(card);
         };
 
