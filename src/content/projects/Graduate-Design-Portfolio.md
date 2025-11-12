@@ -4,8 +4,8 @@ summary: Interdisciplinary projects in Technology, Urban Design, Planning and Ar
 href: https://aap.cornell.edu/sites/default/files/upload/Steindatabase2.html
 year: 2016
 order: 10
-image: ./images/projects_2011-2016.png, ./images/india_data_portal.png
-imageAlt: Interactive map of Clarence Stein Institute projects across the globe, India Data Portal dashboard view
+image: ./images/projects_2011-2016.png, ./images/grad-portfolio-01.png, ./images/grad-portfolio-02.png, ./images/grad-portfolio-03.png, ./images/grad-portfolio-04.png, ./images/grad-portfolio-05.png, ./images/grad-portfolio-06.png, ./images/grad-portfolio-07.png 
+imageAlt: Grad Portfolio Projects at a Glance, ULI Hines 1, ULI Hines 2, Design Connect 1, Design Connect 2, Site Plan + UD, UG Thesis 1, UG Thesis 2
 technologies:
   - language: Adobe Creative Suite
     tools:

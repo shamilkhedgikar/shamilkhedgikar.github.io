@@ -4,8 +4,8 @@ summary: The People First Project was a placemaking and design initiative in Det
 href: https://aap.cornell.edu/sites/default/files/upload/Steindatabase2.html
 year: 2016
 order: 15
-image: ./images/peoplefirstproject.png
-imageAlt: People First Project News coverage
+image: ./images/peoplefirstproject.png, ./images/corktown-3.png, ./images/corktown-1.png, ./images/corktown-2.png
+imageAlt: People First Project News coverage, People First Project Snapshot, Corktown Place Plan, Corktown Landscape Plan
 technologies:
   - language: Adobe Creative Suite
     tools:

@@ -495,6 +495,21 @@ const sentinel = document.getElementById('hero-sentinel');
           overlay.classList.remove('is-open');
           overlay.setAttribute('aria-hidden', 'true');
           document.body.classList.remove('project-overlay-open');
+          if (overlayContent) {
+            overlayContent.querySelectorAll('[data-media]').forEach((media) => {
+              if (!(media instanceof HTMLElement)) return;
+              media.querySelectorAll('[data-media-slide]').forEach((slide, index) => {
+                slide.setAttribute('data-active', index === 0 ? 'true' : 'false');
+                slide.setAttribute('aria-hidden', index === 0 ? 'false' : 'true');
+              });
+              media.querySelectorAll('[data-media-dot]').forEach((dot, index) => {
+                if (!(dot instanceof HTMLElement)) return;
+                dot.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+                dot.setAttribute('tabindex', index === 0 ? '0' : '-1');
+                dot.classList.toggle('is-active', index === 0);
+              });
+            });
+          }
           window.setTimeout(() => {
             overlay?.setAttribute('hidden', 'true');
             if (overlayContent) {

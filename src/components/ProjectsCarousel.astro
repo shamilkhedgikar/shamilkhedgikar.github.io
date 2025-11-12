@@ -213,16 +213,23 @@ const projects: ProjectCard[] = await Promise.all(
           </ul>
         )}
         <div class="project-card__cta">
-          <a
-            class="project-card__link"
-            href={project.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-primary-link
-          >
-            Explore
-            <span aria-hidden="true" class="project-card__arrow">&#128279;</span>
-          </a>
+          {project.href ? (
+            <a
+              class="project-card__link"
+              href={project.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-primary-link
+            >
+              Explore
+              <span aria-hidden="true" class="project-card__arrow">&#128279;</span>
+            </a>
+          ) : (
+            <button type="button" class="project-card__link project-card__link--overlay-trigger">
+              Explore
+              <span aria-hidden="true" class="project-card__arrow">&#128279;</span>
+            </button>
+          )}
           {project.links && project.links.length > 0 && (
             <div class="project-card__links" aria-label="Supplementary links">
               {project.links.map((link) => (
@@ -487,12 +494,19 @@ const projects: ProjectCard[] = await Promise.all(
   border: 1px solid rgba(15, 23, 42, 0.12);
   background: rgba(255, 255, 255, 0.65);
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  cursor: pointer;
+  appearance: none;
 }
 
 .project-card__link:hover{
   transform: translateY(-2px);
   box-shadow: 0 12px 20px rgba(15, 23, 42, 0.16);
   background: rgba(255, 255, 255, 0.9);
+}
+
+.project-card__link--overlay-trigger{
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.78);
 }
 
 .project-card__links{
