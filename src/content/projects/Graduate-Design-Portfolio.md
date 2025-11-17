@@ -16,5 +16,8 @@ technologies:
   - language: GIS
     tools:
       - ArcGIS Pro, ArcMap, QGIS  
+  - language: Programming
+    tools:
+      - Python, R
 ---
-Work completed during internships and coursework at Cornell University and the School of Planning and Architecture Delhi.
+Work completed during internships and coursework at Cornell University and the School of Planning and Architecture Delhi. Details available on request.

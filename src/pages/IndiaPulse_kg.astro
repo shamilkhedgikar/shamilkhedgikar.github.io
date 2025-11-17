@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>IndiaPulse@ISB Knowledge Graph</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Roboto, sans-serif;
+      background-color: #020617;
+      background-image: radial-gradient(circle at 20% 20%, #0f172a 0%, #020617 55%, #000 100%);
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      color: #f1f5f9;
+    }
+
+    body {
+      padding-top: 88px;
+      padding-right: 0;
+      box-sizing: border-box;
+    }
+
+    svg {
+      width: 100vw;
+      height: calc(100vh - 88px);
+      cursor: grab;
+      background-image: linear-gradient(rgba(148,163,184,0.04) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(148,163,184,0.04) 1px, transparent 1px);
+      background-size: 80px 80px;
+      display: block;
+    }
+
+    svg:active {
+      cursor: grabbing;
+    }
+
+    #pageHeader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      background: rgba(2,6,23,0.92);
+      border-bottom: 1px solid rgba(148,163,184,0.25);
+      box-shadow: 0 10px 30px rgba(2,6,23,0.65);
+      z-index: 30;
+      backdrop-filter: blur(8px);
+      box-sizing: border-box;
+    }
+
+    .page-header__text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .page-header__actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .link {
+      fill: none;
+      stroke-width: 1.15px;
+      stroke-linecap: round;
+    }
+
+    .node-group {
+      cursor: pointer;
+    }
+
+    .node-fo {
+      pointer-events: none;
+    }
+
+    .node-rect {
+      stroke-width: 1.3px;
+      filter: drop-shadow(0 4px 14px rgba(15,23,42,0.45));
+      transition: stroke 180ms ease, fill 180ms ease, transform 200ms ease;
+    }
+
+    .node-group:hover .node-rect {
+      filter: drop-shadow(0 8px 20px rgba(56,189,248,0.35));
+      transform: translateY(-2px);
+    }
+
+    .node-label {
+      display: block;
+      font-size: 12px;
+      line-height: 1.35;
+      color: #f8fafc;
+      font-weight: 500;
+      font-family: inherit;
+      letter-spacing: 0.01em;
+      pointer-events: none;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
+    .node-toggle circle {
+      stroke-width: 1.2px;
+    }
+
+    .node-toggle text {
+      fill: #f8fafc;
+      font-size: 16px;
+      font-weight: 800;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+
+    .tooltip {
+      position: absolute;
+      pointer-events: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: rgba(15,23,42,0.95);
+      color: #f8fafc;
+      font-size: 12px;
+      border: 1px solid rgba(148,163,184,0.4);
+      white-space: nowrap;
+      display: none;
+      z-index: 10;
+      box-shadow: 0 10px 25px rgba(2,6,23,0.35);
+    }
+
+    .graph-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: rgba(15,23,42,0.8);
+      color: #f8fafc;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: background 160ms ease, border 160ms ease;
+    }
+
+    .graph-toggle:hover {
+      background: rgba(30,64,175,0.9);
+      border-color: rgba(191,219,254,0.9);
+    }
+
+    .node-selected .node-rect {
+      stroke-width: 2.4px;
+      filter: drop-shadow(0 6px 18px rgba(14,165,233,0.4));
+    }
+
+  </style>
+</head>
+<body>
+<header id="pageHeader">
+  <div class="page-header__text">
+    <div class="page-title">IndiaPulse@ISB Knowledge Graph</div>
+  </div>
+  <div class="page-header__actions">
+    <button id="graphToggle" class="graph-toggle" type="button" aria-label="Expand or collapse all nodes">&lt;&gt;</button>
+  </div>
+</header>
+<div id="tooltip" class="tooltip"></div>
+<svg id="graph"></svg>
+
+<!-- D3.js -->
+<script type="module">
+  import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+  // ---------------------------------------------------------------------------
+  // 1. Adjacency list describing the mind map
+  // ---------------------------------------------------------------------------
+
+  const adjacency = {
+    "IndiaPulse@ISB: Insights and Intelligence from Real Time Data": [
+      "Methodology & Scope",
+      "Economic Activity & Recovery (Macro)",
+      "Labour & Jobs",
+      "Regional & State-Specific Insights",
+      "Other Key Themes"
+    ],
+
+    "Methodology & Scope": [
+      "Generates insights from real-time data",
+      "High-frequency indicators",
+      "Spatial Granularity",
+      "Data Sources"
+    ],
+
+    "Data Sources": [
+      "Various public government reports",
+      "Central Groundwater Board (2011-2017)",
+      "Google COVID-19 Community Mobility Reports",
+      "Crowdsourced COVID data (covid19india.org)",
+      "Annual Survey of Industries (MSPI)",
+      "MNGREGA Mapping of Assets and Beneficiaries",
+      "Mission Antyodaya data",
+      "E-Way Bill data from GSTN"
+    ],
+
+    "Economic Activity & Recovery (Macro)": [
+      "GST Collection",
+      "Manufacturing/Trade (E-Way Bills)",
+      "Electricity Consumption",
+      "Economic Activity Indicators (Tamil Nadu Pulse)"
+    ],
+
+    "GST Collection": [
+      "Began to Weaken in Feb 2020",
+      "Worst Month: April 2020 during 1st lockdown",
+      "Recovery began by July 2020",
+      "By Oct 2020, most states near pre-COVID levels",
+      "Faltering recovery in some states by Dec 2020"
+    ],
+
+    "Manufacturing/Trade (E-Way Bills)": [
+      "V-shaped recovery observed pan-India",
+      "Fastest recovery: Telangana, Andhra Pradesh, Punjab (by June 2020)",
+      "Most States recovered by September",
+      "Used to measure value of traded Goods"
+    ],
+
+    "Electricity Consumption": [
+      "Proxy for 'Current' Economic Activity",
+      "Andhra Pradesh Data (2019 vs 2020)",
+      "Leading Indicator of Economic Activity"
+    ],
+
+    "Economic Activity Indicators (Tamil Nadu Pulse)": [
+      "Co-incident Indicators: GST, Company Registrations, E-way Bills (V-shaped recovery)",
+      "Leading Indicators: Agricultural Market Value",
+      "Lagging Indicators: Electricity Consumption"
+    ],
+
+    "Labour & Jobs": [
+      "MNREGA Demand (Informal Jobs)",
+      "Jobs, Workers and Skills",
+      "Women's Participation in Labour Force",
+      "Production Linked Incentive (PLI) Scheme"
+    ],
+
+    "MNREGA Demand (Informal Jobs)": [
+      "Proxy for Informal Employment",
+      "1-2 months lag to economic downturn",
+      "Demand varies widely by state",
+      "Informal jobs not fully recovered to 2019 level by end of 2020"
+    ],
+
+    "Jobs, Workers and Skills": [
+      "Highest Manufacturing Jobs: TN, Gujarat, Maharashtra",
+      "Skills Center Concentration: Gujarat, Maharashtra, Kerela",
+      "Future Jobs Location: Around Industrial Corridors/Golden Quadrilateral",
+      "Need to develop more skill centers near corridors and industrial clusters"
+    ],
+
+    "Women's Participation in Labour Force": [
+      "High Participation: North Eastern and Southern States (Manipur, Kerela)",
+      "Low Participation: Northern/Central states (Maharashtra is surprisingly low)",
+      "High participation does not correlate with lower wage differentials"
+    ],
+
+    "Production Linked Incentive (PLI) Scheme": [
+      "Sectors: Pharmaceuticals, Automobiles, Telecom, Advanced Chemistry Cell Batteries (Telangana/HP/WB)",
+      "Textiles, Food Projects (West Bengal), Solar Modules, White Goods, Speciality Steel (East Coast/Chhatisgarh)",
+      "Incentivizes Production and Jobs"
+    ],
+
+    "Regional & State-Specific Insights": [
+      "Tamil Nadu (TN Pulse)",
+      "Himachal Pradesh (HP Pulse)",
+      "Andhra Pradesh (AP Pulse)"
+    ],
+
+    "Tamil Nadu (TN Pulse)": [
+      "Global Exports (2018-2019)",
+      "Infrastructure Metrics (District Level)",
+      "MSME Location Strategy"
+    ],
+
+    "Global Exports (2018-2019)": [
+      "Top 5 Industries: Road Vehicles, Apparel, Machinery, Electrical Equipment, Footwear",
+      "Top 5 Destinations: USA, Germany, UK, China, UAE"
+    ],
+
+    "Infrastructure Metrics (District Level)": [
+      "Domains: Accessibility, Electricity/Data Networks, Natural Resources (Water), Financial Infrastructure",
+      "Compares district-wide performance",
+      "Challenges myth of Southern TN underdevelopment"
+    ],
+
+    "MSME Location Strategy": [
+      "Identifies 3 Cluster Types (A, B, C) based on infrastructure reliance",
+      "Highlights areas with government incentives"
+    ],
+
+    "Himachal Pradesh (HP Pulse)": [
+      "Welfare Outcomes/Rural Infrastructure (Block Ranking)",
+      "5 Key Metrics used for economic health ranking",
+      "Observation: Higher infrastructure benchmarks correlate with lower MNREGA demand",
+      "Lower regions of HP have better infrastructure"
+    ],
+
+    "Andhra Pradesh (AP Pulse)": [
+      "Economic Activity (Electricity Consumption)",
+      "Spatial Granularity (1km Hexagon coded by industry)",
+      "2020 activity stayed flat around October (did not pick up fully)"
+    ],
+
+    "Other Key Themes": [
+      "Water Availability and Scarcity",
+      "Agricultural Production",
+      "Urbanization",
+      "Community Mobility (COVID-19)"
+    ],
+
+    "Water Availability and Scarcity": [
+      "Groundwater scarcity increased in coverage/intensity (2011-2017)",
+      "Scarce region: Maharashtra, AP, TN, UP, Rajasthan",
+      "Most water-scarce regions overlap with monsoon dependent areas",
+      "Scarcity affects potential for industrial development"
+    ],
+
+    "Agricultural Production": [
+      "Fertilizer sales remained similar (2019 vs 2020)",
+      "Traded value of produce dipped (Lockdown effect in April 2020)",
+      "Variations by state (Odisha largely unaffected; Maharashtra)",
+      "Punjab dip late 2020 (Farmer's strike potential reason)"
+    ],
+
+    "Urbanization": [
+      "Metrics: Radiance of Night Lights, Spatial Spread of Urban Area",
+      "Post-2004, urban areas outgrew 2011 Census Tier definitions",
+      "Examples: Surat, Agra, Rajmundhry",
+      "Location/Geographical Barriers affect growth direction (eg. Coastal vs Landlocked)"
+    ],
+
+    "Community Mobility (COVID-19)": [
+      "Analyzes mobility in 6 public place categories (Workplaces, Residential, Commercial)",
+      "Sudden deviations coincide with lockdown/unlock timeframes",
+      "Clear transition from workplaces to residential areas observed",
+      "Spikes coincide with local case rise/fall"
+    ]
+  };
+
+  const NOTES_PANEL_WIDTH = 0;
+  const HEADER_HEIGHT = 88;
+
+  const rootTheme = {
+    fillPrimary: "#f59e0b",
+    fillSecondary: "#fcd34d",
+    stroke: "#fcd34d",
+    link: "rgba(251,191,36,0.55)"
+  };
+
+  const branchPalette = [
+    { fillPrimary: "#0ea5e9", fillSecondary: "#38bdf8", stroke: "#7dd3fc", link: "rgba(56,189,248,0.7)" },
+    { fillPrimary: "#10b981", fillSecondary: "#34d399", stroke: "#6ee7b7", link: "rgba(45,212,191,0.65)" },
+    { fillPrimary: "#a855f7", fillSecondary: "#c084fc", stroke: "#d8b4fe", link: "rgba(192,132,252,0.7)" },
+    { fillPrimary: "#f97316", fillSecondary: "#fb923c", stroke: "#fdba74", link: "rgba(249,115,22,0.65)" },
+    { fillPrimary: "#f43f5e", fillSecondary: "#fb7185", stroke: "#fda4af", link: "rgba(244,63,94,0.65)" }
+  ];
+  const defaultBranchTheme = { fillPrimary: "#14b8a6", fillSecondary: "#2dd4bf", stroke: "#5eead4", link: "rgba(45,212,191,0.7)" };
+  let branchPaletteIndex = 0;
+  const branchThemeCache = new Map();
+
+  function resetBranchPalette() {
+    branchPaletteIndex = 0;
+    branchThemeCache.clear();
+  }
+
+  function themeForBranch(name) {
+    if (!branchThemeCache.has(name)) {
+      const theme = branchPalette[branchPaletteIndex % branchPalette.length] || defaultBranchTheme;
+      branchThemeCache.set(name, theme);
+      branchPaletteIndex += 1;
+    }
+    return branchThemeCache.get(name);
+  }
+
+  function assignThemes(node, paletteIndex = 0, inheritedTheme = rootTheme) {
+    let currentTheme = inheritedTheme;
+    if (node.depth === 0) {
+      currentTheme = rootTheme;
+    } else if (node.depth === 1) {
+      currentTheme = themeForBranch(node.data.name);
+    }
+    node.theme = currentTheme;
+
+    const allChildren = [
+      ...(node.children || []),
+      ...(node._children || [])
+    ];
+    allChildren.forEach((child) => {
+      assignThemes(child, paletteIndex, currentTheme);
+    });
+  }
+
+  function getTheme(node) {
+    return node.theme || rootTheme;
+  }
+
+  function getFillColor(node) {
+    const theme = getTheme(node);
+    if (node.depth === 0) return theme.fillPrimary;
+    if (node.depth === 1) return theme.fillPrimary;
+    return theme.fillSecondary;
+  }
+
+  function getStrokeColor(node) {
+    const theme = getTheme(node);
+    return node.depth <= 1 ? theme.stroke : theme.fillSecondary;
+  }
+
+  function getLinkColor(node) {
+    const theme = getTheme(node);
+    return theme.link;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 2. Convert adjacency list -> nodes & links
+  // ---------------------------------------------------------------------------
+
+  const rootId = "IndiaPulse@ISB: Insights and Intelligence from Real Time Data";
+
+  function buildTree(nodeId, adjacencyMap, visited = new Set()) {
+    const entry = { name: nodeId, children: [] };
+    if (visited.has(nodeId)) {
+      return entry;
+    }
+    visited.add(nodeId);
+    const childIds = adjacencyMap[nodeId] || [];
+    entry.children = childIds.map(child => buildTree(child, adjacencyMap, visited));
+    return entry;
+  }
+
+  const root = d3.hierarchy(buildTree(rootId, adjacency));
+  root.x0 = 0;
+  root.y0 = 0;
+  resetBranchPalette();
+  assignThemes(root);
+
+  resetBranchPalette();
+  assignThemes(root);
+
+  const nodeBox = { width: 220, minHeight: 44 };
+  const radialStep = 180;
+  let nodeIndex = 0;
+
+  let width = window.innerWidth - NOTES_PANEL_WIDTH;
+  let height = window.innerHeight - HEADER_HEIGHT;
+  let centerX = width / 2;
+  let centerY = height / 2;
+
+  const svg = d3.select("#graph")
+    .attr("width", width)
+    .attr("height", height);
+
+  const scene = svg.append("g");
+  const content = scene.append("g");
+  const linkLayer = content.append("g").attr("class", "links");
+  const nodeLayer = content.append("g").attr("class", "nodes");
+
+  const radialLink = d3.linkRadial()
+    .angle(d => d.angle)
+    .radius(d => d.radius);
+
+  const zoom = d3.zoom()
+    .scaleExtent([0.4, 2.4])
+    .on("zoom", event => scene.attr("transform", event.transform));
+
+  svg.call(zoom);
+
+  function positionContent() {
+    content.attr("transform", `translate(${centerX},${centerY})`);
+  }
+  positionContent();
+
+  const tooltip = document.getElementById("tooltip");
+  const graphToggleBtn = document.getElementById("graphToggle");
+  let selectedNodeName = null;
+  let graphFullyExpanded = false;
+
+  collapse(root);
+  update(root);
+
+  function collapse(node) {
+    if (node.children) {
+      node._children = node.children;
+      node._children.forEach(collapse);
+      node.children = null;
+    }
+  }
+
+  function expand(node) {
+    if (node._children) {
+      node.children = node._children;
+      node._children = null;
+    }
+  }
+
+  function expandAll(node) {
+    if (node._children) {
+      node.children = node._children;
+      node._children = null;
+    }
+    (node.children || []).forEach(expandAll);
+  }
+
+  graphToggleBtn.addEventListener("click", () => {
+    if (graphFullyExpanded) {
+      collapse(root);
+      graphFullyExpanded = false;
+      graphToggleBtn.textContent = "<>";
+    } else {
+      expandAll(root);
+      graphFullyExpanded = true;
+      graphToggleBtn.textContent = "><";
+    }
+    update(root);
+  });
+
+  function refreshSelectionHighlight() {
+    nodeLayer.selectAll("g.node-group")
+      .classed("node-selected", d => selectedNodeName && d.data.name === selectedNodeName);
+  }
+
+  function clearSelectedNode() {
+    selectedNodeName = null;
+    refreshSelectionHighlight();
+  }
+
+  function selectNode(node) {
+    selectedNodeName = node.data.name;
+    refreshSelectionHighlight();
+  }
+
+  function toggle(node) {
+    if (node.children) {
+      node.children.forEach(collapse);
+      collapse(node);
+    } else {
+      expand(node);
+    }
+    update(node);
+  }
+
+  svg.on("click.noteClear", () => {
+    clearSelectedNode();
+  });
+
+  function project(angle, radius) {
+    const adjusted = angle - Math.PI / 2;
+    return [
+      radius * Math.cos(adjusted),
+      radius * Math.sin(adjusted)
+    ];
+  }
+
+  function hasVisibleChildren(node) {
+    return node.children && node.children.length;
+  }
+
+  function hasAnyChildren(node) {
+    return hasVisibleChildren(node) || (node._children && node._children.length);
+  }
+
+  function computeWeights(node) {
+    const children = node.children || [];
+    if (!children.length) {
+      node.weight = 1;
+      return node.weight;
+    }
+    node.weight = children.reduce((sum, child) => sum + computeWeights(child), 0);
+    return node.weight;
+  }
+
+  function assignAngles(node, startAngle, endAngle, depth) {
+    const span = endAngle - startAngle;
+    node.minAngle = startAngle;
+    node.maxAngle = endAngle;
+    node.angle = startAngle + span / 2;
+    const isTerminal = !hasAnyChildren(node);
+    node.radius = depth * radialStep + (isTerminal ? radialStep * 2 : 0);
+    const [x, y] = project(node.angle, node.radius);
+    node.xPos = x;
+    node.yPos = y;
+
+    const children = hasVisibleChildren(node) ? node.children : [];
+    if (!children.length) return;
+
+    const usableSpan = span * 0.92;
+    let current = startAngle + (span - usableSpan) / 2;
+    const totalWeight = children.reduce((sum, child) => sum + (child.weight || 1), 0);
+    children.forEach(child => {
+      const fraction = (child.weight || 1) / totalWeight;
+      const childSpan = usableSpan * fraction;
+      assignAngles(child, current, current + childSpan, depth + 1);
+      current += childSpan;
+    });
+  }
+
+  function sizeNodes(selection) {
+    selection.each(function(d) {
+      const group = d3.select(this);
+      const rect = group.select("rect");
+      const fo = group.select("foreignObject");
+      const div = fo.select(".node-label").node();
+      if (!div) return;
+
+      div.style.height = "auto";
+      const measured = div.scrollHeight;
+      const boxHeight = Math.max(nodeBox.minHeight, measured + 14);
+      d.boxHeight = boxHeight;
+
+      rect
+        .attr("height", boxHeight)
+        .attr("y", -boxHeight / 2);
+
+      const innerHeight = Math.max(1, boxHeight - 12);
+      fo
+        .attr("height", innerHeight)
+        .attr("y", -innerHeight / 2);
+    });
+  }
+
+  function update(source) {
+    resetBranchPalette();
+    assignThemes(root);
+    computeWeights(root);
+    assignAngles(root, 0, Math.PI * 2, 0);
+
+    const nodes = root.descendants();
+    const links = root.links();
+
+    const sourceAngle = source.x0 !== undefined ? source.x0 : (source.angle || 0);
+    const sourceRadius = source.y0 !== undefined ? source.y0 : (source.radius || 0);
+    const [sx, sy] = project(sourceAngle, sourceRadius);
+
+    const transition = svg.transition().duration(500);
+
+    const nodeSelection = nodeLayer.selectAll("g.node-group")
+      .data(nodes, d => d.id || (d.id = ++nodeIndex));
+
+    const nodeEnter = nodeSelection.enter()
+      .append("g")
+      .attr("class", d => `node-group depth-${d.depth}`)
+      .attr("transform", `translate(${sx},${sy})`)
+      .attr("opacity", 0)
+      .on("click", (event, d) => {
+        event.stopPropagation();
+        selectNode(d);
+      })
+      .on("mouseover", (event, d) => {
+        d3.select(event.currentTarget).raise();
+        tooltip.style.display = "block";
+        tooltip.textContent = d.data.name;
+      })
+      .on("mousemove", event => {
+        tooltip.style.left = (event.pageX + 12) + "px";
+        tooltip.style.top = (event.pageY + 12) + "px";
+      })
+      .on("mouseout", () => {
+        tooltip.style.display = "none";
+      });
+
+    nodeEnter.append("rect")
+      .attr("class", "node-rect")
+      .attr("width", nodeBox.width)
+      .attr("height", nodeBox.minHeight)
+      .attr("x", -nodeBox.width / 2)
+      .attr("y", -nodeBox.minHeight / 2)
+      .attr("rx", 10)
+      .attr("ry", 10)
+      .attr("fill", d => getFillColor(d))
+      .attr("stroke", d => getStrokeColor(d));
+
+    const labelContainer = nodeEnter.append("foreignObject")
+      .attr("class", "node-fo")
+      .attr("x", -(nodeBox.width / 2) + 10)
+      .attr("y", -(nodeBox.minHeight - 12) / 2)
+      .attr("width", nodeBox.width - 20)
+      .attr("height", nodeBox.minHeight - 12);
+
+    labelContainer.append("xhtml:div")
+      .attr("class", "node-label")
+      .text(d => d.data.name);
+
+    const toggleButton = nodeEnter.append("g")
+      .attr("class", "node-toggle")
+      .on("click", (event, d) => {
+        event.stopPropagation();
+        toggle(d);
+      });
+
+    toggleButton.append("circle")
+      .attr("r", 9)
+      .attr("fill", d => getFillColor(d))
+      .attr("stroke", d => getStrokeColor(d));
+
+    toggleButton.append("text")
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "middle")
+      .attr("fill", "#fff");
+
+    sizeNodes(nodeEnter);
+
+    const nodeUpdate = nodeEnter.merge(nodeSelection);
+
+    nodeUpdate.transition(transition)
+      .attr("transform", d => `translate(${d.xPos},${d.yPos})`)
+      .attr("opacity", 1);
+
+    nodeUpdate.select("rect")
+      .attr("width", nodeBox.width)
+      .attr("x", -nodeBox.width / 2)
+      .attr("height", d => d.boxHeight || nodeBox.minHeight)
+      .attr("y", d => -(d.boxHeight || nodeBox.minHeight) / 2)
+      .attr("fill", d => getFillColor(d))
+      .attr("stroke", d => getStrokeColor(d));
+
+    nodeUpdate.select("foreignObject")
+      .attr("x", -(nodeBox.width / 2) + 10)
+      .attr("width", nodeBox.width - 20)
+      .attr("height", d => Math.max(1, (d.boxHeight || nodeBox.minHeight) - 12))
+      .attr("y", d => -(Math.max(1, (d.boxHeight || nodeBox.minHeight) - 12)) / 2);
+
+    nodeUpdate.select(".node-toggle")
+      .style("display", d => (d.children || d._children) ? "block" : "none")
+      .attr("transform", d => {
+        const direction = Math.cos(d.angle - Math.PI / 2) >= 0 ? 1 : -1;
+        return `translate(${direction * (nodeBox.width / 2 + 14)},0)`;
+      });
+
+    nodeUpdate.select(".node-toggle circle")
+      .attr("fill", d => getFillColor(d))
+      .attr("stroke", d => getStrokeColor(d));
+
+    nodeUpdate.select(".node-toggle text")
+      .text(d => d.children ? "-" : "+");
+
+    nodeSelection.exit().transition(transition)
+      .attr("transform", `translate(${sx},${sy})`)
+      .attr("opacity", 0)
+      .remove();
+
+    const linkSelection = linkLayer.selectAll("path")
+      .data(links, d => d.target.id);
+
+    const linkEnter = linkSelection.enter()
+      .append("path")
+      .attr("class", "link")
+      .attr("fill", "none")
+      .attr("stroke", d => getLinkColor(d.target))
+      .attr("d", radialLink({
+        source: { angle: sourceAngle, radius: sourceRadius },
+        target: { angle: sourceAngle, radius: sourceRadius }
+      }));
+
+    linkSelection.merge(linkEnter).transition(transition)
+      .attr("fill", "none")
+      .attr("stroke", d => getLinkColor(d.target))
+      .attr("d", d => radialLink({
+        source: { angle: d.source.angle, radius: d.source.radius },
+        target: { angle: d.target.angle, radius: d.target.radius }
+      }));
+
+    linkSelection.exit().transition(transition)
+      .attr("d", radialLink({
+        source: { angle: sourceAngle, radius: sourceRadius },
+        target: { angle: sourceAngle, radius: sourceRadius }
+      }))
+      .remove();
+
+    nodes.forEach(d => {
+      d.x0 = d.angle;
+      d.y0 = d.radius;
+    });
+
+    refreshSelectionHighlight();
+  }
+
+  window.addEventListener("resize", () => {
+    width = window.innerWidth - NOTES_PANEL_WIDTH;
+    height = window.innerHeight - HEADER_HEIGHT;
+    centerX = width / 2;
+    centerY = height / 2;
+    svg.attr("width", width).attr("height", height);
+    positionContent();
+    update(root);
+  });
+
+</script>
+</body>
+</html>

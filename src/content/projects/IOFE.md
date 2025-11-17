@@ -22,13 +22,16 @@ Technology has long been central to the environmental crisis. While efficiency g
 
 Such synergies emerge when **institutions and technology** work together, giving greater control to those most affected by ecological harm. Within this framework, three pathways define how technology can foster an inclusive forest economy:  
 
-#### 1. Enhancing Visibility & Traceability  
+#### 1. Enhancing Visibility & Traceability
+
 Digital technologies can make the “first mile” of forest-based supply chains—often hidden within informal economies—visible and traceable. By digitally recording production and transactions, value creation can be redistributed more equitably across communities.  
 
-#### 2. Creating Economies of Scale & Reducing Drudgery  
+#### 2. Creating Economies of Scale & Reducing Drudgery
+
 Technology can unlock aggregation and productivity gains through shared storage, transport, and infrastructure. Locally adapted tools can also reduce the physical burden of forest-product collection while integrating informal producers into the formal economy.  
 
-#### 3. Strengthening Accountability through Monitoring  
+#### 3. Strengthening Accountability through Monitoring
+
 Community ownership must be paired with transparent monitoring systems. Remote sensing, analytics, and mobile tools can help track resource use and ensure responsible, accountable forest management.  
 
 ---
@@ -41,4 +44,5 @@ The GitHub organization has evolved into a collaborative hub of open-source tool
 - 📱 **Field Applications:** Mobile and web tools for first-mile data capture and traceability.  
 - 🛰️ **Analytics Pipelines:** Open frameworks for remote sensing, transport, and aggregation analysis.  
 
-Together, these projects translate the initiative’s charter into action—turning ideas of **transparency**, **scalability**, and **accountability** into shared digital infrastructure for an inclusive forest economy.  
+Together, these projects translate the initiative’s charter into action—turning ideas of **transparency**, **scalability**, and **accountability** into shared digital infrastructure for an inclusive forest economy.
+  

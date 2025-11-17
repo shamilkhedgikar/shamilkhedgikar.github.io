@@ -71,7 +71,7 @@ const projects = defineCollection({
       .array(
         z.object({
           label: z.string().optional().nullable(),
-          href: z.string().url(),
+          href: z.union([z.string().url(), z.string().startsWith('/')]),
           icon: z.enum([
             'github',
             'scholar',
@@ -83,6 +83,7 @@ const projects = defineCollection({
             'hyperlink',
             'blog',
             'youtube',
+            'knowledge-graph',
           ]).optional(),
         }),
       )

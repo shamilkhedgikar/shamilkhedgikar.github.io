@@ -9,6 +9,7 @@ import pdf from "../assets/icons/pdf-icon.svg?raw";
 import hyperlink from "../assets/icons/hyperlink.svg?raw";
 import blog from "../assets/icons/blog-link.svg?raw";
 import youtube from "../assets/icons/youtube-icon.svg?raw";
+import knowledgeGraph from "../assets/icons/knowledge-graph.svg?raw";
 
 const { name, size = 24, class: extra = '' } = Astro.props as {
   name:
@@ -21,7 +22,8 @@ const { name, size = 24, class: extra = '' } = Astro.props as {
     | 'pdf'
     | 'hyperlink'
     | 'blog'
-    | 'youtube';
+    | 'youtube'
+    | 'knowledge-graph';
   size?: number;
   class?: string;
 };
@@ -36,6 +38,7 @@ const registry = {
   hyperlink,
   blog,
   youtube,
+  "knowledge-graph": knowledgeGraph,
 } as const;
 const svg = registry[name];
 if (!svg) throw new Error(`Unknown icon: ${name}`);
@@ -45,5 +48,5 @@ if (!svg) throw new Error(`Unknown icon: ${name}`);
 
 <style>
 .icon :where(svg){ width:100%; height:100%; display:block; }
-.icon :where(path, circle, rect, polygon){ fill: currentColor; }
+.icon :where(path, circle, rect, polygon):not([fill^="url("]){ fill: currentColor; }
 </style>
