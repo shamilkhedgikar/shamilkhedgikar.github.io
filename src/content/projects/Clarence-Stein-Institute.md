@@ -4,8 +4,8 @@ summary: Explore 147 projects funded by the Clarence Stein Institute (2004-2016)
 href: https://aap.cornell.edu/sites/default/files/upload/Steindatabase2.html
 year: 2017
 order: 20
-image: ./images/clarence_stein_institute.png
-imageAlt: Clarence Stein Institute Homepage
+image: ./images/clarence_stein_institute-1.png, ./images/clarence_stein_institute-2.png
+imageAlt: Clarence Stein Institute Homepage, Dashboard Screenshot
 technologies:
   - language: R
     tools:
