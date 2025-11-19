@@ -21,7 +21,7 @@ links:
     icon: youtube
 ---
 
-## 🏙️ Urban Governance in India: Institutional Evolution, Constitutional Design & Post-1992 Reform 
+## 🏙️ Urban Governance in India: Institutional Evolution, Constitutional Design & Post-1992 Reform
 
 **_Independent Research Project · Governance, Planning & Public Institutions_**
 
