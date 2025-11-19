@@ -1,0 +1,213 @@
+---
+import "@/styles/markdown.css";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Broken Link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Golos+Text:wght@400..900&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="bg-image-layer" aria-hidden="true"></div>
+    <main class="error-shell">
+      <div class="shattered-container">
+        <!-- Shard 1: Top Left -->
+        <div class="shard shard-1">
+          <div class="shard-content">
+            <h1>404</h1>
+            <p>Link is Br o ke n.</p>
+          </div>
+        </div>
+        <!-- Shard 2: Top Right -->
+        <div class="shard shard-2">
+          <div class="shard-content">
+            <h1>404</h1>
+            <p>Link is Br o ke n</p>
+          </div>
+        </div>
+        <!-- Shard 3: Bottom -->
+        <div class="shard shard-3">
+          <div class="shard-content">
+            <h1>404</h1>
+            <p>Link is Br o ke n</p>
+          </div>
+        </div>
+        
+        <!-- Crack lines overlay -->
+        <svg class="cracks" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M0 0 L45 45 L100 0" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" />
+          <path d="M45 45 L40 100" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" />
+          <path d="M45 45 L100 60" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" />
+        </svg>
+      </div>
+
+      <a href="/" class="home-link">Return Home</a>
+    </main>
+
+    <script is:inline>
+      (() => {
+        try {
+          const colors = { sand: '#eae4c8db', charcoal: 'slategray', bone: '#858483' };
+          const stored = localStorage.getItem('bg-theme');
+          if (!stored || stored === 'moon' || !(stored in colors)) {
+            document.documentElement.style.removeProperty('--bg-layer-color');
+            return;
+          }
+          document.documentElement.style.setProperty('--bg-layer-color', colors[stored]);
+        } catch (err) {
+          /* ignore */
+        }
+      })();
+    </script>
+  </body>
+</html>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Golos Text', sans-serif;
+  overflow: hidden;
+}
+
+.bg-image-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url('/textures/paper-texture.svg');
+  background-size: auto;
+  background-color: var(--bg-layer-color, transparent);
+}
+
+.error-shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+  gap: 3rem;
+}
+
+.shattered-container {
+  position: relative;
+  width: 500px;
+  height: 300px;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));
+}
+
+.shard {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.shard-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a1a;
+}
+
+h1 {
+  font-size: 8rem;
+  margin: 0;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: rgba(15, 23, 42, 0.9);
+  text-shadow: 2px 2px 0px rgba(255,255,255,0.5);
+}
+
+p {
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: 500;
+  color: rgba(15, 23, 42, 0.7);
+}
+
+/* Define the shards using clip-path */
+/* Center point roughly at 45% 45% */
+
+.shard-1 {
+  /* Top Left */
+  clip-path: polygon(0 0, 100% 0, 45% 45%, 0 100%);
+  border-radius: 24px 0 0 24px;
+  transform-origin: 45% 45%;
+}
+
+.shard-2 {
+  /* Top Right */
+  clip-path: polygon(100% 0, 100% 100%, 45% 45%);
+  border-radius: 0 24px 24px 0;
+  transform-origin: 45% 45%;
+}
+
+.shard-3 {
+  /* Bottom */
+  clip-path: polygon(0 100%, 45% 45%, 100% 100%);
+  border-radius: 0 0 24px 24px;
+  transform-origin: 45% 45%;
+}
+
+/* Hover effect to separate shards */
+.shattered-container:hover .shard-1 {
+  transform: translate(-5px, -5px) rotate(-2deg);
+}
+.shattered-container:hover .shard-2 {
+  transform: translate(5px, -2px) rotate(1deg);
+}
+.shattered-container:hover .shard-3 {
+  transform: translate(0, 5px) rotate(2deg);
+}
+
+.cracks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.8;
+}
+
+.home-link {
+  padding: 0.8rem 2.5rem;
+  background: rgba(15, 23, 42, 0.9);
+  color: white;
+  text-decoration: none;
+  border-radius: 999px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.home-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  background: rgba(15, 23, 42, 1);
+}
+
+@media (max-width: 600px) {
+  .shattered-container {
+    width: 90vw;
+    height: 60vw;
+  }
+  h1 {
+    font-size: 5rem;
+  }
+}
+</style>
