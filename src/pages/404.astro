@@ -18,22 +18,22 @@ import "@/styles/markdown.css";
         <!-- Shard 1: Top Left -->
         <div class="shard shard-1">
           <div class="shard-content">
-            <h1>404</h1>
-            <p>Link is Br o ke n.</p>
+            <h1 class="glitch" data-text="404">404</h1>
+            <p class="glitch" data-text="Link is Broken.">Link is Broken.</p>
           </div>
         </div>
         <!-- Shard 2: Top Right -->
         <div class="shard shard-2">
           <div class="shard-content">
-            <h1>404</h1>
-            <p>Link is Br o ke n</p>
+            <h1 class="glitch" data-text="404">404</h1>
+            <p class="glitch" data-text="Link is Broken.">Link is Broken.</p>
           </div>
         </div>
         <!-- Shard 3: Bottom -->
         <div class="shard shard-3">
           <div class="shard-content">
-            <h1>404</h1>
-            <p>Link is Br o ke n</p>
+            <h1 class="glitch" data-text="404">404</h1>
+            <p class="glitch" data-text="Link is Broken.">Link is Broken.</p>
           </div>
         </div>
         
@@ -55,12 +55,27 @@ import "@/styles/markdown.css";
           const stored = localStorage.getItem('bg-theme');
           if (!stored || stored === 'moon' || !(stored in colors)) {
             document.documentElement.style.removeProperty('--bg-layer-color');
-            return;
+          } else {
+            document.documentElement.style.setProperty('--bg-layer-color', colors[stored]);
           }
-          document.documentElement.style.setProperty('--bg-layer-color', colors[stored]);
         } catch (err) {
           /* ignore */
         }
+
+        const container = document.querySelector('.shattered-container');
+        if (!container) return;
+
+        const randomColor = () => {
+          const hue = Math.floor(Math.random() * 360);
+          const saturation = 60 + Math.random() * 30;
+          const lightness = 45 + Math.random() * 15;
+          return `hsl(${hue}deg, ${saturation}%, ${lightness}%)`;
+        };
+
+        container.addEventListener('mouseenter', () => {
+          container.style.setProperty('--glitch-color-a', randomColor());
+          container.style.setProperty('--glitch-color-b', randomColor());
+        });
       })();
     </script>
   </body>
@@ -101,6 +116,8 @@ html, body {
   width: 500px;
   height: 300px;
   filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));
+  --glitch-color-a: #38bdf8;
+  --glitch-color-b: #f472b6;
 }
 
 .shard {
@@ -139,6 +156,43 @@ p {
   margin: 0;
   font-weight: 500;
   color: rgba(15, 23, 42, 0.7);
+}
+
+.glitch {
+  position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.glitch::before {
+  color: var(--glitch-color-a, #38bdf8);
+  clip-path: inset(0 0 55% 0);
+  transform: translate(0, 0);
+}
+
+.glitch::after {
+  color: var(--glitch-color-b, #f472b6);
+  clip-path: inset(45% 0 0 0);
+  transform: translate(0, 0);
+}
+
+.shattered-container:hover .glitch::before {
+  opacity: 0.85;
+  transform: translate(-2px, -1px);
+}
+
+.shattered-container:hover .glitch::after {
+  opacity: 0.85;
+  transform: translate(2px, 1px);
 }
 
 /* Define the shards using clip-path */
