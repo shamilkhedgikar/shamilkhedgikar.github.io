@@ -2,7 +2,7 @@
 title: "Urban Governance in India: Policies, Proposals and Reforms"
 summary: Comprehensive research report on urban governance in India, focusing on the institutional stakeholders, complex constitutional provisions, and historical evolution of urban policies.
 year: 2018
-order: 22
+order: 30
 image: ./images/urban_governance-1.png, ./images/urban_governance-2.png, ./images/urban_governance-3.png, ./images/urban_governance-4.png, ./images/urban_governance-5.png
 imageAlt: State and Local Governments, Decision Making in Executive/Judiciary, Center-State Relations, Planning Typologies, Formality and Informality in Settlements
 technologies:

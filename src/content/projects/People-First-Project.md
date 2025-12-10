@@ -3,7 +3,7 @@ title: The People First Project
 summary: The People First Project was a placemaking and design initiative in Detroit, focused on the Corktown Michigan Avenue that involved residents, creatives, and community stakeholders in shaping public spaces in the neighborhood.
 href: https://aap.cornell.edu/sites/default/files/upload/Steindatabase2.html
 year: 2016
-order: 15
+order: 20
 image: ./images/peoplefirstproject.png, ./images/corktown-3.png, ./images/corktown-1.png, ./images/corktown-2.png
 imageAlt: People First Project News coverage, People First Project Snapshot, Corktown Place Plan, Corktown Landscape Plan
 technologies:
