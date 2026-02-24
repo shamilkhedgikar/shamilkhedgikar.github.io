@@ -39,14 +39,16 @@ const { id = 'about', heading = '' } = Astro.props;
 
 <style>
 .about-section{
+  --about-container-max: 900px;
+  --about-container-pad: clamp(0.3rem, 1.8vw, 0.75rem);
   padding-block: clamp(2rem, 4vw, 3rem);
   scroll-margin-top: 7.5rem;
 }
 
 .about-shell{
-  width: min(100%, 900px);
+  inline-size: min(100%, var(--about-container-max));
   margin: 0 auto;
-  padding-inline: clamp(0.3rem, 1.8vw, 0.75rem);
+  padding-inline: var(--about-container-pad);
   display: grid;
   gap: 1.35rem;
   text-align: left;
@@ -168,9 +170,17 @@ const { id = 'about', heading = '' } = Astro.props;
 }
 
 @media (max-width: 720px){
+  .about-section{
+    --about-container-max: none;
+    --about-container-pad: 0;
+    padding-inline: clamp(1rem, 4.8vw, 1.3rem);
+  }
+
   .about-shell{
     gap: 1.15rem;
-    padding-inline: clamp(0.7rem, 4vw, 1rem);
+    inline-size: 100%;
+    max-inline-size: 100%;
+    margin-inline: 0;
   }
 
   .about-body{
@@ -180,6 +190,7 @@ const { id = 'about', heading = '' } = Astro.props;
   .about-copy{
     font-size: 0.95rem;
     line-height: 1.58;
+    padding-inline: 0;
   }
 
   .about-toggle{

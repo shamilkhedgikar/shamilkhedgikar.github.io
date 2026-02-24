@@ -229,7 +229,6 @@ const projects: ProjectCard[] = await Promise.all(
             aria-label={`Open details for ${project.title}`}
           >
             Details
-            <span aria-hidden="true" class="project-card__arrow">&#128269;</span>
           </button>
           {project.links && project.links.length > 0 && (
             <div class="project-card__links" aria-label="Supplementary links">

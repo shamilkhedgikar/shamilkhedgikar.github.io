@@ -34,6 +34,20 @@ const formatBlogDate = (date: Date) =>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <script is:inline define:vars={{ injectedThemeColors: themeColors }}>
+      (() => {
+        try {
+          const stored = localStorage.getItem('bg-theme');
+          if (!stored || stored === 'moon' || !(stored in injectedThemeColors)) {
+            document.documentElement.style.removeProperty('--bg-layer-color');
+            return;
+          }
+          document.documentElement.style.setProperty('--bg-layer-color', injectedThemeColors[stored]);
+        } catch (err) {
+          /* ignore */
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -94,7 +108,7 @@ const formatBlogDate = (date: Date) =>
             aria-expanded="false"
             aria-label="Open social links"
           >
-            Links
+            Socials
           </button>
         </nav>
       </header>
@@ -372,8 +386,12 @@ const formatBlogDate = (date: Date) =>
           const measured = Math.ceil(heroName.getBoundingClientRect().width);
           if (!measured) return;
           const widthValue = `${measured}px`;
+          const desktopHeroWidth = '350px';
           if (heroSocials instanceof HTMLElement) {
-            heroSocials.style.setProperty('--hero-name-width', widthValue);
+            heroSocials.style.setProperty(
+              '--hero-name-width',
+              mobileViewportQuery.matches ? widthValue : desktopHeroWidth,
+            );
           }
           if (mobileLinksInner instanceof HTMLElement) {
             mobileLinksInner.style.setProperty('--hero-name-width', widthValue);
@@ -410,6 +428,17 @@ const formatBlogDate = (date: Date) =>
         };
 
         const closeMobileLinks = () => setMobileLinksOpen(false);
+        const isMobileLinksTarget = (target) => {
+          if (!(target instanceof Node)) return false;
+          if (mobileLinksPanel instanceof HTMLElement && mobileLinksPanel.contains(target)) return true;
+          if (mobileLinksToggle instanceof HTMLButtonElement && mobileLinksToggle.contains(target)) return true;
+          return false;
+        };
+        const closeMobileLinksFromOutside = (event) => {
+          if (!mobileLinksOpen) return;
+          if (isMobileLinksTarget(event.target)) return;
+          closeMobileLinks();
+        };
 
         if (mobileLinksToggle instanceof HTMLButtonElement && mobileLinksPanel instanceof HTMLElement) {
           mobileLinksToggle.addEventListener('click', (event) => {
@@ -418,13 +447,17 @@ const formatBlogDate = (date: Date) =>
             setMobileLinksOpen(!mobileLinksOpen);
           });
 
-          document.addEventListener('pointerdown', (event) => {
+          document.addEventListener('pointerdown', closeMobileLinksFromOutside, true);
+          document.addEventListener('touchstart', closeMobileLinksFromOutside, { passive: true, capture: true });
+
+          const closeMobileLinksOnScrollIntent = (event) => {
             if (!mobileLinksOpen) return;
-            const target = event.target;
-            if (!(target instanceof Node)) return;
-            if (mobileLinksPanel.contains(target) || mobileLinksToggle.contains(target)) return;
+            if (isMobileLinksTarget(event.target)) return;
             closeMobileLinks();
-          });
+          };
+          window.addEventListener('scroll', closeMobileLinksOnScrollIntent, { passive: true });
+          window.addEventListener('wheel', closeMobileLinksOnScrollIntent, { passive: true });
+          window.addEventListener('touchmove', closeMobileLinksOnScrollIntent, { passive: true });
 
           mobileLinksPanel.addEventListener('click', (event) => {
             const target = event.target;
@@ -1133,7 +1166,7 @@ main,
   justify-content: center;
   margin: 2rem auto 2rem;
   border: 0.2px solid rgba(255, 255, 255, 0.3);
-  z-index: 1;
+  z-index: 0;
 }
 
 

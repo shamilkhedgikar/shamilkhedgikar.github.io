@@ -34,6 +34,20 @@ const metaDescription = resolveText(post.data.description, post.data.summary) ??
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script is:inline define:vars={{ injectedThemeColors: themeColors }}>
+      (() => {
+        try {
+          const stored = localStorage.getItem('bg-theme');
+          if (!stored || stored === 'moon' || !(stored in injectedThemeColors)) {
+            document.documentElement.style.removeProperty('--bg-layer-color');
+            return;
+          }
+          document.documentElement.style.setProperty('--bg-layer-color', injectedThemeColors[stored]);
+        } catch (err) {
+          /* ignore */
+        }
+      })();
+    </script>
     <title>{post.data.title} | Writing</title>
     <meta name="description" content={metaDescription} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -72,23 +86,6 @@ const metaDescription = resolveText(post.data.description, post.data.summary) ??
         <Content />
       </article>
     </main>
-    <script is:inline define:vars={{ themeColors }}>
-      (() => {
-        if (typeof window === 'undefined') return;
-        try {
-          const colors = themeColors;
-          const stored = localStorage.getItem('bg-theme');
-          if (!stored || stored === 'moon' || !(stored in colors)) {
-            document.documentElement.style.removeProperty('--bg-layer-color');
-            return;
-          }
-          document.documentElement.style.setProperty('--bg-layer-color', colors[stored]);
-        } catch (err) {
-          /* ignore */
-        }
-      })();
-    </script>
-
   </body>
 </html>
 

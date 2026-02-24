@@ -444,9 +444,9 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
   }
 
   .timeline-card{
-    padding: 1.35rem 1.05rem 1.35rem 1.65rem;
+    padding: 1.1rem 0.95rem 1.1rem 1.55rem;
     transform: none;
-    gap: 0.65rem;
+    gap: 0.45rem;
   }
 
   .timeline-card:is(:hover, :focus-within){
@@ -455,58 +455,11 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
   }
 
   .timeline-card__toggle{
-    display: inline-flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.6rem;
-    inline-size: fit-content;
-    min-inline-size: 6.35rem;
-    min-block-size: 2.05rem;
-    padding: 0.36rem 0.72rem;
-    border-radius: 999px;
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    background: rgba(255, 255, 255, 0.72);
-    color: rgba(15, 23, 42, 0.88);
-    font-family: 'Golos Text', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-  }
-
-  .timeline-card__toggle:hover{
-    transform: translateY(-1px);
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 8px 14px rgba(15, 23, 42, 0.14);
-  }
-
-  .timeline-card__toggle:focus-visible{
-    outline: 2px solid rgba(15, 23, 42, 0.5);
-    outline-offset: 2px;
-  }
-
-  .timeline-card__toggle-icon{
-    font-size: 0.72rem;
-    line-height: 1;
-    transition: transform 0.22s ease;
+    display: none !important;
   }
 
   .timeline-card__details{
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    pointer-events: none;
-    transition: max-height 0.32s ease, opacity 0.24s ease;
-  }
-
-  .timeline-card.is-expanded .timeline-card__details{
-    max-height: 65rem;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .timeline-card.is-expanded .timeline-card__toggle-icon{
-    transform: rotate(180deg);
+    display: none !important;
   }
 
   .timeline-card__body :where(p, ul){
@@ -549,59 +502,18 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
         const onWheel = (event) => {
           if (!shouldInterceptWheel()) return;
           if (Math.abs(event.deltaY) < 1) return;
-          const { scrollTop, scrollHeight, clientHeight } = element;
-          const atTop = scrollTop <= 0;
-          const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
-          if ((event.deltaY < 0 && atTop) || (event.deltaY > 0 && atBottom)) {
+          if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
+          const maxScroll = element.scrollHeight - element.clientHeight;
+          const nextScrollTop = element.scrollTop + event.deltaY;
+          if (nextScrollTop <= 0 || nextScrollTop >= maxScroll) {
             return;
           }
           event.preventDefault();
-          element.scrollTop += event.deltaY;
+          element.scrollTop = nextScrollTop;
         };
 
         element.addEventListener('wheel', onWheel, { passive: false });
       });
-
-    const cards = Array.from(document.querySelectorAll('[data-timeline-card]')).filter(
-      (card) => card instanceof HTMLElement,
-    );
-
-    const setCardExpanded = (card, on) => {
-      const toggle = card.querySelector('[data-timeline-toggle]');
-      const details = card.querySelector('[data-timeline-details]');
-      if (!(toggle instanceof HTMLButtonElement) || !(details instanceof HTMLElement)) return;
-      card.classList.toggle('is-expanded', on);
-      toggle.setAttribute('aria-expanded', String(on));
-      details.setAttribute('aria-hidden', String(!on));
-    };
-
-    const syncTimelineMode = () => {
-      const compact = compactQuery.matches;
-      cards.forEach((card) => {
-        if (!compact) {
-          setCardExpanded(card, true);
-          card.removeAttribute('data-mobile-initialized');
-          return;
-        }
-        if (!card.hasAttribute('data-mobile-initialized')) {
-          setCardExpanded(card, false);
-          card.setAttribute('data-mobile-initialized', 'true');
-        }
-      });
-    };
-
-    cards.forEach((card) => {
-      const toggle = card.querySelector('[data-timeline-toggle]');
-      if (!(toggle instanceof HTMLButtonElement)) return;
-      toggle.addEventListener('click', () => {
-        if (!compactQuery.matches) return;
-        const expanded = card.classList.contains('is-expanded');
-        setCardExpanded(card, !expanded);
-      });
-    });
-
-    syncTimelineMode();
-    compactQuery.addEventListener('change', syncTimelineMode);
   });
 </script>
 

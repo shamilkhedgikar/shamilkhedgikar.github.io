@@ -27,6 +27,20 @@ const resolveText = (...values: Array<string | null | undefined>) => {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script is:inline define:vars={{ injectedThemeColors: themeColors }}>
+      (() => {
+        try {
+          const stored = localStorage.getItem('bg-theme');
+          if (!stored || stored === 'moon' || !(stored in injectedThemeColors)) {
+            document.documentElement.style.removeProperty('--bg-layer-color');
+            return;
+          }
+          document.documentElement.style.setProperty('--bg-layer-color', injectedThemeColors[stored]);
+        } catch (err) {
+          /* ignore */
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Golos+Text:wght@400..900&display=swap" rel="stylesheet">
@@ -76,23 +90,6 @@ const resolveText = (...values: Array<string | null | undefined>) => {
         )}
       </section>
     </main>
-    <script is:inline define:vars={{ themeColors }}>
-      (() => {
-        if (typeof window === 'undefined') return;
-        try {
-          const colors = themeColors;
-          const stored = localStorage.getItem('bg-theme');
-          if (!stored || stored === 'moon' || !(stored in colors)) {
-            document.documentElement.style.removeProperty('--bg-layer-color');
-            return;
-          }
-          document.documentElement.style.setProperty('--bg-layer-color', colors[stored]);
-        } catch (err) {
-          /* ignore */
-        }
-      })();
-    </script>
-
   </body>
 </html>
 
