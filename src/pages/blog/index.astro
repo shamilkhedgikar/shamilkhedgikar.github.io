@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import "@/styles/markdown.css";
+import { themeColors } from "../../data/themeColors";
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => {
@@ -75,11 +76,11 @@ const resolveText = (...values: Array<string | null | undefined>) => {
         )}
       </section>
     </main>
-    <script is:inline>
+    <script is:inline define:vars={{ themeColors }}>
       (() => {
         if (typeof window === 'undefined') return;
         try {
-          const colors = { sand: 'lightyellow', charcoal: 'slategray', bone: '#858483' };
+          const colors = themeColors;
           const stored = localStorage.getItem('bg-theme');
           if (!stored || stored === 'moon' || !(stored in colors)) {
             document.documentElement.style.removeProperty('--bg-layer-color');

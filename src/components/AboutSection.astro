@@ -46,6 +46,7 @@ const { id = 'about', heading = '' } = Astro.props;
 .about-shell{
   width: min(100%, 900px);
   margin: 0 auto;
+  padding-inline: clamp(0.3rem, 1.8vw, 0.75rem);
   display: grid;
   gap: 1.35rem;
   text-align: left;
@@ -73,7 +74,7 @@ const { id = 'about', heading = '' } = Astro.props;
 .about-copy{
   font-family: 'Golos Text', sans-serif;
   font-size: 1rem;
-  line-height: 1.00;
+  line-height: 1.55;
   color: rgba(15, 23, 42, 0.78);
   text-align:left;
   max-width: 86ch;
@@ -131,6 +132,8 @@ const { id = 'about', heading = '' } = Astro.props;
   --about-rotate: 0deg;
   display: grid;
   place-items: center;
+  min-inline-size: 2.65rem;
+  min-block-size: 2.1rem;
   font-family: 'Golos Text', sans-serif;
   font-weight: 700;
   border: 1px solid rgba(224, 231, 248, 0.5);
@@ -167,11 +170,20 @@ const { id = 'about', heading = '' } = Astro.props;
 @media (max-width: 720px){
   .about-shell{
     gap: 1.15rem;
-    padding-inline: 0.25rem;
+    padding-inline: clamp(0.7rem, 4vw, 1rem);
   }
 
   .about-body{
     max-block-size: var(--teaser, 280px);
+  }
+
+  .about-copy{
+    font-size: 0.95rem;
+    line-height: 1.58;
+  }
+
+  .about-toggle{
+    padding: 0.3rem 1.05rem;
   }
 }
 </style>

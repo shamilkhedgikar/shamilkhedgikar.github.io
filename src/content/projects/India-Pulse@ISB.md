@@ -4,8 +4,8 @@ summary: Insights on India's economic recovery during the pandemic based on high
 href: https://diri.isb.edu/en/research/india-pulse1.html
 year: 2021
 order: 40
-image: ./images/indiapulse-1.png, ./images/indiapulse-2.png, ./images/indiapulse-3
-imageAlt: IndiaPulse dashboards illustrating economic recovery metrics across India, Summary Video, Knowledge Graph for IndiaPulse@ISB
+image: ./images/indiapulse-1.png
+imageAlt: IndiaPulse dashboards illustrating economic recovery metrics across India
 technologies:
   - language: Python
     tools:

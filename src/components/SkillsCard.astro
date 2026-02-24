@@ -496,15 +496,17 @@ const legendLanguages = languageFilters.filter((language) =>
 }
 
 .tech-groups{
-  display: ruby;
-  ruby-position: over;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.95rem 1.45rem;
+  align-items: flex-start;
 }
 
 .tech-group{
   display: inline-grid;
   gap: 0.6rem;
-  margin-inline-end: clamp(1.8rem, 3.2vw, 2.8rem);
-  margin-block-end: 1.1rem;
+  margin-inline-end: 0;
+  margin-block-end: 0;
   transition: opacity 0.24s ease, filter 0.24s ease;
 }
 
@@ -663,6 +665,18 @@ button.atlas-tag{
 @media (max-width: 720px){
   .skills-card{
     padding: 1.5rem 1.65rem;
+  }
+
+  .tech-groups{
+    gap: 0.8rem 0.85rem;
+  }
+
+  .atlas-tag{
+    font-size: 0.78rem;
+  }
+
+  .skills-card__legend-trigger{
+    font-size: 0.74rem;
   }
 }
 </style>

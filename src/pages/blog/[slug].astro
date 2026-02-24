@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 import "@/styles/markdown.css";
+import { themeColors } from "../../data/themeColors";
 
 type BlogEntry = CollectionEntry<'blog'>;
 
@@ -72,11 +73,11 @@ const metaDescription = resolveText(post.data.description, post.data.summary) ??
         <Content />
       </article>
     </main>
-    <script is:inline>
+    <script is:inline define:vars={{ themeColors }}>
       (() => {
         if (typeof window === 'undefined') return;
         try {
-          const colors = { sand: '#eae4c8db', charcoal: 'slategray', bone: '#858483' };
+          const colors = themeColors;
           const stored = localStorage.getItem('bg-theme');
           if (!stored || stored === 'moon' || !(stored in colors)) {
             document.documentElement.style.removeProperty('--bg-layer-color');

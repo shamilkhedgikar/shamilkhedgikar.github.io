@@ -161,10 +161,6 @@ const projects: ProjectCard[] = await Promise.all(
         data-card
         data-card-id={project.id}
         data-tech={project.techSlugs.join(' ')}
-        tabindex="0"
-        role="button"
-        aria-expanded="false"
-        aria-haspopup="dialog"
       >
         <header class="project-card__header">
           <h3 class="project-card__title">{project.title}</h3>
@@ -213,7 +209,7 @@ const projects: ProjectCard[] = await Promise.all(
           </ul>
         )}
         <div class="project-card__cta">
-          {project.href ? (
+          {project.href && (
             <a
               class="project-card__link"
               href={project.href}
@@ -224,12 +220,17 @@ const projects: ProjectCard[] = await Promise.all(
               Explore
               <span aria-hidden="true" class="project-card__arrow">&#128279;</span>
             </a>
-          ) : (
-            <button type="button" class="project-card__link project-card__link--overlay-trigger">
-              Explore
-              <span aria-hidden="true" class="project-card__arrow">&#128279;</span>
-            </button>
           )}
+          <button
+            type="button"
+            class="project-card__link project-card__link--overlay-trigger"
+            data-overlay-trigger
+            aria-haspopup="dialog"
+            aria-label={`Open details for ${project.title}`}
+          >
+            Details
+            <span aria-hidden="true" class="project-card__arrow">&#128269;</span>
+          </button>
           {project.links && project.links.length > 0 && (
             <div class="project-card__links" aria-label="Supplementary links">
               {project.links.map((link) => (
@@ -238,9 +239,11 @@ const projects: ProjectCard[] = await Promise.all(
                   class="project-card__link-line"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={link.label}
+                  title={link.label}
                 >
                   {link.icon && <Icon name={link.icon} size={16} class="project-link__icon" />}
-                  {/* <span>{link.label}</span> */}
+                  <span class="project-link__sr">{link.label}</span>
                 </a>
               ))}
             </div>
@@ -267,7 +270,7 @@ const projects: ProjectCard[] = await Promise.all(
   <button class="carousel-arrow is-next arrow-pill" type="button" aria-label="Next projects" data-dir="1"></button>
   <div class="project-overlay" data-project-overlay hidden aria-hidden="true">
     <div class="project-overlay__backdrop" data-overlay-backdrop></div>
-    <div class="project-overlay__shell" role="dialog" aria-modal="true">
+    <div class="project-overlay__shell" role="dialog" aria-modal="true" aria-label="Project details">
       <button
         class="project-overlay__close"
         type="button"
@@ -308,6 +311,7 @@ const projects: ProjectCard[] = await Promise.all(
   -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.95) 4%, rgba(0, 0, 0, 0.95) 96%, rgba(0, 0, 0, 0) 100%);
   mask-size: 100% 100%;
   -webkit-mask-size: 100% 100%;
+  min-inline-size: 0;
 }
 
 .projects-track::-webkit-scrollbar{
@@ -338,6 +342,7 @@ const projects: ProjectCard[] = await Promise.all(
   flex: 0 0 var(--carousel-card-size);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   cursor: pointer;
+  min-inline-size: 0;
 }
 
 .project-card:focus-visible{
@@ -380,7 +385,7 @@ const projects: ProjectCard[] = await Promise.all(
   margin: 0;
   font-family: 'Golos Text', sans-serif;
   font-size: 0.96rem;
-  line-height: 1.55;
+  line-height: 1.6;
   color: rgba(15, 23, 42, 0.78);
 }
 
@@ -483,7 +488,9 @@ const projects: ProjectCard[] = await Promise.all(
 .project-card__link{
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
+  min-block-size: 2.3rem;
   font-family: 'Golos Text', sans-serif;
   font-weight: 600;
   font-size: 0.9rem;
@@ -516,9 +523,10 @@ const projects: ProjectCard[] = await Promise.all(
 }
 
 .project-card__link-line{
+  position: relative;
   display: inline-flex;
-  inline-size: 32px;
-  block-size: 32px;
+  inline-size: 36px;
+  block-size: 36px;
   border-radius: 50%;
   border: none;
   background: none;
@@ -531,9 +539,26 @@ const projects: ProjectCard[] = await Promise.all(
   transform: translateY(-1px);
 }
 
+.project-card__link-line:focus-visible{
+  outline: 2px solid rgba(15, 23, 42, 0.58);
+  outline-offset: 2px;
+}
+
 .project-link__icon{
   display: inline-flex;
   color: inherit;
+}
+
+.project-link__sr{
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .project-card__body{
@@ -631,8 +656,9 @@ const projects: ProjectCard[] = await Promise.all(
 
 .project-overlay__close{
   position: absolute;
-  top: clamp(0.4rem, 1.2vw, 0.75rem);
-  right: clamp(0.4rem, 1.2vw, 0.75rem);
+  top: calc(clamp(0.4rem, 1.2vw, 0.75rem) + env(safe-area-inset-top, 0px));
+  right: calc(clamp(0.4rem, 1.2vw, 0.75rem) + env(safe-area-inset-right, 0px));
+  z-index: 5;
   inline-size: 32px;
   block-size: 32px;
   border: none;
@@ -656,17 +682,18 @@ const projects: ProjectCard[] = await Promise.all(
 }
 
 .project-overlay__close:focus-visible{
-  outline: 2px solid rgba(15, 23, 42, 0.6);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.82), 0 10px 16px rgba(15, 23, 42, 0.18);
 }
 
 .project-overlay__shell{
   position: relative;
+  isolation: isolate;
   width: min(96vw, 1120px);
   max-width: 720px;
-  max-height: min(92vh, 960px);
+  max-height: min(92dvh, 960px);
   overflow-y: auto;
-  overflow-x: auto;
+  overflow-x: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
   border-radius: 20px;
@@ -722,6 +749,10 @@ const projects: ProjectCard[] = await Promise.all(
 
 .project-card--overlay .project-card__cta{
   flex-wrap: wrap;
+}
+
+.project-card--overlay [data-overlay-trigger]{
+  display: none;
 }
 
 .carousel-arrow{
@@ -789,18 +820,117 @@ const projects: ProjectCard[] = await Promise.all(
 }
 
 @media (max-width: 720px){
+  .carousel-arrow{
+    display: none;
+  }
+
   .projects-track{
-    --carousel-card-size: calc(100% - 1rem);
+    --carousel-card-size: calc(100% - clamp(2.6rem, 10vw, 3.4rem));
+    gap: 0.85rem;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    padding-block: 0.35rem 0.95rem;
+    padding-inline: clamp(0.95rem, 4vw, 1.3rem);
+    scroll-padding-inline: clamp(0.95rem, 4vw, 1.3rem);
+    scrollbar-gutter: stable;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
     mask-image: none;
     -webkit-mask-image: none;
   }
 
   .project-card{
-    padding: 1.7rem 1.8rem;
+    flex: 0 0 var(--carousel-card-size);
+    scroll-snap-align: center;
+    width: auto;
+    max-width: var(--carousel-card-size);
+    padding: 1.02rem 0.9rem;
+    gap: 0.72rem;
+  }
+
+  .project-card__title{
+    font-size: clamp(0.98rem, 3.7vw, 1.18rem);
+    line-height: 1.32;
+  }
+
+  .project-card__summary{
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.86rem;
+    line-height: 1.5;
+  }
+
+  .project-card__year{
+    font-size: 0.7rem;
+    padding: 0.26rem 0.58rem;
+  }
+
+  .project-card__media-track{
+    aspect-ratio: 16 / 9;
+  }
+
+  .project-card__media-slide :where(img){
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .project-card__tags{
+    padding-top: 0.56rem;
+    gap: 0.3rem;
+  }
+
+  .project-card__tags li{
+    font-size: 0.66rem;
+    padding: 0.2rem 0.45rem;
+  }
+
+  .project-card__cta{
+    gap: 0.42rem;
+  }
+
+  .project-card__link{
+    min-block-size: 2rem;
+    padding: 0.36rem 0.72rem;
+    font-size: 0.79rem;
+  }
+
+  .project-card__media-dots{
+    display: inline-flex;
+  }
+
+  .project-overlay{
+    place-items: stretch;
+    padding: 0;
+  }
+
+  .project-overlay__close{
+    inline-size: 42px;
+    block-size: 42px;
+    top: calc(0.45rem + env(safe-area-inset-top, 0px));
+    right: calc(0.45rem + env(safe-area-inset-right, 0px));
+    z-index: 8;
   }
 
   .project-overlay__shell{
-    width: min(96vw, 640px);
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    transform: translateY(24px) scale(1);
+  }
+
+  .project-overlay__content{
+    padding: calc(3.5rem + env(safe-area-inset-top, 0px)) 0.75rem calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .project-card--overlay{
+    padding: 1.15rem 1rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    border-radius: 14px;
   }
 }
 </style>

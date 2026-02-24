@@ -94,6 +94,7 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
             const halo = haloMap.get(entry.data.category) ?? defaultCategory.halo;
             const { Content } = entry;
             const { role, organization } = extractTitleParts(entry);
+            const detailsId = `timeline-details-${entry.id.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
             const links = (entry.data.links ?? []).map((link) => ({
               ...link,
               label: resolveLinkLabel(link.href, link.label),
@@ -104,6 +105,7 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
                 class="timeline-card glass-card"
                 style={`--tone:${tone}; --tone-halo:${halo};`}
                 role="listitem"
+                data-timeline-card
               >
                 <header class="timeline-card__header">
                   <div class="timeline-card__topline">
@@ -113,29 +115,43 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
                   <span class="timeline-card__date">{entry.data.period}</span>
                   {entry.data.subtitle && <p class="timeline-card__subtitle">{entry.data.subtitle}</p>}
                 </header>
-                <div class="timeline-card__body">
-                  <Content />
-                  {plumx && (
-                    <div class="timeline-card__plumx">
-                      <PlumxWidget href={plumx.href} label={plumx.label} />
-                    </div>
+                <button
+                  type="button"
+                  class="timeline-card__toggle"
+                  data-timeline-toggle
+                  aria-expanded="true"
+                  aria-controls={detailsId}
+                >
+                  <span>Details</span>
+                  <span class="timeline-card__toggle-icon" aria-hidden="true">&#9662;</span>
+                </button>
+                <div class="timeline-card__details" data-timeline-details id={detailsId} aria-hidden="false">
+                  <div class="timeline-card__body">
+                    <Content />
+                    {plumx && (
+                      <div class="timeline-card__plumx">
+                        <PlumxWidget href={plumx.href} label={plumx.label} />
+                      </div>
+                    )}
+                  </div>
+                  {links.length > 0 && (
+                    <footer class="timeline-card__links" aria-label="Related links">
+                      {links.map((link) => (
+                        <a
+                          href={link.href}
+                          class="timeline-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={link.label}
+                          title={link.label}
+                        >
+                          {link.icon && <Icon name={link.icon} size={16} class="timeline-link__icon" />}
+                          <span class="timeline-link__sr">{link.label}</span>
+                        </a>
+                      ))}
+                    </footer>
                   )}
                 </div>
-                {links.length > 0 && (
-                  <footer class="timeline-card__links" aria-label="Related links">
-                    {links.map((link) => (
-                      <a
-                        href={link.href}
-                        class="timeline-link"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {link.icon && <Icon name={link.icon} size={16} class="timeline-link__icon" />}
-                        {/* <span>{link.label}</span> */}
-                      </a>
-                    ))}
-                  </footer>
-                )}
               </article>
             );
           })}
@@ -263,6 +279,15 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
   gap: 0.65rem;
 }
 
+.timeline-card__toggle{
+  display: none;
+}
+
+.timeline-card__details{
+  display: grid;
+  gap: 0.85rem;
+}
+
 .timeline-card__topline{
   display: flex;
   align-items: flex-start;
@@ -314,7 +339,7 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
   margin: 0 0 0.65rem 0;
   font-family: 'Golos Text', sans-serif;
   font-size: 0.92rem;
-  line-height: 1.25;
+  line-height: 1.5;
   color: rgba(15, 23, 42, 0.85);
 }
 
@@ -346,8 +371,14 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
 }
 
 .timeline-link{
+  position: relative;
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   gap: 0.35rem;
+  min-inline-size: 1.95rem;
+  min-block-size: 1.95rem;
+  padding: 0.1rem;
   border-radius: 999px;
   font-family: 'Golos Text', sans-serif;
   font-size: 0.82rem;
@@ -374,6 +405,18 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
   transform-origin: center;
 }
 
+.timeline-link__sr{
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 @media (max-width: 720px){
   .timeline-viewport{
     max-block-size: none;
@@ -385,25 +428,101 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
   }
 
   .timeline-row{
-    grid-template-columns: minmax(3.5rem, 90px) 1fr;
-    gap: 1.1rem;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
   }
 
   .timeline-year{
     font-size: 0.95rem;
+    text-align: left;
+    padding-top: 0.1rem;
   }
 
   .timeline-stack{
-    padding-left: 2.1rem;
+    padding-left: 1.45rem;
+    gap: 1.15rem;
   }
 
   .timeline-card{
-    padding: 1.5rem 1.35rem 1.5rem 2.25rem;
+    padding: 1.35rem 1.05rem 1.35rem 1.65rem;
     transform: none;
+    gap: 0.65rem;
+  }
+
+  .timeline-card:is(:hover, :focus-within){
+    transform: none;
+    box-shadow: 0 18px 24px rgba(15, 23, 42, 0.1);
+  }
+
+  .timeline-card__toggle{
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    inline-size: fit-content;
+    min-inline-size: 6.35rem;
+    min-block-size: 2.05rem;
+    padding: 0.36rem 0.72rem;
+    border-radius: 999px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: rgba(255, 255, 255, 0.72);
+    color: rgba(15, 23, 42, 0.88);
+    font-family: 'Golos Text', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .timeline-card__toggle:hover{
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 8px 14px rgba(15, 23, 42, 0.14);
+  }
+
+  .timeline-card__toggle:focus-visible{
+    outline: 2px solid rgba(15, 23, 42, 0.5);
+    outline-offset: 2px;
+  }
+
+  .timeline-card__toggle-icon{
+    font-size: 0.72rem;
+    line-height: 1;
+    transition: transform 0.22s ease;
+  }
+
+  .timeline-card__details{
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-height 0.32s ease, opacity 0.24s ease;
+  }
+
+  .timeline-card.is-expanded .timeline-card__details{
+    max-height: 65rem;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .timeline-card.is-expanded .timeline-card__toggle-icon{
+    transform: rotate(180deg);
+  }
+
+  .timeline-card__body :where(p, ul){
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .timeline-card::before{
+    left: -1.62rem;
+    top: 1.65rem;
   }
 
   .timeline-card::after{
-    width: 2.25rem;
+    left: -1.33rem;
+    top: 2rem;
+    width: 1.95rem;
   }
 }
 
@@ -414,12 +533,21 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
 
 <script is:inline>
   document.addEventListener('astro:load', () => {
+    const compactQuery = window.matchMedia('(max-width: 720px)');
+
     document
       .querySelectorAll('[data-timeline-viewport]')
       .forEach((viewport) => {
         if (!(viewport instanceof HTMLElement)) return;
         const element = viewport;
+
+        const shouldInterceptWheel = () => {
+          if (compactQuery.matches) return false;
+          return element.scrollHeight > element.clientHeight + 2;
+        };
+
         const onWheel = (event) => {
+          if (!shouldInterceptWheel()) return;
           if (Math.abs(event.deltaY) < 1) return;
           const { scrollTop, scrollHeight, clientHeight } = element;
           const atTop = scrollTop <= 0;
@@ -433,6 +561,51 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
 
         element.addEventListener('wheel', onWheel, { passive: false });
       });
+
+    const cards = Array.from(document.querySelectorAll('[data-timeline-card]')).filter(
+      (card): card is HTMLElement => card instanceof HTMLElement,
+    );
+
+    const setCardExpanded = (card, on) => {
+      const toggle = card.querySelector('[data-timeline-toggle]');
+      const details = card.querySelector('[data-timeline-details]');
+      if (!(toggle instanceof HTMLButtonElement) || !(details instanceof HTMLElement)) return;
+      card.classList.toggle('is-expanded', on);
+      toggle.setAttribute('aria-expanded', String(on));
+      details.setAttribute('aria-hidden', String(!on));
+    };
+
+    const syncTimelineMode = () => {
+      const compact = compactQuery.matches;
+      cards.forEach((card) => {
+        if (!compact) {
+          setCardExpanded(card, true);
+          card.removeAttribute('data-mobile-initialized');
+          return;
+        }
+        if (!card.hasAttribute('data-mobile-initialized')) {
+          setCardExpanded(card, false);
+          card.setAttribute('data-mobile-initialized', 'true');
+        }
+      });
+    };
+
+    cards.forEach((card) => {
+      const toggle = card.querySelector('[data-timeline-toggle]');
+      if (!(toggle instanceof HTMLButtonElement)) return;
+      toggle.addEventListener('click', () => {
+        if (!compactQuery.matches) return;
+        const expanded = card.classList.contains('is-expanded');
+        setCardExpanded(card, !expanded);
+      });
+    });
+
+    syncTimelineMode();
+    if (typeof compactQuery.addEventListener === 'function') {
+      compactQuery.addEventListener('change', syncTimelineMode);
+    } else if (typeof compactQuery.addListener === 'function') {
+      compactQuery.addListener(syncTimelineMode);
+    }
   });
 </script>
 

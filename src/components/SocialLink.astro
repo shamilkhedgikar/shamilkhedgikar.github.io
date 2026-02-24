@@ -1,31 +1,58 @@
 ---
 import Icon from '../components/Icon.astro';
-const { href, label, name } = Astro.props; // name ∈ registry keys in Icons.astro
+const { href, label, name } = Astro.props;
+const isExternal = typeof href === 'string' && /^(https?:)?\/\//i.test(href);
 ---
-<a class="social-link" href={href} aria-label={label} target="_blank" rel="noopener noreferrer">
-  <Icon name={name} size={22} />
+<a
+  class="social-link"
+  href={href}
+  aria-label={label}
+  target={isExternal ? '_blank' : undefined}
+  rel={isExternal ? 'noopener noreferrer' : undefined}
+>
+  <Icon name={name} size={20} class="social-link__icon" />
 </a>
 
 <style>
 .social-link{
-  inline-size:40px;
-  block-size:40px;
-  display:grid;                 /* lets us place the child */
-  padding:2.5px;
-  margin-top: 10px;                 
-  line-height:0;                /* removes baseline wiggle */
-  transition:transform .15s ease, opacity .15s ease;
-  /* optional visuals ... border, bg, radius */
+  inline-size: var(--social-size, 2.25rem);
+  block-size: var(--social-size, 2.25rem);
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  color: rgba(15, 23, 42, 0.85);
+  line-height: 0;
+  text-decoration: none;
+  transition: transform 0.18s ease, opacity 0.18s ease, background-color 0.18s ease;
 }
 
-.social-link:hover{ transform: translateY(-1px); opacity:.85; }
+.social-link:hover{
+  transform: translateY(-1px);
+  opacity: 0.85;
+}
 
-.social-link svg,
-.social-link img{
-  width:20px;
-  height:20px;
-  justify-self:start;           /* left  */
-  align-self:end;               /* bottom */
-  display:block;
+.social-link:focus-visible{
+  outline: 2px solid rgba(15, 23, 42, 0.5);
+  outline-offset: 2px;
+}
+
+.social-link__icon{
+  inline-size: var(--social-icon-size, 1.2rem) !important;
+  block-size: var(--social-icon-size, 1.2rem) !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 720px){
+  .social-link{
+    inline-size: var(--social-size, 2.05rem);
+    block-size: var(--social-size, 2.05rem);
+  }
+
+  .social-link__icon{
+    inline-size: var(--social-icon-size, 1.05rem) !important;
+    block-size: var(--social-icon-size, 1.05rem) !important;
+  }
 }
 </style>

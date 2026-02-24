@@ -1,5 +1,6 @@
 ---
 import "@/styles/markdown.css";
+import { themeColors } from "../data/themeColors";
 ---
 
 <html lang="en">
@@ -48,10 +49,10 @@ import "@/styles/markdown.css";
       <a href="/" class="home-link">Return Home</a>
     </main>
 
-    <script is:inline>
+    <script is:inline define:vars={{ themeColors }}>
       (() => {
         try {
-          const colors = { sand: '#eae4c8db', charcoal: 'slategray', bone: '#858483' };
+          const colors = themeColors;
           const stored = localStorage.getItem('bg-theme');
           if (!stored || stored === 'moon' || !(stored in colors)) {
             document.documentElement.style.removeProperty('--bg-layer-color');

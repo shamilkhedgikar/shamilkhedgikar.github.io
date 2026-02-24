@@ -5,6 +5,7 @@ import ExperienceTimeline from "../components/ExperienceTimeline.astro";
 import ProjectsCarousel from "../components/ProjectsCarousel.astro";
 import SkillsCard from "../components/SkillsCard.astro";
 import { timelineCategories } from "../data/timelineCategories";
+import { themeColors } from "../data/themeColors";
 import { getEntry, getCollection } from "astro:content";
 import { Image } from "astro:assets";
 import profilePic from "../assets/images/profile-picture.jpg";
@@ -31,15 +32,15 @@ const formatBlogDate = (date: Date) =>
 ---
 
 <html lang="en">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Golos+Text:wght@400..900&family=Manrope:wght@200..800&display=swap"
-    rel="stylesheet"
-  >
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Golos+Text:wght@400..900&family=Manrope:wght@200..800&display=swap"
+      rel="stylesheet"
+    >
     <title>Home</title>
   </head>
   <body>
@@ -68,8 +69,11 @@ const formatBlogDate = (date: Date) =>
     </div>
     <main>
       <header class="site-header" role="banner">
-        <div class="brand">Shamil Shirish Khedgikar</div>
-        <div class="socials small">
+        <div class="brand">
+          <span class="brand__desktop">Shamil Shirish Khedgikar</span>
+          <span class="brand__mobile">Shamil Shirish Khedgikar</span>
+        </div>
+        <div class="socials small site-header-socials">
           <SocialLink name="linkedin" href="https://www.linkedin.com/in/shamilkhedgikar" label="LinkedIn" />
           <SocialLink name="github" href="https://github.com/shamilkhedgikar" label="GitHub" />
           <SocialLink name="scholar" href="https://scholar.google.com/citations?user=-u_uBZUAAAAJ&hl=en" label="Google Scholar" />
@@ -77,14 +81,41 @@ const formatBlogDate = (date: Date) =>
           <SocialLink name="instagram" href="https://www.instagram.com/swordsandblades/?hl=en" label="Instagram" />
           <SocialLink name="rss" href="/rss.xml" label="RSS Feed" />
         </div>
+        <nav class="site-header-nav" aria-label="Top section navigation">
+          <a href="#about">About</a>
+          <a href="#experience">Work</a>
+          <a href="#projects">Projects</a>
+          <a href="#technologies">Tech</a>
+          <a href="#blog">Blog</a>
+          <button
+            type="button"
+            class="mobile-header-action"
+            data-mobile-links-toggle
+            aria-controls="mobile-links-panel"
+            aria-expanded="false"
+            aria-label="Open social links"
+          >
+            Links
+          </button>
+        </nav>
       </header>
+      <aside id="mobile-links-panel" class="mobile-links-panel" data-mobile-links-panel hidden>
+        <div class="mobile-links-panel__inner" role="group" aria-label="Social links">
+          <SocialLink name="linkedin" href="https://www.linkedin.com/in/shamilkhedgikar" label="LinkedIn" />
+          <SocialLink name="github" href="https://github.com/shamilkhedgikar" label="GitHub" />
+          <SocialLink name="scholar" href="https://scholar.google.com/citations?user=-u_uBZUAAAAJ&hl=en" label="Google Scholar" />
+          <SocialLink name="twitter" href="https://twitter.com/ShamilKhedgikar" label="Twitter" />
+          <SocialLink name="instagram" href="https://www.instagram.com/swordsandblades/?hl=en" label="Instagram" />
+          <SocialLink name="rss" href="/rss.xml" label="RSS Feed" />
+        </div>
+      </aside>
 
       <section class="hero">
         <header class="text-wrapper">
           <h1>Shamil Shirish Khedgikar</h1>
           <h4> Data Scientist &middot; Product Engineer </h4>
         </header>
-        <div class="socials">
+        <div class="socials hero-socials">
           <SocialLink name="linkedin" href="https://www.linkedin.com/in/shamilkhedgikar" label="LinkedIn" />
           <SocialLink name="github" href="https://github.com/shamilkhedgikar" label="GitHub" />
           <SocialLink name="scholar" href="https://scholar.google.com/citations?user=-u_uBZUAAAAJ&hl=en" label="Google Scholar" />
@@ -125,6 +156,7 @@ const formatBlogDate = (date: Date) =>
             <h2 class="section-title">Projects</h2>
             <p class="section-subtitle">
               Selected works in engineering, data, and design.
+            </p>
           </div>
           <ProjectsCarousel />
           <div id="technologies" class="tech-stack">
@@ -171,13 +203,13 @@ const formatBlogDate = (date: Date) =>
       </section>
     </main>
 
-    <nav class="side-nav">
-      <span class="nav-arrow">&#x23F5;</span>
+    <nav class="side-nav" aria-label="Section quick navigation">
+      <span class="nav-arrow" aria-hidden="true">&#x23F5;</span>
       <ul>
         <li><a href="#about">About</a></li>
-        <li><a href="#experience">Experience</a></li>
+        <li><a href="#experience">Work</a></li>
         <li><a href="#projects">Projects</a></li>
-        <li><a href="#technologies">Technologies</a></li>
+        <li><a href="#technologies">Tech</a></li>
         <li><a href="#blog">Blog</a></li>
       </ul>
     </nav>
@@ -185,7 +217,7 @@ const formatBlogDate = (date: Date) =>
     <script src="https://cdn.jsdelivr.net/npm/marching-squares@1.0.0/dist/bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
 
-        <script is:inline>
+    <script is:inline define:vars={{ themeColors }}>
       (() => {
         const switcher = document.querySelector('.theme-switcher');
         if (!switcher) return;
@@ -203,11 +235,7 @@ const formatBlogDate = (date: Date) =>
           buttonMeta.set(theme, { symbol, title });
         });
 
-        const THEME_COLORS = {
-          sand: '#fffbe9',
-          charcoal: 'slategray',
-          bone: '#F2F0EF',
-        };
+        const THEME_COLORS = themeColors;
 
         let collapseHandler = null;
         const clearCollapseWatcher = () => {
@@ -332,7 +360,88 @@ const formatBlogDate = (date: Date) =>
           }
         });
 
-const sentinel = document.getElementById('hero-sentinel');
+        const mobileLinksToggle = document.querySelector('[data-mobile-links-toggle]');
+        const mobileLinksPanel = document.querySelector('[data-mobile-links-panel]');
+        const mobileLinksInner = mobileLinksPanel?.querySelector('.mobile-links-panel__inner');
+        const heroName = document.querySelector('.text-wrapper h1');
+        const heroSocials = document.querySelector('.hero-socials');
+        const mobileViewportQuery = window.matchMedia('(max-width: 960px)');
+        let mobileLinksOpen = false;
+
+        const syncSocialsWidthToName = () => {
+          if (!(heroName instanceof HTMLElement)) return;
+          const measured = Math.ceil(heroName.getBoundingClientRect().width);
+          if (!measured) return;
+          const widthValue = `${measured}px`;
+          if (heroSocials instanceof HTMLElement) {
+            heroSocials.style.setProperty('--hero-name-width', widthValue);
+          }
+          if (mobileLinksInner instanceof HTMLElement) {
+            mobileLinksInner.style.setProperty('--hero-name-width', widthValue);
+          }
+        };
+
+        syncSocialsWidthToName();
+        window.addEventListener('resize', syncSocialsWidthToName);
+        window.addEventListener('orientationchange', syncSocialsWidthToName);
+        if (document.fonts?.ready) {
+          document.fonts.ready.then(syncSocialsWidthToName).catch(() => {});
+        }
+
+        const setMobileLinksOpen = (on) => {
+          if (!(mobileLinksToggle instanceof HTMLButtonElement)) return;
+          if (!(mobileLinksPanel instanceof HTMLElement)) return;
+          const next = Boolean(on) && mobileViewportQuery.matches;
+          mobileLinksOpen = next;
+          mobileLinksToggle.setAttribute('aria-expanded', String(next));
+          mobileLinksToggle.setAttribute('aria-label', next ? 'Close social links' : 'Open social links');
+          if (next) {
+            mobileLinksPanel.removeAttribute('hidden');
+            requestAnimationFrame(() => {
+              mobileLinksPanel.classList.add('is-open');
+            });
+            return;
+          }
+          mobileLinksPanel.classList.remove('is-open');
+          window.setTimeout(() => {
+            if (!mobileLinksOpen) {
+              mobileLinksPanel.setAttribute('hidden', 'true');
+            }
+          }, 180);
+        };
+
+        const closeMobileLinks = () => setMobileLinksOpen(false);
+
+        if (mobileLinksToggle instanceof HTMLButtonElement && mobileLinksPanel instanceof HTMLElement) {
+          mobileLinksToggle.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            setMobileLinksOpen(!mobileLinksOpen);
+          });
+
+          document.addEventListener('pointerdown', (event) => {
+            if (!mobileLinksOpen) return;
+            const target = event.target;
+            if (!(target instanceof Node)) return;
+            if (mobileLinksPanel.contains(target) || mobileLinksToggle.contains(target)) return;
+            closeMobileLinks();
+          });
+
+          mobileLinksPanel.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target instanceof HTMLElement && target.closest('a')) {
+              closeMobileLinks();
+            }
+          });
+
+          window.addEventListener('resize', () => {
+            if (!mobileViewportQuery.matches) {
+              closeMobileLinks();
+            }
+          });
+        }
+
+        const sentinel = document.getElementById('hero-sentinel');
         if (sentinel) {
           const io = new IntersectionObserver(([entry]) => {
             if (!entry) return;
@@ -390,6 +499,11 @@ const sentinel = document.getElementById('hero-sentinel');
         let activeCardId = null;
         let lastFocusedElement = null;
         const mediaInitialized = new WeakSet();
+        const FOCUSABLE_SELECTOR =
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+        const isOverlayOpen = () =>
+          overlay instanceof HTMLElement && overlay.classList.contains('is-open');
 
         const initCardMedia = (card) => {
           if (!(card instanceof HTMLElement)) return;
@@ -526,9 +640,6 @@ const sentinel = document.getElementById('hero-sentinel');
           if (!overlay || !overlayContent) return;
           const clone = card.cloneNode(true);
           clone.classList.add('project-card--overlay');
-          clone.removeAttribute('tabindex');
-          clone.removeAttribute('role');
-          clone.setAttribute('aria-expanded', 'true');
           clone.querySelectorAll('[data-project-body]').forEach((body) => {
             body.removeAttribute('data-project-body');
             body.setAttribute('aria-hidden', 'false');
@@ -547,8 +658,36 @@ const sentinel = document.getElementById('hero-sentinel');
           }
         };
 
-        const handleCardActivation = (card) => {
-          lastFocusedElement = card;
+        const trapOverlayFocus = (event) => {
+          if (event.key !== 'Tab') return;
+          if (!isOverlayOpen() || !(overlay instanceof HTMLElement)) return;
+          const focusables = Array.from(overlay.querySelectorAll(FOCUSABLE_SELECTOR)).filter(
+            (element) =>
+              element instanceof HTMLElement &&
+              !element.hasAttribute('hidden') &&
+              element.getAttribute('aria-hidden') !== 'true' &&
+              (element.offsetParent !== null || element === document.activeElement),
+          );
+          if (focusables.length === 0) {
+            event.preventDefault();
+            return;
+          }
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+          const active = document.activeElement;
+          if (event.shiftKey && active === first) {
+            event.preventDefault();
+            last.focus();
+            return;
+          }
+          if (!event.shiftKey && active === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        };
+
+        const handleCardActivation = (card, trigger) => {
+          lastFocusedElement = trigger ?? card;
           activeCardId = card.dataset.cardId ?? null;
           openOverlay(card);
         };
@@ -598,24 +737,66 @@ const sentinel = document.getElementById('hero-sentinel');
 
           cards.forEach((card) => {
             initCardMedia(card);
+            let pointerStartX = 0;
+            let pointerStartY = 0;
+            let trackingPointer = false;
+            let suppressClick = false;
+
+            card.addEventListener('pointerdown', (event) => {
+              if (event.pointerType === 'mouse' && event.button !== 0) return;
+              trackingPointer = true;
+              pointerStartX = event.clientX;
+              pointerStartY = event.clientY;
+              suppressClick = false;
+            });
+
+            card.addEventListener('pointermove', (event) => {
+              if (!trackingPointer) return;
+              const deltaX = Math.abs(event.clientX - pointerStartX);
+              const deltaY = Math.abs(event.clientY - pointerStartY);
+              if (deltaX > 12 || deltaY > 12) {
+                suppressClick = true;
+              }
+            });
+
+            const clearPointerState = () => {
+              trackingPointer = false;
+              if (suppressClick) {
+                window.setTimeout(() => {
+                  suppressClick = false;
+                }, 0);
+              }
+            };
+
+            card.addEventListener('pointerup', clearPointerState);
+            card.addEventListener('pointercancel', clearPointerState);
+
             card.addEventListener('click', (event) => {
+              if (suppressClick) return;
               const target = event.target;
-              if (target instanceof HTMLElement && target.closest('a')) {
+              if (
+                target instanceof HTMLElement &&
+                target.closest('a, button, input, select, textarea, [contenteditable="true"]')
+              ) {
                 return;
               }
-              handleCardActivation(card);
+              handleCardActivation(card, card);
             });
-            card.addEventListener('keydown', (event) => {
-              if (event.target !== card) return;
-              if (event.key === 'Enter' || event.key === ' ') {
+            const detailsButtons = Array.from(card.querySelectorAll('[data-overlay-trigger]'));
+            detailsButtons.forEach((button) => {
+              if (!(button instanceof HTMLButtonElement)) return;
+              button.addEventListener('click', (event) => {
                 event.preventDefault();
-                handleCardActivation(card);
-              }
+                event.stopPropagation();
+                handleCardActivation(card, button);
+              });
+              button.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  handleCardActivation(card, button);
+                }
+              });
             });
-          });
-
-          track.querySelectorAll('a').forEach((anchor) => {
-            anchor.addEventListener('click', (event) => event.stopPropagation());
           });
 
           applyFilter(carousel);
@@ -630,8 +811,16 @@ const sentinel = document.getElementById('hero-sentinel');
         }
         document.addEventListener('keydown', (event) => {
           if (event.key === 'Escape') {
-            closeOverlay();
+            if (mobileLinksOpen) {
+              closeMobileLinks();
+              return;
+            }
+            if (isOverlayOpen()) {
+              closeOverlay();
+              return;
+            }
           }
+          trapOverlayFocus(event);
         });
 
         carousels.forEach(initCarousel);
@@ -658,10 +847,16 @@ html, body {
   padding: 0;
   width: 100%;
   height: 100%;
+  max-width: 100%;
   background-size: auto;
   background-attachment: scroll;
   overflow-x: hidden;
+  overflow-x: clip;
   font-family: 'Golos Text', sans-serif;
+}
+
+body.project-overlay-open{
+  overflow: hidden;
 }
 
 html {
@@ -671,6 +866,29 @@ html {
 
 :root {
   --shell-width: min(100%, 900px);
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --mobile-nav-height: 3.35rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+main,
+.scroll-section,
+.section-shell,
+.socials,
+.blog-grid,
+.blog-card,
+.site-header,
+.side-nav,
+.side-nav ul {
+  min-inline-size: 0;
 }
 
 .bg-image-layer {
@@ -685,8 +903,8 @@ html {
 
 .theme-switcher{
   position: fixed;
-  bottom: clamp(0.65rem, 2vw, 1.2rem);
-  right: clamp(0.75rem, 2.4vw, 2.1rem);
+  bottom: calc(clamp(0.65rem, 2vw, 1.2rem) + var(--safe-area-bottom));
+  right: calc(clamp(0.75rem, 2.4vw, 2.1rem) + var(--safe-area-right));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -695,6 +913,7 @@ html {
   border-radius: 12px;
   box-shadow: 0 18px 28px rgba(15, 23, 42, 0.18);
   z-index: 1201;
+  max-inline-size: calc(100vw - var(--safe-area-left) - var(--safe-area-right));
 }
 
 .theme-switcher__menu{
@@ -713,7 +932,7 @@ html {
 .theme-switcher:focus-within .theme-switcher__menu{
   max-height: 14rem;
   opacity: 1;
-  transform: translateY(0.25) scale(1);
+  transform: translateY(0.25rem) scale(1);
   pointer-events: auto;
 }
 
@@ -762,6 +981,9 @@ html {
 
 .text-wrapper h1 {
   margin: 0.5rem 0 0.25rem;
+  display: inline-block;
+  inline-size: fit-content;
+  max-inline-size: 100%;
 }
 
 .text-wrapper h4 {
@@ -797,7 +1019,17 @@ html {
   padding-block-end: clamp(3.5rem, 8vw, 5rem);
 }
 
-.hero .socials {
+.hero .hero-socials {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  justify-items: center;
+  align-items: center;
+  column-gap: 0;
+  row-gap: 0.2rem;
+  inline-size: min(100%, var(--hero-name-width, 24rem));
+  visibility: visible;
+  opacity: 1;
+  margin-inline: auto;
   margin-top: 1rem;
   margin-bottom: clamp(2.5rem, 6vw, 3.5rem);
 }
@@ -864,6 +1096,8 @@ html {
 #experience,
 #projects,
 .socials {
+  --social-size: 2.25rem;
+  --social-icon-size: 1.15rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.7rem;
@@ -871,6 +1105,8 @@ html {
 }
 
 .socials.small {
+  --social-size: 2rem;
+  --social-icon-size: 1rem;
   justify-content: flex-end;
   gap: 0.4rem;
 }
@@ -967,7 +1203,7 @@ html {
 .blog-card__entry:hover,
 .blog-card__entry:focus-visible{
   transform: translateY(-1px);
-  border-color: 1px solid rgba(15,23,42,0.12);
+  border-color: rgba(15,23,42,0.12);
   outline: none;
 }
 
@@ -1047,6 +1283,10 @@ html {
   width: 180px;
 }
 
+.side-nav:focus-within {
+  width: 180px;
+}
+
 .side-nav ul {
   opacity: 0;
   list-style: none;
@@ -1107,7 +1347,15 @@ html {
   opacity: 0;
 }
 
+.side-nav:focus-within .nav-arrow {
+  opacity: 0;
+}
+
 .side-nav:hover ul {
+  opacity: 1;
+}
+
+.side-nav:focus-within ul {
   opacity: 1;
 }
 
@@ -1117,7 +1365,9 @@ html {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.6rem 1rem;
+  padding: calc(0.45rem + var(--safe-area-top)) calc(1rem + var(--safe-area-right)) 0.45rem calc(1rem + var(--safe-area-left));
+  min-block-size: calc(3.1rem + var(--safe-area-top));
+  max-inline-size: 100vw;
   font-family: 'Golos Text', sans-serif;
   background: rgba(224, 231, 248, 0.48);
   backdrop-filter: blur(10px) saturate(140%);
@@ -1131,20 +1381,358 @@ html {
 }
 
 .site-header .brand {
+  display: flex;
+  align-items: center;
+  min-inline-size: 0;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 1.05rem;
   margin-right: auto;
 }
 
-.site-header .socials {
-  display: flex;
-  gap: 0.4rem;
-  transform: scale(0.7);
+.brand__desktop,
+.brand__mobile {
+  max-inline-size: min(72vw, 32rem);
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brand__mobile {
+  display: none;
+}
+
+.site-header .site-header-socials {
+  --header-socials-width: clamp(5.8rem, 30vw, 16rem);
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  justify-items: center;
+  align-items: center;
+  inline-size: var(--header-socials-width);
+  flex: 0 0 var(--header-socials-width);
+  row-gap: 0;
+  transform: translateY(-0.5rem);
+  scale: 0.80;
+}
+
+.site-header-nav {
+  display: none;
+  align-items: center;
+  gap: 0.34rem;
+  min-inline-size: 0;
+}
+
+.site-header-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 1.95rem;
+  padding: 0.35rem 0.62rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.66);
+  color: rgba(15, 23, 42, 0.86);
+  text-decoration: none;
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.site-header-nav a:focus-visible {
+  outline: 2px solid rgba(15, 23, 42, 0.5);
+  outline-offset: 2px;
+}
+
+.mobile-header-action {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 3.25rem;
+  min-block-size: 2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+  color: rgba(15, 23, 42, 0.82);
+  font-family: 'Golos Text', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.mobile-header-action:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 14px rgba(15, 23, 42, 0.14);
+}
+
+.mobile-header-action:focus-visible {
+  outline: 2px solid rgba(15, 23, 42, 0.45);
+  outline-offset: 2px;
+}
+
+.mobile-links-panel {
+  position: fixed;
+  top: calc(3.6rem + var(--safe-area-top));
+  left: calc(0.75rem + var(--safe-area-left));
+  right: calc(0.75rem + var(--safe-area-right));
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px) scale(0.98);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 1001;
+  max-inline-size: calc(100vw - var(--safe-area-left) - var(--safe-area-right) - 1.5rem);
+}
+
+.mobile-links-panel[hidden] {
+  display: none !important;
+}
+
+.mobile-links-panel.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.mobile-links-panel__inner {
+  --social-size: 2rem;
+  --social-icon-size: 0.25rem;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  justify-items: center;
+  align-items: center;
+  column-gap: 1.2rem;
+  row-gap: 0.05rem;
+  inline-size: min(100%, var(--hero-name-width, 24rem));
+  max-inline-size: 100%;
+  margin-inline: auto;
+  padding: 1rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(224, 231, 248, 0.75);
+  background: rgba(224, 231, 248, 0.76);
+  backdrop-filter: blur(10px) saturate(135%);
+  -webkit-backdrop-filter: blur(10px) saturate(135%);
+  box-shadow: 0 12px 20px rgba(15, 23, 42, 0.14);
+  transform: translate(-0.5rem, -1rem);
 }
 
 body.show-header .site-header {
   transform: translateY(0);
   opacity: 1;
+}
+
+@media (max-width: 960px) {
+  html {
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    font-size: 15px;
+  }
+
+  .side-nav {
+    display: none;
+  }
+
+  .site-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "brand"
+      "menu";
+    align-items: center;
+    row-gap: 0.4rem;
+    column-gap: 0.5rem;
+    padding: calc(0.42rem + var(--safe-area-top)) calc(0.66rem + var(--safe-area-right)) 0.42rem calc(0.66rem + var(--safe-area-left));
+    min-block-size: auto;
+  }
+
+  .site-header .brand {
+    grid-area: brand;
+    margin-right: 0;
+  }
+
+  .site-header .site-header-socials {
+    display: none !important;
+  }
+
+  .site-header-nav {
+    grid-area: menu;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.3rem;
+  }
+
+  .site-header-nav a {
+    min-block-size: 1.8rem;
+    padding: 0.28rem 0.56rem;
+    font-size: 0.7rem;
+  }
+
+  .site-header-nav .mobile-header-action {
+    display: inline-flex;
+    min-block-size: 1.8rem;
+    padding: 0.28rem 0.56rem;
+    font-size: 0.7rem;
+    border-radius: 999px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.66);
+    color: rgba(15, 23, 42, 0.86);
+    box-shadow: none;
+    transform: none;
+  }
+
+  .site-header-nav .mobile-header-action:hover {
+    transform: none;
+    box-shadow: none;
+    background: rgba(255, 255, 255, 0.66);
+  }
+
+  .mobile-links-panel {
+    display: block;
+    top: calc(5.9rem + var(--safe-area-top));
+  }
+
+  .brand__desktop {
+    display: none;
+  }
+
+  .brand__mobile {
+    display: inline-block;
+    max-inline-size: calc(100vw - var(--safe-area-left) - var(--safe-area-right) - 1.35rem);
+    font-size: clamp(0.76rem, 2.15vw, 0.9rem);
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .theme-switcher {
+    bottom: calc(0.9rem + var(--safe-area-bottom));
+    right: calc(0.7rem + var(--safe-area-right));
+    z-index: 1202;
+  }
+
+  .glass-ring {
+    width: 172px;
+    height: 172px;
+    margin: 1.2rem auto 1.3rem;
+  }
+
+  .scroll-section {
+    padding: clamp(1.35rem, 4.5vw, 1.95rem) 0.9rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .timeline-legend {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 720px) {
+  body {
+    font-size: 14.5px;
+    padding-bottom: calc(4rem + var(--safe-area-bottom));
+  }
+
+  main {
+    padding-bottom: clamp(4.2rem, 12vw, 5.6rem);
+  }
+
+  .site-header {
+    row-gap: 0.34rem;
+    padding: calc(0.38rem + var(--safe-area-top)) calc(0.58rem + var(--safe-area-right)) 0.38rem calc(0.58rem + var(--safe-area-left));
+  }
+
+  .site-header-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 0.1rem;
+  }
+
+  .site-header-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-header-nav a {
+    min-block-size: 1.74rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.68rem;
+  }
+
+  .site-header-nav .mobile-header-action {
+    min-block-size: 1.74rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.68rem;
+  }
+
+  .mobile-links-panel {
+    top: calc(5.45rem + var(--safe-area-top));
+  }
+
+  .hero .hero-socials {
+    column-gap: 0;
+    row-gap: 0.16rem;
+    margin-top: 0.85rem;
+    margin-bottom: 1.65rem;
+    --social-size: 2rem;
+    --social-icon-size: 1rem;
+  }
+
+  .theme-switcher {
+    bottom: calc(0.7rem + var(--safe-area-bottom));
+    right: calc(0.55rem + var(--safe-area-right));
+  }
+
+  .glass-ring {
+    width: 170px;
+    height: 170px;
+    margin: 1.2rem auto 1.25rem;
+  }
+
+  .scroll-section {
+    padding: clamp(1.35rem, 4.8vw, 1.95rem) 0.85rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .text-wrapper h1 {
+    font-size: clamp(1.45rem, 5.2vw, 1.8rem);
+    line-height: 1.22;
+  }
+
+  .text-wrapper h4 {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .section-title {
+    font-size: clamp(1.35rem, 5vw, 1.65rem);
+  }
+
+  .section-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .blog-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .blog-card {
+    padding: 1.35rem 1.15rem;
+  }
+
+  .blog-card__entry {
+    padding: 0.62rem 0.65rem;
+  }
 }
 </style>
 

@@ -40,8 +40,14 @@ const registry = {
   youtube,
   "knowledge-graph": knowledgeGraph,
 } as const;
-const svg = registry[name];
-if (!svg) throw new Error(`Unknown icon: ${name}`);
+const rawSvg = registry[name];
+if (!rawSvg) throw new Error(`Unknown icon: ${name}`);
+
+// Avoid duplicated paint-server ids like "tritone" across multiple inline SVGs.
+const uniquePaintId = `tritone-${name}-${Math.random().toString(36).slice(2, 10)}`;
+const svg = rawSvg
+  .replace(/id=(['"])tritone\1/g, `id="${uniquePaintId}"`)
+  .replace(/url\(#tritone\)/g, `url(#${uniquePaintId})`);
 ---
 
 <span class={`icon ${extra}`} style={`inline-size:${size}px; block-size:${size}px`} set:html={svg} />
