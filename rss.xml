@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Shamil Khedgikar</title>
+    <link>https://shamilkhedgikar.github.io</link>
+    <description>Research, engineering, and geospatial writing.</description>
+    <item><title>Geospatial Primitives</title><link>https://shamilkhedgikar.github.io/blog/sampling-geospatial-primitives/</link><guid isPermaLink="true">https://shamilkhedgikar.github.io/blog/sampling-geospatial-primitives/</guid><pubDate>Fri, 21 Nov 2025 00:00:00 GMT</pubDate><description>Front matter, layout conventions, code and data blocks, math, embeds, and accessibility tips for new posts.</description></item><item><title>Authoring Cheatsheet</title><link>https://shamilkhedgikar.github.io/blog/markdown-cheatsheet/</link><guid isPermaLink="true">https://shamilkhedgikar.github.io/blog/markdown-cheatsheet/</guid><pubDate>Sun, 02 Nov 2025 00:00:00 GMT</pubDate><description>Front matter, layout conventions, code and data blocks, math, embeds, and accessibility tips for new posts.</description></item>
+  </channel>
+</rss>
