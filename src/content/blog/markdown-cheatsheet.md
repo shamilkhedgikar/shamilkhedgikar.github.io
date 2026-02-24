@@ -9,6 +9,7 @@ tags:
   - markdown
   - workflow
 order: 100
+draft: true
 ---
 
 Welcome! This note captures the conventions that keep Markdown content consistent across the site. Every section below renders with the same `.md` stylesheet that powers project pages, the experience timeline, and other content collections.

@@ -8,4 +8,5 @@ tags:
   - statistics
   - geospatial
 order: 200
+draft: true
 ---
