@@ -814,21 +814,6 @@ const formatBlogDate = (date: Date) =>
               }
               handleCardActivation(card, card);
             });
-            const detailsButtons = Array.from(card.querySelectorAll('[data-overlay-trigger]'));
-            detailsButtons.forEach((button) => {
-              if (!(button instanceof HTMLButtonElement)) return;
-              button.addEventListener('click', (event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                handleCardActivation(card, button);
-              });
-              button.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  handleCardActivation(card, button);
-                }
-              });
-            });
           });
 
           applyFilter(carousel);

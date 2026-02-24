@@ -221,15 +221,6 @@ const projects: ProjectCard[] = await Promise.all(
               <span aria-hidden="true" class="project-card__arrow">&#128279;</span>
             </a>
           )}
-          <button
-            type="button"
-            class="project-card__link project-card__link--overlay-trigger"
-            data-overlay-trigger
-            aria-haspopup="dialog"
-            aria-label={`Open details for ${project.title}`}
-          >
-            Details
-          </button>
           {project.links && project.links.length > 0 && (
             <div class="project-card__links" aria-label="Supplementary links">
               {project.links.map((link) => (
@@ -510,11 +501,6 @@ const projects: ProjectCard[] = await Promise.all(
   background: rgba(255, 255, 255, 0.9);
 }
 
-.project-card__link--overlay-trigger{
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  background: rgba(255, 255, 255, 0.78);
-}
-
 .project-card__links{
   display: flex;
   align-items: center;
@@ -748,10 +734,6 @@ const projects: ProjectCard[] = await Promise.all(
 
 .project-card--overlay .project-card__cta{
   flex-wrap: wrap;
-}
-
-.project-card--overlay [data-overlay-trigger]{
-  display: none;
 }
 
 .carousel-arrow{
