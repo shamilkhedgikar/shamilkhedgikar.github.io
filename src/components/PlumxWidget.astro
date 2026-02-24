@@ -8,7 +8,6 @@ const {
 };
 
 const linkLabel = label ?? 'View PlumX metrics';
-const scriptSrc = '//cdn.plu.mx/widget-popup.js';
 ---
 
 <div class="plumx-widget">
@@ -26,7 +25,7 @@ const scriptSrc = '//cdn.plu.mx/widget-popup.js';
 
 <script is:inline>
   (() => {
-    const src = "${scriptSrc}";
+    const src = "//cdn.plu.mx/widget-popup.js";
     if (!document.querySelector(`script[src="${src}"]`)) {
       const script = document.createElement('script');
       script.src = src;

@@ -1,5 +1,4 @@
 ﻿---
-title: "Home"
 import AboutSection from "../components/AboutSection.astro";
 import ExperienceTimeline from "../components/ExperienceTimeline.astro";
 import ProjectsCarousel from "../components/ProjectsCarousel.astro";
@@ -217,7 +216,7 @@ const formatBlogDate = (date: Date) =>
     <script src="https://cdn.jsdelivr.net/npm/marching-squares@1.0.0/dist/bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
 
-    <script is:inline define:vars={{ themeColors }}>
+    <script is:inline define:vars={{ injectedThemeColors: themeColors }}>
       (() => {
         const switcher = document.querySelector('.theme-switcher');
         if (!switcher) return;
@@ -235,7 +234,7 @@ const formatBlogDate = (date: Date) =>
           buttonMeta.set(theme, { symbol, title });
         });
 
-        const THEME_COLORS = themeColors;
+        const THEME_COLORS = injectedThemeColors;
 
         let collapseHandler = null;
         const clearCollapseWatcher = () => {

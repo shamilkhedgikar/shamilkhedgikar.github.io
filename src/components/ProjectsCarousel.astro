@@ -187,7 +187,7 @@ const projects: ProjectCard[] = await Promise.all(
             </div>
             {project.media.length > 1 && (
               <div class="project-card__media-dots" data-media-dots role="tablist">
-                {project.media.map((item, index) => (
+                {project.media.map((_, index) => (
                   <button
                     type="button"
                     class="project-card__media-dot"

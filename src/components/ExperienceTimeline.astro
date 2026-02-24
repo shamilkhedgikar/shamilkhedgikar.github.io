@@ -563,7 +563,7 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
       });
 
     const cards = Array.from(document.querySelectorAll('[data-timeline-card]')).filter(
-      (card): card is HTMLElement => card instanceof HTMLElement,
+      (card) => card instanceof HTMLElement,
     );
 
     const setCardExpanded = (card, on) => {
@@ -601,11 +601,7 @@ const resolveLinkLabel = (href: string, explicit?: string | null) => {
     });
 
     syncTimelineMode();
-    if (typeof compactQuery.addEventListener === 'function') {
-      compactQuery.addEventListener('change', syncTimelineMode);
-    } else if (typeof compactQuery.addListener === 'function') {
-      compactQuery.addListener(syncTimelineMode);
-    }
+    compactQuery.addEventListener('change', syncTimelineMode);
   });
 </script>
 
