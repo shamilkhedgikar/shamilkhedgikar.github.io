@@ -531,11 +531,53 @@ const formatBlogDate = (date: Date) =>
         let activeCardId = null;
         let lastFocusedElement = null;
         const mediaInitialized = new WeakSet();
+        let lockedScrollY = 0;
+        let isBodyScrollLocked = false;
         const FOCUSABLE_SELECTOR =
           'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
         const isOverlayOpen = () =>
           overlay instanceof HTMLElement && overlay.classList.contains('is-open');
+
+        const lockBodyScroll = () => {
+          if (isBodyScrollLocked) return;
+          const body = document.body;
+          const docEl = document.documentElement;
+          lockedScrollY = window.scrollY || window.pageYOffset || docEl.scrollTop || 0;
+          const scrollbarCompensation = Math.max(0, window.innerWidth - docEl.clientWidth);
+          if (scrollbarCompensation > 0) {
+            body.style.setProperty('padding-right', `${scrollbarCompensation}px`);
+          }
+          body.style.setProperty('position', 'fixed');
+          body.style.setProperty('top', `-${lockedScrollY}px`);
+          body.style.setProperty('left', '0');
+          body.style.setProperty('right', '0');
+          body.style.setProperty('width', '100%');
+          body.style.setProperty('overflow', 'hidden');
+          body.classList.add('project-overlay-open');
+          isBodyScrollLocked = true;
+        };
+
+        const unlockBodyScroll = () => {
+          if (!isBodyScrollLocked) return;
+          const body = document.body;
+          const docEl = document.documentElement;
+          body.classList.remove('project-overlay-open');
+          body.style.removeProperty('position');
+          body.style.removeProperty('top');
+          body.style.removeProperty('left');
+          body.style.removeProperty('right');
+          body.style.removeProperty('width');
+          body.style.removeProperty('overflow');
+          body.style.removeProperty('padding-right');
+          const previousScrollBehavior = docEl.style.scrollBehavior;
+          docEl.style.scrollBehavior = 'auto';
+          window.scrollTo(0, lockedScrollY);
+          requestAnimationFrame(() => {
+            docEl.style.scrollBehavior = previousScrollBehavior;
+          });
+          isBodyScrollLocked = false;
+        };
 
         const initCardMedia = (card) => {
           if (!(card instanceof HTMLElement)) return;
@@ -640,7 +682,7 @@ const formatBlogDate = (date: Date) =>
           if (!overlay) return;
           overlay.classList.remove('is-open');
           overlay.setAttribute('aria-hidden', 'true');
-          document.body.classList.remove('project-overlay-open');
+          unlockBodyScroll();
           if (overlayContent) {
             overlayContent.querySelectorAll('[data-media]').forEach((media) => {
               if (!(media instanceof HTMLElement)) return;
@@ -663,7 +705,11 @@ const formatBlogDate = (date: Date) =>
             }
           }, 220);
           if (lastFocusedElement instanceof HTMLElement) {
-            lastFocusedElement.focus();
+            try {
+              lastFocusedElement.focus({ preventScroll: true });
+            } catch {
+              lastFocusedElement.focus();
+            }
           }
           activeCardId = null;
         };
@@ -680,10 +726,10 @@ const formatBlogDate = (date: Date) =>
           overlayContent.innerHTML = '';
           overlayContent.appendChild(clone);
           initCardMedia(clone);
+          lockBodyScroll();
           overlay.removeAttribute('hidden');
           overlay.setAttribute('aria-hidden', 'false');
           overlay.classList.add('is-open');
-          document.body.classList.add('project-overlay-open');
           const closeButton = overlayClose;
           if (closeButton instanceof HTMLElement) {
             closeButton.focus();
@@ -873,7 +919,7 @@ html, body {
 }
 
 body.project-overlay-open{
-  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 html {
@@ -1285,36 +1331,49 @@ main,
   top: 50%;
   left: 0;
   transform: translateY(-50%);
-  width: 40px;
+  inline-size: 2.7rem;
+  block-size: 3rem;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
   background: rgba(224, 231, 248, 0.48);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-right: 2px solid rgba(224, 231, 248, 0.48);
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  transition: width 0.5s ease;
+  transition: inline-size 0.42s ease, block-size 0.3s ease, box-shadow 0.24s ease;
   z-index: 1000;
 }
 
 .side-nav:hover {
-  width: 180px;
+  inline-size: 11.25rem;
+  block-size: auto;
+  place-items: stretch;
 }
 
 .side-nav:focus-within {
-  width: 180px;
+  inline-size: 11.25rem;
+  block-size: auto;
+  place-items: stretch;
 }
 
 .side-nav ul {
   opacity: 0;
   list-style: none;
-  transition: opacity 0.2s ease 0.2s;
-  padding: 1rem;
+  transition: opacity 0.2s ease, max-height 0.24s ease, padding 0.24s ease;
+  padding: 0;
   margin: 0;
   white-space: nowrap;
+  max-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  inline-size: 100%;
 }
 
 .side-nav li {
-  margin: 1rem 0;
+  margin: 0.55rem 0;
 }
 
 .side-nav a {
@@ -1345,7 +1404,7 @@ main,
   place-items: center;
   font-weight: 700;
   right: 0.35rem;
-  top: 45%;
+  top: 50%;
   transform: translateY(-50%);
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px) saturate(150%);
@@ -1370,10 +1429,16 @@ main,
 
 .side-nav:hover ul {
   opacity: 1;
+  max-height: 24rem;
+  padding: 0.95rem;
+  pointer-events: auto;
 }
 
 .side-nav:focus-within ul {
   opacity: 1;
+  max-height: 24rem;
+  padding: 0.95rem;
+  pointer-events: auto;
 }
 
 .site-header {
