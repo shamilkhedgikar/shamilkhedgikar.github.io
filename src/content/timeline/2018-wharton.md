@@ -5,7 +5,7 @@ organization: The Wharton School, UPenn, Philadelphia, PA
 category: Work
 period: Aug. 2018 - Dec. 2018
 year: 2018
-subtitle: Department of Real Estate - Philadelphia, PA
+subtitle: Department of Real Estate
 order: 30
 ---
 

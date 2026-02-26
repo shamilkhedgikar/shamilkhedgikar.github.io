@@ -1,7 +1,7 @@
 ---
 title: Senior Product Engineer - Indian School of Business
 role: Senior Product Engineer
-organization: Indian School of Business - Hyderabad, India
+organization: Indian School of Business, Hyderabad, India
 order: 50
 category: Work
 period: Sept. 2020 - May 2022

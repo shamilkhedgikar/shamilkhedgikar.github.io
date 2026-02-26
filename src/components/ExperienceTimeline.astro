@@ -87,6 +87,11 @@ const normalizeSubtitle = (value?: unknown) => {
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : null;
 };
+
+const hasTimelineBodyText = (value?: unknown) => {
+  if (typeof value !== 'string') return false;
+  return value.trim().length > 0;
+};
 ---
 
 <div class="timeline-viewport" data-timeline-viewport role="presentation">
@@ -106,6 +111,7 @@ const normalizeSubtitle = (value?: unknown) => {
               label: resolveLinkLabel(link.href, link.label),
             }));
             const subtitle = normalizeSubtitle(entry.data.subtitle);
+            const hasBodyText = hasTimelineBodyText(entry.body);
             const plumx = entry.data.plumx;
             return (
               <article
@@ -120,7 +126,15 @@ const normalizeSubtitle = (value?: unknown) => {
                     {organization && <span class="timeline-card__org">{organization}</span>}
                   </div>
                   <span class="timeline-card__date">{entry.data.period}</span>
-                  {subtitle && <p class="timeline-card__subtitle">{subtitle}</p>}
+                  {subtitle && (
+                    hasBodyText ? (
+                      <p class="timeline-card__subtitle">{subtitle}</p>
+                    ) : (
+                      <ul class="timeline-card__subtitle-list">
+                        <li class="timeline-card__subtitle">{subtitle}</li>
+                      </ul>
+                    )
+                  )}
                 </header>
                 <button
                   type="button"
@@ -329,6 +343,11 @@ const normalizeSubtitle = (value?: unknown) => {
   font-size: var(--timeline-subtitle-size);
   line-height: var(--timeline-subtitle-line);
   color: var(--timeline-subtitle-color);
+}
+
+.timeline-card__subtitle-list{
+  margin: 0;
+  padding-left: 1.2rem;
 }
 
 .timeline-card__date{

@@ -10,5 +10,4 @@ plumx:
   href: https://plu.mx/plum/a/?doi=10.2139%2Fssrn.5249614
   label: View PlumX metrics and citations
 ---
-
 [Read the preprint](https://dx.doi.org/10.2139/ssrn.5249614)
