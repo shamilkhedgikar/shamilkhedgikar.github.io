@@ -346,7 +346,8 @@ const normalizeSubtitle = (value?: unknown) => {
   color: rgba(15, 23, 42, 0.64);
 }
 
-.timeline-card__body :where(p, ul){
+.timeline-card__body :global(p),
+.timeline-card__body :global(ul){
   margin: 0 0 0.65rem 0;
   font-family: 'Golos Text', sans-serif;
   font-size: var(--timeline-subtitle-size);
@@ -354,18 +355,34 @@ const normalizeSubtitle = (value?: unknown) => {
   color: var(--timeline-subtitle-color);
 }
 
-.timeline-card__body :where(ul){
+.timeline-card__body :global(ul){
   padding-left: 1.20rem;
 }
 
-.timeline-card__body :where(li){
+.timeline-card__body :global(li){
   margin-bottom: 0.4rem;
 }
 
-.timeline-card__body :where(a){
+.timeline-card__body :global(a){
   color: var(--timeline-subtitle-color);
   font-weight: 400;
-  text-decoration: none;
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, var(--timeline-subtitle-color) 70%, transparent);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+  transition: color 0.16s ease, text-decoration-thickness 0.16s ease, text-underline-offset 0.16s ease;
+}
+
+.timeline-card__body :global(a:link),
+.timeline-card__body :global(a:visited){
+  color: var(--timeline-subtitle-color);
+}
+
+.timeline-card__body :global(a:hover),
+.timeline-card__body :global(a:focus-visible){
+  color: rgba(15, 23, 42, 0.9);
+  text-decoration-thickness: 0.1em;
+  text-underline-offset: 0.2em;
 }
 
 .timeline-card__plumx{
@@ -473,7 +490,8 @@ const normalizeSubtitle = (value?: unknown) => {
     display: none !important;
   }
 
-  .timeline-card__body :where(p, ul){
+  .timeline-card__body :global(p),
+  .timeline-card__body :global(ul){
     font-size: var(--timeline-subtitle-size);
     line-height: var(--timeline-subtitle-line);
   }
