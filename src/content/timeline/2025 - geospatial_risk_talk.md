@@ -8,5 +8,4 @@ year: 2025
 order: 115
 ---
 RelWeights: A Spatially Explicit Approach for understanding Risk Propagation
- - [Post]()
- - [Repo]()
+- [Repo](https://github.com/shamilkhedgikar/RelWeights/tree/main)
