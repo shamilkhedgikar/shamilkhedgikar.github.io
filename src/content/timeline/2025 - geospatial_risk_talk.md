@@ -1,7 +1,7 @@
 ---
 title: NYC Climate Week - Geospatial Risk Summit
 role: Geospatial Risk Summit @NYC Climate Week 
-organization: Geospatial Risk
+organization: Geospatial Risk, NYC
 category: Talks, Awards & Grants
 period: October 2025
 year: 2025
