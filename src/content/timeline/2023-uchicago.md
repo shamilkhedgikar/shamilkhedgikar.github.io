@@ -8,4 +8,5 @@ year: 2023
 order: 90
 ---
 Committee on Quantitative Methods in Social, Behavioral and Health Sciences
-[Alumni Profile](https://voices.uchicago.edu/qrmeth/mapss-qmsa/qmsa-alumni/qmsa-thesis-projects-2023-cohort/#:~:text=Shamil%20Khedgikar)
+
+- [Alumni Profile](https://voices.uchicago.edu/qrmeth/mapss-qmsa/qmsa-alumni/qmsa-thesis-projects-2023-cohort/#:~:text=Shamil%20Khedgikar)
