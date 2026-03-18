@@ -1,0 +1,17 @@
+{
+  "siteUrl": "https://shamilkhedgikar.github.io/",
+  "deployedAtIso": "2026-03-18T21:22:56.653Z",
+  "deployedAtUtc": "Wed, 18 Mar 2026 21:22:56 GMT",
+  "sourceBranch": "dev",
+  "sourceCommit": "e0d85d0",
+  "sourceCommitFull": "e0d85d04ba0ad34729ea12179ca0f7cc1c3c6a79",
+  "sourceSubject": "Remove legacy deploy workflow and stamp master deployments",
+  "repoUrl": "https://github.com/shamilkhedgikar/shamilkhedgikar.github.io",
+  "branchUrl": "https://github.com/shamilkhedgikar/shamilkhedgikar.github.io/tree/dev",
+  "commitUrl": "https://github.com/shamilkhedgikar/shamilkhedgikar.github.io/commit/e0d85d04ba0ad34729ea12179ca0f7cc1c3c6a79",
+  "contentCounts": {
+    "projects": 10,
+    "blogPosts": 2,
+    "timelineEntries": 20
+  }
+}
