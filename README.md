@@ -8,9 +8,23 @@ This repo powers Shamil Khedgikar's personal site, built with [Astro](https://as
 - `npm run dev` - start the dev server at <http://localhost:4321/>.
 - `npm run check` - run Astro diagnostics.
 - `npm run build` - produce a production build in `dist/`.
+- `npm run verify` - run diagnostics and a production build in one command.
 - `npm run preview` - locally preview the production build.
-- `npm run deploy` - publish `dist/` to the `gh-pages` branch via `gh-pages -d dist`.
-- `deploy` does not build first, so run `npm run build` before `npm run deploy`.
+- `npm run deploy` - manual fallback that builds locally and publishes `dist/` to the `gh-pages` branch.
+
+## Deployment Flow
+
+- Use `npm run dev` while editing locally.
+- Run `npm run verify` before pushing when you want a local preflight check.
+- Push to `dev` or open a PR to run CI automatically.
+- Merge or push to `master` to trigger automatic GitHub Pages deployment.
+- `npm run deploy` is now optional and only needed as a manual fallback.
+
+## Dependency Updates
+
+- Dependabot opens weekly PRs for npm dependencies and GitHub Actions updates.
+- Review and merge those PRs instead of running `npm update` manually for routine upgrades.
+- CI runs on each dependency PR, and a merge to `master` deploys automatically.
 
 ## Content Model
 
@@ -134,6 +148,6 @@ tags: [geospatial, methods]
 - Keep new content files ASCII unless source text requires otherwise.
 - Quote YAML strings that include punctuation-heavy values.
 - Run `npm run check` after schema/content-collection changes.
-- Do not commit `dist/`; publish by rebuilding locally, then deploying.
+- Do not commit `dist/`; GitHub Actions builds it during CI and deployment.
 
 Happy mapping!

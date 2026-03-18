@@ -6,15 +6,18 @@
     "dev": "astro dev",
     "check": "astro check",
     "build": "astro build",
+    "verify": "npm run check && npm run build",
     "preview": "astro preview",
-    "deploy": "gh-pages -d dist --nojekyll"
+    "deploy": "npm run build && gh-pages -d dist --nojekyll"
   },
   "dependencies": {
     "roughjs": "^4.6.6"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.8",
     "@astrojs/mdx": "^4.3.11",
     "astro": "^5.15.9",
-    "gh-pages": "^6.3.0"
+    "gh-pages": "^6.3.0",
+    "typescript": "^5.9.3"
   }
 }
