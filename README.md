@@ -17,14 +17,14 @@ This repo powers Shamil Khedgikar's personal site, built with [Astro](https://as
 - Use `npm run dev` while editing locally.
 - Run `npm run verify` before pushing when you want a local preflight check.
 - Push to `dev` or open a PR to run CI automatically.
-- Push to `dev` to trigger automatic GitHub Pages deployment.
+- Merge or push to `master` to trigger automatic GitHub Pages deployment.
 - `npm run deploy` is now optional and only needed as a manual fallback.
 
 ## Dependency Updates
 
 - Dependabot opens weekly PRs for npm dependencies and GitHub Actions updates.
 - Review and merge those PRs instead of running `npm update` manually for routine upgrades.
-- CI runs on each dependency PR, and a merge into `dev` deploys automatically.
+- CI runs on each dependency PR, and a merge to `master` deploys automatically.
 
 ## Content Model
 
