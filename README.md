@@ -10,21 +10,24 @@ This repo powers Shamil Khedgikar's personal site, built with [Astro](https://as
 - `npm run build` - produce a production build in `dist/`.
 - `npm run verify` - run diagnostics and a production build in one command.
 - `npm run preview` - locally preview the production build.
-- `npm run deploy` - manual fallback that builds locally and publishes `dist/` to the `gh-pages` branch.
+- `npm run deploy` - build locally and publish `dist/` directly to the `master` branch.
 
 ## Deployment Flow
 
-- Use `npm run dev` while editing locally.
+- `dev` is the source branch. Keep Astro code, content, and workflows there.
+- `master` is the static output branch. It should contain the generated site only.
+- Use `npm run dev` while editing locally on `dev`.
 - Run `npm run verify` before pushing when you want a local preflight check.
 - Push to `dev` or open a PR to run CI automatically.
-- Merge or push to `master` to trigger automatic GitHub Pages deployment.
-- `npm run deploy` is now optional and only needed as a manual fallback.
+- When you want to publish, run `npm run deploy` from `dev`. That builds `dist/` and pushes the generated site to `master`.
+- Configure GitHub Pages to publish from the `master` branch root, not from GitHub Actions.
 
 ## Dependency Updates
 
 - Dependabot opens weekly PRs for npm dependencies and GitHub Actions updates.
+- Dependency PRs target `dev`, which is the source branch.
 - Review and merge those PRs instead of running `npm update` manually for routine upgrades.
-- CI runs on each dependency PR, and a merge to `master` deploys automatically.
+- After merging to `dev`, publish separately with `npm run deploy` when you are ready.
 
 ## Content Model
 
@@ -148,6 +151,6 @@ tags: [geospatial, methods]
 - Keep new content files ASCII unless source text requires otherwise.
 - Quote YAML strings that include punctuation-heavy values.
 - Run `npm run check` after schema/content-collection changes.
-- Do not commit `dist/`; GitHub Actions builds it during CI and deployment.
+- Do not commit `dist/` to `dev`; `npm run deploy` publishes the built output to `master`.
 
 Happy mapping!

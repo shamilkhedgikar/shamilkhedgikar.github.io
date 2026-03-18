@@ -8,7 +8,7 @@
     "build": "astro build",
     "verify": "npm run check && npm run build",
     "preview": "astro preview",
-    "deploy": "npm run build && gh-pages -d dist --nojekyll"
+    "deploy": "npm run build && gh-pages -d dist -b master --nojekyll"
   },
   "dependencies": {
     "roughjs": "^4.6.6"
