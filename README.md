@@ -9,6 +9,7 @@ This repo powers Shamil Khedgikar's personal site, built with [Astro](https://as
 - `npm run check` - run Astro diagnostics.
 - `npm run build` - produce a production build in `dist/`.
 - `npm run verify` - run diagnostics and a production build in one command.
+- `npm run prepare:deploy` - write deployment metadata and a generated `README.md` into `dist/` for the `master` branch.
 - `npm run preview` - locally preview the production build.
 - `npm run deploy` - build locally and publish `dist/` directly to the `master` branch.
 
@@ -19,7 +20,7 @@ This repo powers Shamil Khedgikar's personal site, built with [Astro](https://as
 - Use `npm run dev` while editing locally on `dev`.
 - Run `npm run verify` before pushing when you want a local preflight check.
 - Push to `dev` or open a PR to run CI automatically.
-- When you want to publish, run `npm run deploy` from `dev`. That builds `dist/` and pushes the generated site to `master`.
+- When you want to publish, run `npm run deploy` from `dev`. That builds `dist/`, writes deployment metadata, generates a branch-specific `README.md`, and pushes the generated site to `master`.
 - Configure GitHub Pages to publish from the `master` branch root, not from GitHub Actions.
 
 ## Dependency Updates

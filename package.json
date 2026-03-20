@@ -7,8 +7,9 @@
     "check": "astro check",
     "build": "astro build",
     "verify": "npm run check && npm run build",
+    "prepare:deploy": "node scripts/write-master-readme.mjs",
     "preview": "astro preview",
-    "deploy": "npm run build && gh-pages -d dist -b master --nojekyll"
+    "deploy": "npm run build && npm run prepare:deploy && gh-pages -d dist -b master --nojekyll"
   },
   "dependencies": {
     "roughjs": "^4.6.6"
