@@ -13,6 +13,13 @@ This repo powers Shamil Khedgikar's personal site, built with [Astro](https://as
 - `npm run preview` - locally preview the production build.
 - `npm run deploy` - build locally and publish `dist/` directly to the `master` branch.
 
+## Analytics and Crawlers
+
+- Add your GA4 measurement ID to a local `.env` file using `.env.example` as the template.
+- Use `PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX`.
+- Analytics is loaded through `/ga-config.js`, so the same ID reaches Astro pages and the legacy static `public/IndiaPulse_kg.html` file.
+- `robots.txt` is generated at build time from `src/pages/robots.txt.ts`.
+
 ## Deployment Flow
 
 - `dev` is the source branch. Keep Astro code, content, and workflows there.

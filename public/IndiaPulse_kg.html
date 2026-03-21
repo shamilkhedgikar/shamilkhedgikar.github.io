@@ -3,6 +3,26 @@
 <head>
   <meta charset="utf-8" />
   <title>IndiaPulse@ISB Knowledge Graph</title>
+  <script src="/ga-config.js"></script>
+  <script>
+    (() => {
+      const measurementId = window.__GA_MEASUREMENT_ID__;
+      if (!measurementId || window.gtag) return;
+
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function gtag() {
+        window.dataLayer.push(arguments);
+      };
+
+      const tagScript = document.createElement("script");
+      tagScript.async = true;
+      tagScript.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
+      document.head.appendChild(tagScript);
+
+      window.gtag("js", new Date());
+      window.gtag("config", measurementId, { anonymize_ip: true });
+    })();
+  </script>
   <style>
     html, body {
       margin: 0;

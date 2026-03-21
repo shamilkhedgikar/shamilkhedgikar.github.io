@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 import "@/styles/markdown.css";
 import { themeColors } from "../../data/themeColors";
+import GoogleAnalytics from "../../components/GoogleAnalytics.astro";
 
 type BlogEntry = CollectionEntry<'blog'>;
 
@@ -53,6 +54,7 @@ const metaDescription = resolveText(post.data.description, post.data.summary) ??
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Golos+Text:wght@400..900&display=swap" rel="stylesheet">
+    <GoogleAnalytics />
   </head>
   <body>
     <div class="bg-image-layer" aria-hidden="true"></div>

@@ -11,6 +11,7 @@ import profilePic from "../assets/images/profile-picture.jpg";
 import "@/styles/markdown.css";
 
 import SocialLink from "../components/SocialLink.astro";
+import GoogleAnalytics from "../components/GoogleAnalytics.astro";
 
 const aboutEntry = await getEntry("profile", "about");
 if (!aboutEntry) {
@@ -54,6 +55,7 @@ const formatBlogDate = (date: Date) =>
       href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Golos+Text:wght@400..900&family=Manrope:wght@200..800&display=swap"
       rel="stylesheet"
     >
+    <GoogleAnalytics />
     <title>Home</title>
   </head>
   <body>
