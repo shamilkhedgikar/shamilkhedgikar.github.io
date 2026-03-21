@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 import "@/styles/markdown.css";
 import { themeColors } from "../../data/themeColors";
 import GoogleAnalytics from "../../components/GoogleAnalytics.astro";
+import SiteHead from "../../components/SiteHead.astro";
 
 type BlogEntry = CollectionEntry<'blog'>;
 
@@ -49,12 +50,11 @@ const metaDescription = resolveText(post.data.description, post.data.summary) ??
         }
       })();
     </script>
-    <title>{post.data.title} | Writing</title>
-    <meta name="description" content={metaDescription} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Golos+Text:wght@400..900&display=swap" rel="stylesheet">
     <GoogleAnalytics />
+    <SiteHead title={`${post.data.title} | Shamil Khedgikar`} description={metaDescription} />
   </head>
   <body>
     <div class="bg-image-layer" aria-hidden="true"></div>

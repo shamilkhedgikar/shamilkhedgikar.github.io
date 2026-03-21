@@ -12,6 +12,7 @@ import "@/styles/markdown.css";
 
 import SocialLink from "../components/SocialLink.astro";
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
+import SiteHead from "../components/SiteHead.astro";
 
 const aboutEntry = await getEntry("profile", "about");
 if (!aboutEntry) {
@@ -56,7 +57,10 @@ const formatBlogDate = (date: Date) =>
       rel="stylesheet"
     >
     <GoogleAnalytics />
-    <title>Home</title>
+    <SiteHead
+      title="Shamil Khedgikar | Home"
+      description="Personal Website: Shamil Shirish Khedgikar"
+    />
   </head>
   <body>
     <div class="bg-image-layer" aria-hidden="true"></div>
