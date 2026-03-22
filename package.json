@@ -17,6 +17,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
     "@astrojs/mdx": "^4.3.11",
+    "@types/node": "^22.19.15",
     "astro": "^5.15.9",
     "gh-pages": "^6.3.0",
     "typescript": "^5.9.3"
